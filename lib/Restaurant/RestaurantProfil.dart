@@ -24,14 +24,14 @@ import 'package:tawelticlient/widget/RoundedButton.dart';
                  image: DecorationImage(
                      colorFilter: ColorFilter.mode(
                          Color(0xFFFEFEFE).withOpacity(0.7), BlendMode.dstATop),
-                     image: AssetImage('assets/restau.jpg'),
+                     image: AssetImage('assets/plaza_corniche.jpg'),
                      fit: BoxFit.cover),
                ),
                child: RichText(
                  text: TextSpan(
                    children: <TextSpan>[
                      TextSpan(text: 'Welcome to\n', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30 , letterSpacing: 2 , color: KBlue)),
-                     TextSpan(text: ' My restaurant', style: TextStyle(fontSize: 30, color: KBlue)),
+                     TextSpan(text: ' The Plaza Corniche', style: TextStyle(fontSize: 30, color: KBlue)),
                    ],
                  ),
                ),

@@ -28,7 +28,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             width: MediaQuery.of(context).size.width*0.45,
@@ -42,7 +42,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 20, top: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -65,7 +65,6 @@ class _RestaurantCardState extends State<RestaurantCard> {
               ],
             ),
           ),
-
         ],
       ),
     );

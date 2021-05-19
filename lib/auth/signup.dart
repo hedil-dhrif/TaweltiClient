@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tawelticlient/accueil.dart';
 import 'package:tawelticlient/auth/signin.dart';
 import 'package:tawelticlient/widget/CustomInputBox.dart';
 import 'package:tawelticlient/widget/MyCostumTitleWidget.dart';
@@ -19,7 +20,7 @@ class SignUpPage extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                padding: EdgeInsets.only(top: 100, bottom: 30),
+                padding: EdgeInsets.only(top: 180, bottom: 40),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
@@ -52,39 +53,24 @@ class SignUpPage extends StatelessWidget {
                       inputHint: '8+ Characters,1 Capital letter',
                       color: KBlue,
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "Remember me",
-                          style: TextStyle(
-                            fontFamily: 'Product Sans',
-                            fontSize: 15.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff8f9db5).withOpacity(0.45),
-                          ),
-                          //
-                        ),
-                        Text(
-                          "Forgot password",
-                          style: TextStyle(
-                            fontFamily: 'Product Sans',
-                            fontSize: 15.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff8f9db5).withOpacity(0.45),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      "Remember me",
+                      style: TextStyle(
+                        fontFamily: 'Product Sans',
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff8f9db5).withOpacity(0.45),
+                      ),
+                      //
                     ),
                     SubmiButton(
                       scrWidth: scrWidth,
                       scrHeight: scrHeight,
                       tap: () {
-                        /*Navigator.push(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddRestaurant()));*/
+                                builder: (context) => Accueil()));
                       },
                       title: 'Create Account',
                       bcolor: KBlue,

@@ -54,7 +54,7 @@ class _NestedTabBarState extends State<NestedTabBar>
               text: "Events",
             ),
             Tab(
-              text: "Gallery",
+              text: "Happy hour",
             ),
           ],
         ),
@@ -84,7 +84,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                                   color: KBlue),
                             ),
                             TextSpan(
-                              text: 'myrestau@restau.com',
+                              text: 'plaza@gnet.tn',
                               style: TextStyle(fontSize: 20, color: KBlue),
                             ),
                           ],
@@ -104,7 +104,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                                       color: KBlue),
                                 ),
                                 TextSpan(
-                                  text: '21365478',
+                                  text: ' 71 743 577',
                                   style: TextStyle(fontSize: 20, color: KBlue),
                                 ),
                               ],
@@ -124,7 +124,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                                       color: KBlue),
                                 ),
                                 TextSpan(
-                                  text: 'Tunisia, tunisia',
+                                  text: '22, R. Maroc',
                                   style: TextStyle(fontSize: 20, color: KBlue),
                                 ),
                               ],
@@ -144,9 +144,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                                       color: KBlue),
                                 ),
                                 TextSpan(
-                                  text: 'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page, '
-                                      'le texte définitif venant remplacer le faux-texte dès qu\'il est prêt ou que la mise en page est achevée. '
-                                      'Généralement, on utilise un texte en faux latin, le Lorem ipsum ou Lipsum.',
+                                  text: 'Que vous nous rendiez visite pour des motifs d\'affaires ou de loisirs, un chaleureux accueil vous attend tout comme chez vous. Le Plaza vous offre un jardin paisible et tranquille ainsi qu\'une piscine avec vue panoramique sur la mer Méditerranée.',
                                   style: TextStyle(fontSize: 20, color: KBlue),
 
                                 ),

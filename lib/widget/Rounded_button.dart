@@ -21,23 +21,20 @@ class _RoundedButtonState extends State<RoundedButton> {
       onTap: widget.ontap,
       child: Container(
         padding: EdgeInsets.all(5),
-        width: MediaQuery.of(context).size.width*0.8,
+        width: MediaQuery.of(context).size.width*0.65,
         height: MediaQuery.of(context).size.height*0.08,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.white, width: 1)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Image.asset(
-                widget.image,
-            ),
             Text(
               widget.text,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 25,
+                fontSize: 30,
                 fontWeight: FontWeight.w600,
               ),
             ),

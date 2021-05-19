@@ -24,7 +24,7 @@ class _GetPasswordState extends State<GetPassword> {
         child: Stack(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 100),
+              padding: EdgeInsets.only(top: 30),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
@@ -38,6 +38,11 @@ class _GetPasswordState extends State<GetPassword> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'assets/logoBlue.png',
+                    height: 120,
+                  ),
+                  SizedBox(height: 100,),
                   MyCostumTitle(
                     MyTitle: 'Get password',
                     size: 30,

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/widget/NestedBarClient.dart';
 
 class ClientProfil extends StatefulWidget {
@@ -14,24 +16,31 @@ class _ClientProfilState extends State<ClientProfil> {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 80),
-             /* margin: EdgeInsets.only(bottom: 20),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height*0.3,
-              padding: EdgeInsets.fromLTRB(20, 100, 20, 30),
+              margin: EdgeInsets.only(top:80, left: 190),
+              height: 60,
+              width: 130,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
-                image: DecorationImage(
-                    colorFilter: ColorFilter.mode(
-                        Color(0xFFFEFEFE).withOpacity(0.7), BlendMode.dstATop),
-                    image: AssetImage('assets/restau.jpg'),
-                    fit: BoxFit.cover),
-              ),*/
+                  color: KBlue,
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              child: Center(
+                child: Text(
+                  'Edit profil',
+                  style: TextStyle(
+                      fontSize: 22.5,
+                      color: Colors.white
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 30),
               child: CircleAvatar(
                 radius: 75,
                 backgroundImage: AssetImage('assets/profil.jpg'),
               ),
             ),
+            SizedBox(height: 20,),
             NestedBarClient(),
           ],
         ),

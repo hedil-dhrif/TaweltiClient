@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tawelticlient/Restaurant/RestaurantProfil.dart';
 import 'package:tawelticlient/client/Profil.dart';
-import 'package:tawelticlient/widget/RestauCard.dart';
+import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/RestaurantCard.dart';
 
 import 'constants.dart';
@@ -12,59 +13,72 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
-        child: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: KBlue,
+        child: AppBarWidget(
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ClientProfil()));
+            },
+            child: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundColor: KBlue,
+                backgroundImage: AssetImage('assets/profil.png'),
+              ),
+            ),
           ),
-          title: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ClientProfil()));
-                  },
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundColor: KBlue,
-                    backgroundImage: AssetImage('assets/profil.png'),
+          title: 'Hello Jhon',
+          onpressed: () {
+            _scaffoldKey.currentState.openEndDrawer();
+          },
+        ),
+      ),
+      endDrawer: Container(
+          width: MediaQuery.of(context).size.width * 0.6,
+          child: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Text('Drawer Header'),
+                  decoration: BoxDecoration(
+                    color: KBlue,
                   ),
                 ),
-                SizedBox(
-                  width: 20,
+                ListTile(
+                  title: Row(
+                    children: [
+                      Icon(CupertinoIcons.settings),
+                      Text('paramètres'),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                Text(
-                  'Hello Jhon!',
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: KBlue,
-                      fontFamily: 'ProductSans',
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.w400),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Icon(Icons.logout),
+                      Text('déconnexion'),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height * 0.08),
-            child: Divider(
-              thickness: 2,
-              color: KBeige,
-            ),
-          ),
-        ),
-      ),
+          )),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -92,60 +106,197 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  RestauCard(
-                    image: 'assets/tunisienne.jpg',
-                    title: 'Cuisine\n tunisienne',
+            Container(
+              padding: EdgeInsets.only(right: 20, bottom: 25),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cuisine type: ',
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: KBlue
+                            ),
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                  'Cuisine arabe',
+                                style: TextStyle(
+                                  fontSize: 17.5,
+                                  color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'Cuisine thailandaise',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'Cuisine japonaise',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'Cuisine italienne',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 20,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Location: ',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: KBlue
+                            ),
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'Sea view',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'Mountain view',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.square,
+                                color: KBeige,
+                              ),
+                              SizedBox(width: 10,),
+                              Text(
+                                'IN the city',
+                                style: TextStyle(
+                                    fontSize: 17.5,
+                                    color: KBlue
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  RestauCard(
-                    image: 'assets/tunisienne.jpg',
-                    title: 'Cuisine\n tunisienne',
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  RestauCard(
-                    image: 'assets/tunisienne.jpg',
-                    title: 'Cuisine\n tunisienne',
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  RestauCard(
-                    image: 'assets/tunisienne.jpg',
-                    title: 'Cuisine\n tunisienne',
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  RestauCard(
-                    image: 'assets/tunisienne.jpg',
-                    title: 'Cuisine\n tunisienne',
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                RestaurantCard(
-                  image: 'assets/restaurant.jpg',
-                  title: 'Mon restau',
-                  soustitle: 'Rue habib bourguiba',
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (contest) => RestaurantProfil()));
+                  },
+                  child: RestaurantCard(
+                    image: 'assets/plaza_corniche.jpg',
+                    title: 'Plaza cornich',
+                    soustitle: 'La marsa',
+                  ),
                 ),
                 RestaurantCard(
-                  image: 'assets/restaurant.jpg',
-                  title: 'Mon restau',
-                  soustitle: 'Rue habib bourguiba',
+                  image: 'assets/the_cliff.jpg',
+                  title: 'the cliff',
+                  soustitle: 'Sidi Dhrif',
+                ),
+              ],
+            ),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                RestaurantCard(
+                  image: 'assets/maison_bleue.jpg',
+                  title: 'Le maison bleue',
+                  soustitle: 'Sidi Bou Said',
+                ),
+                RestaurantCard(
+                  image: 'assets/villa_didon.jpg',
+                  title: 'Villa Didon',
+                  soustitle: 'Carthage',
                 ),
               ],
             ),
@@ -154,4 +305,11 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+class CheckBoxModal {
+  String title;
+  bool checked;
+
+  CheckBoxModal({@required this.title, @required this.checked = false});
 }

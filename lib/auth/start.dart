@@ -14,7 +14,7 @@ class _StartPageState extends State<StartPage> {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 100),
+            padding: EdgeInsets.symmetric(vertical: 120),
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
@@ -27,6 +27,13 @@ class _StartPageState extends State<StartPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: 200),
+                  child: Image.asset(
+                    'assets/logoTawelti.png',
+                    width: 250,
+                  ),
+                ),
                 RoundedButton(
                   ontap: (){
                     Navigator.push(
@@ -34,20 +41,7 @@ class _StartPageState extends State<StartPage> {
                         MaterialPageRoute(
                             builder: (context) => SignIn()));
                   },
-                  image: 'assets/email.png',
-                  text: 'Signup with email',
-                ),
-                SizedBox(height: 30,),
-                RoundedButton(
-                  ontap: (){},
-                  image: 'assets/google.png',
-                  text: 'Signup with google',
-                ),
-                SizedBox(height: 30,),
-                RoundedButton(
-                  ontap: (){},
-                  image: 'assets/facebook.png',
-                  text: 'Signup with facebook',
+                  text: 'Log in',
                 ),
               ],
             ),

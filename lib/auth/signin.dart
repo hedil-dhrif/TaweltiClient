@@ -24,7 +24,7 @@ class _SignInState extends State<SignIn> {
         child: Stack(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 150),
+              padding: EdgeInsets.only(top: 100),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
@@ -38,12 +38,17 @@ class _SignInState extends State<SignIn> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset(
+                      'assets/logoBlue.png',
+                    height: 120,
+                  ),
+                  SizedBox(height: 50,),
                   MyCostumTitle(
                     MyTitle: 'Sign In',
-                    size: 60,
+                    size: 50,
                   ),
                   MyCustomInputBox(
-                    label: 'Name',
+                    label: 'User name',
                     inputHint: 'John',
                     color: KBlue,
                   ),
@@ -67,7 +72,7 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height*0.15,),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.075,),
                   SubmiButton(
                     scrWidth: scrWidth,
                     scrHeight: scrHeight,

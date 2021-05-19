@@ -4,6 +4,7 @@ import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/widget/DisabledInputbox.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
 import 'package:tawelticlient/widget/profileCarousel.dart';
+import 'package:tawelticlient/widget/reservecard.dart';
 
 class NestedBarClient extends StatefulWidget {
   @override
@@ -96,19 +97,7 @@ class _NestedBarClientState extends State<NestedBarClient>
                   padding: EdgeInsets.only(top: 30),
                   child: Column(
                     children: [
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      EventCard(),
+                      ReservationCard(),
                     ],
                   ),
                 ),

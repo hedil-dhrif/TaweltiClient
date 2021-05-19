@@ -84,7 +84,7 @@ class Item1 extends StatelessWidget {
         image: DecorationImage(
             colorFilter: ColorFilter.mode(
                 Color(0xFFFEFEFE), BlendMode.dstATop),
-            image: ExactAssetImage('assets/restaurant.jpg'),
+            image: ExactAssetImage('assets/détail1.jpeg'),
             fit: BoxFit.cover),
       ),
     );
@@ -101,7 +101,7 @@ class Item2 extends StatelessWidget {
         image: DecorationImage(
             colorFilter: ColorFilter.mode(
                 Color(0xFFFEFEFE), BlendMode.dstATop),
-            image: ExactAssetImage('assets/restaurant1.jpg'),
+            image: ExactAssetImage('assets/détail2.jpg'),
             fit: BoxFit.cover),
       ),
     );
@@ -118,7 +118,7 @@ class Item3 extends StatelessWidget {
         image: DecorationImage(
             colorFilter: ColorFilter.mode(
                 Color(0xFFFEFEFE), BlendMode.dstATop),
-            image: ExactAssetImage('assets/restaurant2.jpg'),
+            image: ExactAssetImage('assets/détail3.jpg'),
             fit: BoxFit.cover),
       ),
     );
