@@ -4,7 +4,7 @@ class Restaurant {
   String description;
   String adresse;
   //bool etat;
-  String cuisine;
+  //String cuisine;
   DateTime temps_ouverture;
   DateTime temps_fermeture;
   DateTime createdAt;
@@ -16,7 +16,7 @@ class Restaurant {
       this.NomResto,
       this.adresse,
       this.description,
-      this.cuisine,
+      //this.cuisine,
       //this.etat,
       this.userId,
       this.temps_fermeture,
@@ -41,7 +41,7 @@ class Restaurant {
       description: item['Description'],
       userId: item['UserId'],
       //etat: item['etat'],
-      cuisine: item['cuisine'],
+      //cuisine: item['cuisine'],
       temps_ouverture: DateTime.parse(item['temps_ouverture']),
       temps_fermeture: DateTime.parse(item['temps_fermeture']),
       createdAt: DateTime.parse(item['createdAt']),

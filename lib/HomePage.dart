@@ -200,8 +200,9 @@ class _HomePageState extends State<HomePage> {
                                 "Cuisine française",
                                 "Cuisine italienne",
                               ],
-                              onSelected: (List<String> checked) =>
-                              findRestaurantUsingLoop(_apiResponse.data, checked),),
+                             // onSelected: (List<String> checked) =>
+                              //findRestaurantUsingLoop(_apiResponse.data, checked),
+                          ),
                         ),
                       ],
                     ),
@@ -295,29 +296,28 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  findRestaurantUsingLoop(List<Restaurant> restaurants, List<String> cuisineType) {
-    List<Restaurant> results = [];
-    print(cuisineType);
-    if(cuisineType.length==null){
-      setState(() {
-        results=_apiResponse.data;
-      });
-    }else{
-      for (var i = 0; i < restaurants.length; i++) {
-        for(var j=0;j<cuisineType.length;j++){
-          if (restaurants[i].cuisine == cuisineType[j].toLowerCase()) {
-            results.add(restaurants[i]);
-            print('Using loop: ${restaurants[i].NomResto}');
-            setState(() {
-              _foundRestaurants=results;
-            });
-          }
-        }
-
-      }
-    }
-
-  }
+  // findRestaurantUsingLoop(List<Restaurant> restaurants, List<String> cuisineType) {
+  //   List<Restaurant> results = [];
+  //   print(cuisineType);
+  //   if(cuisineType.length==null){
+  //     setState(() {
+  //       results=_apiResponse.data;
+  //     });
+  //   }else{
+  //     for (var i = 0; i < restaurants.length; i++) {
+  //       for(var j=0;j<cuisineType.length;j++){
+  //         if (restaurants[i].cuisine == cuisineType[j].toLowerCase()) {
+  //           results.add(restaurants[i]);
+  //           print('Using loop: ${restaurants[i].NomResto}');
+  //           setState(() {
+  //             _foundRestaurants=results;
+  //           });
+  //         }
+  //       }
+  //
+  //     }
+  //   }
+  // }
 
   findRestaurantUsingLocation(List<Restaurant> restaurants, List<String> location) {
     List<Restaurant> results = [];
