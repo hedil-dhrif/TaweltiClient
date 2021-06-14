@@ -1,10 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/DetailsEvent.dart';
+import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/models/event.dart';
+import 'package:tawelticlient/models/user.dart';
+import 'package:tawelticlient/services/restaurant.services.dart';
+import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
 import 'package:tawelticlient/widget/profileCarousel.dart';
 
+import '../reservation/AddReservation.dart';
+
 class NestedTabBar extends StatefulWidget {
+  final int restaurantId;
+  final int userId;
+  final String adresse;
+  final String description;
+  NestedTabBar({this.restaurantId,this.adresse,this.description,this.userId});
   @override
   _NestedTabBarState createState() => _NestedTabBarState();
 }
@@ -12,12 +27,40 @@ class NestedTabBar extends StatefulWidget {
 class _NestedTabBarState extends State<NestedTabBar>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
+  UserServices get userService => GetIt.I<UserServices>();
+  RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
+  List<Event> events = [];
+  APIResponse<List<Event>> _apiResponse;
 
-  @override
+  bool get isEditing => widget.restaurantId != null;
+  bool _isLoading = false;
+  String errorMessage;
+  String email;
+  String phone;
+  bool _enabled= true;
+  User user;
   void initState() {
     super.initState();
-    _nestedTabController = new TabController(length: 3, vsync: this);
+    print(widget.restaurantId);
+    _fetchEvents();
+    super.initState();
+    _nestedTabController = new TabController(length: 2, vsync: this);
+
   }
+
+  _fetchEvents() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponse = await restaurantService.getRestaurantsListEvents(widget.restaurantId.toString());
+    print(_apiResponse.data.length);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+
 
   @override
   void dispose() {
@@ -53,139 +96,141 @@ class _NestedTabBarState extends State<NestedTabBar>
             Tab(
               text: "Events",
             ),
-            Tab(
-              text: "Happy hour",
-            ),
           ],
         ),
         Container(
-          height: screenHeight * 0.6,
+          height: screenHeight * 0.5,
           child: TabBarView(
             controller: _nestedTabController,
             children: <Widget>[
               Container(
                   padding: EdgeInsets.only(left: 20, top: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileCarousel(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        RichText(
-                            text: TextSpan(
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'Email: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: KBlue),
-                            ),
-                            TextSpan(
-                              text: 'plaza@gnet.tn',
-                              style: TextStyle(fontSize: 20, color: KBlue),
-                            ),
-                          ],
-                        ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Phone number : ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: ' 71 743 577',
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Location: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: '22, R. Maroc',
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Description: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: 'Que vous nous rendiez visite pour des motifs d\'affaires ou de loisirs, un chaleureux accueil vous attend tout comme chez vous. Le Plaza vous offre un jardin paisible et tranquille ainsi qu\'une piscine avec vue panoramique sur la mer Méditerranée.',
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-
-                                ),
-                              ],
-                            ),
-                        ),
-                      ],
-                    ),
-                  )),
-              SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.only(top: 30),
-                  child: Column(
+                  child: ListView(
                     children: [
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileCarousel(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          RichText(
+                              text: TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Email: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: KBlue),
+                              ),
+                              TextSpan(
+                                text: 'plaza@gnet.tn',
+                                style: TextStyle(fontSize: 20, color: KBlue),
+                              ),
+                            ],
+                          ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Phone number : ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: KBlue),
+                                  ),
+                                  TextSpan(
+                                    text: ' 71 743 577',
+                                    style: TextStyle(fontSize: 20, color: KBlue),
+                                  ),
+                                ],
+                              ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Location: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: KBlue),
+                                  ),
+                                  TextSpan(
+                                    text: widget.adresse,
+                                    style: TextStyle(fontSize: 20, color: KBlue),
+                                  ),
+                                ],
+                              ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Description: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: KBlue),
+                                  ),
+                                  TextSpan(
+                                    text: widget.description,
+                                    style: TextStyle(fontSize: 20, color: KBlue),
+
+                                  ),
+                                ],
+                              ),
+                          ),
+                          TextButton(onPressed:(){
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => AddReservation(userId: widget.userId,restaurantId: widget.restaurantId,)));
+                          }, child: Text('add reservation'))
+                        ],
                       ),
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      EventCard(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      EventCard(),
                     ],
-                  ),
-                ),
-              ),
+                  )),
               Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.greenAccent,
-                ),
-              ),
+                height: MediaQuery.of(context).size.height*0.5,
+                child: _buildEventsList(_apiResponse.data),
+    ),
+
             ],
           ),
         )
       ],
+    );
+  }
+
+  _buildEventsList(List data) {
+    return Container(
+      child: ListView.separated(
+        itemCount: data.length,
+        itemBuilder: (BuildContext context, int index) {
+          return EventCard(
+            EventName: data[index].nom,
+            category: data[index].category,
+            description: data[index].description,
+            pressDetails:  () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => DetailsEvent(eventId: data[index].id,))).then((__) => _fetchEvents());
+            },
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(
+          color: Colors.black87,
+        ),
+      ),
     );
   }
 }

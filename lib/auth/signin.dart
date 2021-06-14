@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tawelticlient/api/api.dart';
 import 'package:tawelticlient/auth/signup.dart';
 import 'package:tawelticlient/widget/CustomInputBox.dart';
-import 'package:tawelticlient/widget/MyCostumTitleWidget.dart';
 import 'package:tawelticlient/widget/SubmitButton.dart';
 
+import '../accueil.dart';
 import '../constants.dart';
 import 'getpassword.dart';
 
@@ -14,11 +18,20 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool _isLoading = false;
+  String token;
+  int userId;
+  String username;
+  bool _validate = false;
+
+
+  TextEditingController mailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
+
   Widget build(BuildContext context) {
     var scrWidth = MediaQuery.of(context).size.width;
     var scrHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(
@@ -36,23 +49,27 @@ class _SignInState extends State<SignIn> {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Image.asset(
                       'assets/logoBlue.png',
-                    height: 120,
+                    height: 100,
                   ),
-                  SizedBox(height: 50,),
-                  MyCostumTitle(
-                    MyTitle: 'Sign In',
-                    size: 50,
-                  ),
+                  SizedBox(height: 20,),
+                  // MyCostumTitle(
+                  //   MyTitle: 'Sign In',
+                  //   size: 35,
+                  // ),
                   MyCustomInputBox(
-                    label: 'User name',
-                    inputHint: 'John',
+                    validate: _validate,
+                    textController:mailController ,
+                    label: 'email',
+                    inputHint: 'email',
                     color: KBlue,
                   ),
                   MyCustomInputBox(
+                    validate: _validate,
+                    textController: passwordController,
                     label: 'Password',
                     inputHint: '8+ Characters,1 Capital letter',
                     color: KBlue,
@@ -72,23 +89,29 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height*0.075,),
+                  //SizedBox(height: MediaQuery.of(context).size.height*0.055,),
                   SubmiButton(
                     scrWidth: scrWidth,
                     scrHeight: scrHeight,
                     tap: () {
+                      setState(() {
+                        mailController.text.isEmpty ? _validate = true : _validate = false;
+                        passwordController.text.isEmpty ? _validate = true : _validate = false;
+                      });
+                      _login();
                       /*Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AddRestaurant()));*/
                     },
-                    title: 'Create Account',
+                    title: 'Sign In',
                     bcolor: KBlue,
                     size: 20,
                     color: Colors.white70,
                   ),
                   GestureDetector(
                     onTap: () {
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -126,5 +149,53 @@ class _SignInState extends State<SignIn> {
         ),
       ),
     );
+  }
+
+  void _login() async{
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    var data = {
+      'email' : mailController.text,
+      'password' : passwordController.text
+    };
+
+    var res = await CallApi().postData(data, 'users/login');
+    var body = json.decode(res.body);
+    //if(body['status_code']==200){
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    localStorage.setString('token', body['token']);
+    token=body['token'];
+    _getProfile();
+    print(body);
+    // localStorage.setString('user', json.decode(body['userData']));
+    // print(body['userData']);
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (context) => Accueil(userId: userId,)));
+    // }else{
+    //   print('error');
+    // }
+
+
+    setState(() {
+      _isLoading = false;
+    });
+
+  }
+
+  void _getProfile()async{
+    var res = await CallApi().getProfile('users/profile',token);
+    var body = json.decode(res.body);
+    SharedPreferences localStorage1 = await SharedPreferences.getInstance();
+    localStorage1.setInt('id', json.decode(body['id'].toString()));
+    print(body['id']);
+    // userId=body['id'];
+    // username=body['username'];
+    // print(userId);
+    // print(body);
   }
 }

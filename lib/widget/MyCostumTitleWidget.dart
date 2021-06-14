@@ -21,6 +21,7 @@ class _MyCostumTitleState extends State<MyCostumTitle> {
         style: TextStyle(
             color: Color(0xFFAF8F61),
             fontSize: widget.size,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

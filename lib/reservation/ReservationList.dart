@@ -2,13 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:tawelticlient/widget/RestauCard.dart';
-import 'package:tawelticlient/widget/reservecard.dart';
+import 'package:tawelticlient/api/api_Response.dart';
+import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/models/reservation.dart';
+import 'package:tawelticlient/services/reservation.services.dart';
+import 'package:tawelticlient/reservation/AddReservation.dart';
+import 'package:tawelticlient/widget/floorDelete.dart';
+import 'package:tawelticlient/widget/waitCard.dart';
 
-import '../constants.dart';
-import 'AddReservation.dart';
+import '../widget/RestauCard.dart';
+import 'DetailsReservation.dart';
 
 class ReservationtList extends StatefulWidget {
   @override
@@ -16,14 +22,19 @@ class ReservationtList extends StatefulWidget {
 }
 
 class _ReservationtListState extends State<ReservationtList> {
+  ReservationServices get reservationService => GetIt.I<ReservationServices>();
+  List<Reservation> reservations = [];
+  APIResponse<List<Reservation>> _apiResponse;
+  bool _isLoading = false;
   CalendarController _controller;
   Map<DateTime, List<dynamic>> _events;
   List<dynamic> _selectedEvents;
   TextEditingController _eventController;
   SharedPreferences prefs;
-
+ var user;
   @override
   void initState() {
+    _getUserInfo();
     super.initState();
     _controller = CalendarController();
     _eventController = TextEditingController();
@@ -31,7 +42,18 @@ class _ReservationtListState extends State<ReservationtList> {
     _selectedEvents = [];
     initPrefs();
   }
+  void _getUserInfo() async {
+    SharedPreferences localStorage1 = await SharedPreferences.getInstance();
+    var userId = localStorage1.getInt('id');
+    user=userId;
+    print(userId);
+    setState(() {
+      user = userId;
+      _fetchReservations(user);
 
+      //print(user);
+    });
+  }
   initPrefs() async {
     prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -147,42 +169,32 @@ class _ReservationtListState extends State<ReservationtList> {
                 calendarController: _controller,
               ),
             ),
-            SizedBox(
-              height: 20,
+            SizedBox(height: 20,),
+            Container(
+              margin: EdgeInsets.only(left: 10),
+              height: MediaQuery.of(context).size.height*0.6,
+               child:_buildEventsList(_apiResponse.data),
             ),
-            Center(
-              child: Column(
-                children: [
-                 ReservationCard(
-                   titre1: '123',
-                   titre2: 'Jhon Doe',
-                   titre3: '20:00',
-                   titre4: 'Outside',
-                   titre5: 'T20',
-                 ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  ReservationCard(
-                    titre1: '843',
-                    titre2: 'Jhon Doe',
-                    titre3: '15:10',
-                    titre4: 'Outside',
-                    titre5: 'T2',
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  ReservationCard(
-                    titre1: '627',
-                    titre2: 'Jhon Doe',
-                    titre3: '21:30',
-                    titre4: 'Inside',
-                    titre5: 'T01',
-                  ),
-                ],
+
+            /*..._selectedEvents.map(
+              (event) => ListTile(
+                title: Container(
+                  color: Colors.white,
+                    padding: EdgeInsets.all(20),
+                    child: Text(event.title),
+                ),
+                */ /*onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EventDetailsPage(
+                        event: event,
+                      ),
+                    ),
+                  );
+                },*/ /*
               ),
-            ),
+            ),*/
           ],
         ),
       ),
@@ -190,9 +202,64 @@ class _ReservationtListState extends State<ReservationtList> {
         backgroundColor: KBeige,
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddReservation()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AddReservation()));
         },
+      ),
+    );
+  }
+
+  _fetchReservations(user) async {
+    print(user);
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponse = await reservationService.getUsersListReservations(user.toString());
+    print(_apiResponse.data);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildEventsList(List data) {
+    return Container(
+      child: ListView.separated(
+        itemCount: data.length,
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => DetailReservation(reservationId: data[index].id,))).then((__) => _fetchReservations(user));
+            },
+            child: WaitCard(
+              delete:()async{
+                final result = await showDialog(
+                    context: context, builder: (_) => FloorDelete());
+
+                if (result) {
+                  final deleteResult = await reservationService
+                      .deleteReservation(data[index].id.toString());
+                  _fetchReservations(user);
+
+                  var message = 'The reservation was deleted successfully';
+
+                  return deleteResult?.data ?? false;
+                }
+                print(result);
+                return result;
+              },
+              guestname: data[index].nomPersonne,
+              nbPersonne: data[index].nbPersonne.toString(),
+              reservationId: data[index].id,
+              reservationDate: data[index].id.toString(),
+              reservationTime: data[index].heureReservation,
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(
+          color: Colors.black87,
+        ),
       ),
     );
   }

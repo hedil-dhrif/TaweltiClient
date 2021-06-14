@@ -1,27 +1,48 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/constants.dart';
-
-import 'AddreservationNext.dart';
-import 'ReservationList.dart';
-
+import 'package:tawelticlient/models/reservation.dart';
+import 'package:tawelticlient/services/reservation.services.dart';
 
 class AddReservation extends StatefulWidget {
+  final int userId;
+  final int restaurantId;
+  AddReservation({this.restaurantId,this.userId});
   @override
   _AddReservationState createState() => _AddReservationState();
 }
 
 class _AddReservationState extends State<AddReservation> {
+  ReservationServices get reservationService => GetIt.I<ReservationServices>();
+
   DateTime _datetime;
   int _counter = 0;
+  bool _isLoading = false;
+  TextEditingController guestNameController = TextEditingController();
   String valueChoose;
   List listItem = [
     'Outside',
     'Inside',
     'Garden',
   ];
-
+  var user;
+  @override
+  void initState() {
+    _getUserInfo();
+    super.initState();
+  }
+  void _getUserInfo() async {
+    SharedPreferences localStorage1 = await SharedPreferences.getInstance();
+    var userId = localStorage1.getInt('id');
+    print(userId);
+    setState(() {
+      user = userId;
+      print(user);
+    });
+  }
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -40,7 +61,7 @@ class _AddReservationState extends State<AddReservation> {
     if (datetime == null) {
       return 'Select Date';
     } else {
-      return DateFormat('dd/MM/yyyy').format(datetime);
+      return DateFormat('dd-MM-yyyy').format(datetime);
     }
   }
 
@@ -82,8 +103,7 @@ class _AddReservationState extends State<AddReservation> {
           ),
           leading: IconButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ReservationtList()));
+             Navigator.of(context).pop();
             },
             icon: Icon(CupertinoIcons.arrow_left),
           ),
@@ -106,8 +126,8 @@ class _AddReservationState extends State<AddReservation> {
           ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
+        //mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: Container(
@@ -116,6 +136,26 @@ class _AddReservationState extends State<AddReservation> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Text(
+                    'Guest name :',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: KBlue,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: KBlue),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextFormField(
+                      controller: guestNameController,
+                    ),
+                  ),
                   Text(
                     'Guest number :',
                     style: TextStyle(
@@ -167,7 +207,7 @@ class _AddReservationState extends State<AddReservation> {
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Column(
@@ -176,7 +216,7 @@ class _AddReservationState extends State<AddReservation> {
                           Text(
                             'Pick a date :',
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               color: KBlue,
                             ),
                           ),
@@ -184,14 +224,14 @@ class _AddReservationState extends State<AddReservation> {
                             height: 20,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width*0.35,
+                            width: MediaQuery.of(context).size.width*0.8,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                             decoration: BoxDecoration(
                               border: Border.all(width: 1, color: KBlue),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(
                                   Icons.calendar_today_outlined,
@@ -202,7 +242,7 @@ class _AddReservationState extends State<AddReservation> {
                                   child: Text(
                                     getText(),
                                     style: TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 20,
                                     ),
                                   ),
                                   onTap: () {
@@ -225,13 +265,14 @@ class _AddReservationState extends State<AddReservation> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 20,),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Pick time :',
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               color: KBlue,
                             ),
                           ),
@@ -239,14 +280,14 @@ class _AddReservationState extends State<AddReservation> {
                             height: 20,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width*0.35,
+                            width: MediaQuery.of(context).size.width*0.8,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                             decoration: BoxDecoration(
                               border: Border.all(width: 1, color: KBlue),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(
                                   Icons.timer,
@@ -257,7 +298,7 @@ class _AddReservationState extends State<AddReservation> {
                                   child: Text(
                                     getTextTime(),
                                     style: TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 20,
                                     ),
                                   ),
                                   onTap: () {
@@ -271,90 +312,83 @@ class _AddReservationState extends State<AddReservation> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Pick zone: ',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: KBlue,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: KBlue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: DropdownButton(
-                      hint: Text(
-                        'Select Floor : ',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                      ),
-                      iconSize: 35,
-                      isExpanded: true,
-                      underline: SizedBox(),
-                      value: valueChoose,
-                      onChanged: (newValue) {
-                        setState(() {
-                          valueChoose = newValue;
-                        });
-                      },
-                      items: listItem.map((valueItem) {
-                        return DropdownMenuItem(
-                          value: valueItem,
-                          child: Text(
-                            valueItem,
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  // Text(
+                  //   'Pick zone: ',
+                  //   style: TextStyle(
+                  //     fontSize: 20,
+                  //     color: KBlue,
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  //   decoration: BoxDecoration(
+                  //     border: Border.all(width: 1, color: KBlue),
+                  //     borderRadius: BorderRadius.circular(10),
+                  //   ),
+                  //   child: DropdownButton(
+                  //     hint: Text(
+                  //       'Select Floor : ',
+                  //       style: TextStyle(
+                  //         fontSize: 20,
+                  //       ),
+                  //     ),
+                  //     icon: Icon(
+                  //       Icons.arrow_drop_down,
+                  //     ),
+                  //     iconSize: 35,
+                  //     isExpanded: true,
+                  //     underline: SizedBox(),
+                  //     value: valueChoose,
+                  //     onChanged: (newValue) {
+                  //       setState(() {
+                  //         valueChoose = newValue;
+                  //       });
+                  //     },
+                  //     items: listItem.map((valueItem) {
+                  //       return DropdownMenuItem(
+                  //         value: valueItem,
+                  //         child: Text(
+                  //           valueItem,
+                  //           style: TextStyle(
+                  //             fontSize: 20,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 40,
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddReservationNext()));
+                      _addReservation();
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => AddReservationNext()));
                     },
                     child: Center(
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.35,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                             color: KBlue,
                             borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Next',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: KBackgroundColor,
-                                  letterSpacing: 2),
-                            ),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 24,
-                              color: KBackgroundColor,
-                            )
-                          ],
+                        child: Center(
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: KBackgroundColor,
+                                letterSpacing: 2),
+                          ),
                         ),
                       ),
                     ),
@@ -366,5 +400,38 @@ class _AddReservationState extends State<AddReservation> {
         ],
       ),
     );
+  }
+  _addReservation()async{
+    setState(() {
+      _isLoading = true;
+    });
+    final reservation = Reservation(
+      userId: user,
+      restaurantId: widget.restaurantId,
+      nbPersonne: _counter,
+      nomPersonne: guestNameController.text,
+      dateReservation: getText(),
+      heureReservation: getTextTime(),
+    );
+    final result = await reservationService.createReservation(reservation);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Done'),
+          content: Text('your reservation is added successfully'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        ));
   }
 }

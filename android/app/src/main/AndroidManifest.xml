@@ -2,6 +2,8 @@
     package="com.tawelti.tawelticlient">
    <application
         android:label="tawelticlient"
+       android:requestLegacyExternalStorage="true"
+       android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

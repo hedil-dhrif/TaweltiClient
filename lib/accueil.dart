@@ -5,10 +5,18 @@ import 'package:tawelticlient/HomePage.dart';
 import 'package:tawelticlient/client/Profil.dart';
 
 import 'constants.dart';
+import 'reservation/AddReservation.dart';
 import 'reservation/ReservationList.dart';
-class Accueil extends StatelessWidget {
-  const Accueil({Key key}) : super(key: key);
+import 'reservation/ReservationList.dart';
+class Accueil extends StatefulWidget {
+  final int userId;
+  const Accueil({Key key,this.userId}) : super(key: key);
 
+  @override
+  _AccueilState createState() => _AccueilState();
+}
+
+class _AccueilState extends State<Accueil> {
   @override
   Widget build(BuildContext context) {
     PersistentTabController _controller;
@@ -19,7 +27,7 @@ class Accueil extends StatelessWidget {
       return [
         HomePage(),
         ReservationtList(),
-        ClientProfil()
+        ClientProfil(userID:widget.userId ,)
       ];
     }
 

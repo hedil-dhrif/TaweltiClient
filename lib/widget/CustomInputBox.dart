@@ -6,8 +6,9 @@ class MyCustomInputBox extends StatefulWidget {
   String inputHint;
   Color color;
   TextEditingController textController;
+  bool validate;
 
-  MyCustomInputBox({this.label, this.inputHint, this.color, this.textController});
+  MyCustomInputBox({this.label, this.inputHint, this.color, this.textController, this.validate});
   @override
   _MyCustomInputBoxState createState() => _MyCustomInputBoxState();
 }
@@ -49,6 +50,7 @@ class _MyCustomInputBoxState extends State<MyCustomInputBox> {
                 color: KBlue,
                 fontWeight: FontWeight.bold),
             decoration: InputDecoration(
+              errorText: widget.validate ? 'Value Can\'t Be Empty' : null,
               hintText: widget.inputHint,
               hintStyle: TextStyle(
                   fontSize: 18,

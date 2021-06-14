@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 
 
 import '../constants.dart';
-import '../reservation/AddReservation.dart';
 import 'TowSidedRoundedButton.dart';
 
-class RestauCard extends StatefulWidget {
+class WaitCard extends StatefulWidget {
   final int reservationId;
   final String guestname;
   final String reservationDate;
   final String reservationTime;
   final String nbPersonne;
+  final Function delete;
 
-  RestauCard({this.nbPersonne,this.guestname,this.reservationDate,this.reservationTime,this.reservationId});
+
+  WaitCard({this.nbPersonne,this.guestname,this.reservationDate,this.reservationTime,this.reservationId,this.delete,});
   @override
-  _RestauCardState createState() => _RestauCardState();
+  _WaitCardState createState() => _WaitCardState();
 }
 
-class _RestauCardState extends State<RestauCard> {
+class _WaitCardState extends State<WaitCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,7 +119,19 @@ class _RestauCardState extends State<RestauCard> {
               ],
             ),
           ),
-
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TwoSideRoundedButton(
+                text: 'cancel',
+                press: widget.delete,
+                bottomradious: 20,
+                topradious: 0,
+                textcolor: Colors.white,
+                conatinercolor: KBlue,
+              ),
+            ],
+          ),
         ],
       ),
     );

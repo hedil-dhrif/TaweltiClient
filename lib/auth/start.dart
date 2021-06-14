@@ -14,7 +14,7 @@ class _StartPageState extends State<StartPage> {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 120),
+            padding: EdgeInsets.symmetric(vertical: 70),
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class _StartPageState extends State<StartPage> {
                         MaterialPageRoute(
                             builder: (context) => SignIn()));
                   },
-                  text: 'Log in',
+                  text: 'Get started',
                 ),
               ],
             ),

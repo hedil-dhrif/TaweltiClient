@@ -4,11 +4,13 @@ import '../constants.dart';
 
 class DisabledInputBox extends StatefulWidget {
   String label;
+  bool enabled;
   String inputHint;
   Color color;
   TextEditingController controller;
+  bool validate;
 
-  DisabledInputBox({this.label, this.inputHint, this.color,this.controller});
+  DisabledInputBox({this.label, this.inputHint, this.color,this.controller,this.enabled,this.validate});
   @override
   _DisabledInputBoxState createState() => _DisabledInputBoxState();
 }
@@ -43,13 +45,14 @@ class _DisabledInputBoxState extends State<DisabledInputBox> {
               border: Border.all(color: widget.color , width: 1),
             ),
             child: TextFormField(
-              enabled: false,
+              enabled: widget.enabled,
               controller: widget.controller,
               style: TextStyle(
                   fontSize: 20,
                   color: KBlue,
                   fontWeight: FontWeight.bold),
               decoration: InputDecoration(
+                errorText: widget.validate ? 'Value Can\'t Be Empty' : null,
                 enabled: true,
                 hintText: widget.inputHint,
                 hintStyle: TextStyle(
