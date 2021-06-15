@@ -54,7 +54,7 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
         description = restaurant.description;
         name = restaurant.NomResto;
         userId = restaurant.userId;
-        kitchen = cuisine.type;
+        //kitchen = cuisine.type;
         print(adresse);
         print(kitchen);
         print(description);

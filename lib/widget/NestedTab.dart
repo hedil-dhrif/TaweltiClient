@@ -4,8 +4,10 @@ import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/DetailsEvent.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/models/Cuisine.dart';
 import 'package:tawelticlient/models/event.dart';
 import 'package:tawelticlient/models/user.dart';
+import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
@@ -32,8 +34,13 @@ class _NestedTabBarState extends State<NestedTabBar>
   TabController _nestedTabController;
   UserServices get userService => GetIt.I<UserServices>();
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
+  CuisineServices get cuisineService => GetIt.I<CuisineServices>();
+
   List<Event> events = [];
+  final List<String> listCuisines=[];
+
   APIResponse<List<Event>> _apiResponse;
+  APIResponse<List<Cuisine>> _cuisineResponse;
 
   bool get isEditing => widget.restaurantId != null;
   bool _isLoading = false;
@@ -47,6 +54,7 @@ class _NestedTabBarState extends State<NestedTabBar>
     super.initState();
     print(widget.restaurantId);
     _fetchEvents();
+    _fetchCuisines();
     super.initState();
     _nestedTabController = new TabController(length: 3, vsync: this);
   }
@@ -127,6 +135,25 @@ class _NestedTabBarState extends State<NestedTabBar>
                         Information(
                           titre1: 'Kitchen: ',
                           titre2: widget.kitchen,
+                        ),
+                        Wrap(
+                          // runSpacing: 5.0,
+                          // spacing: 5.0,
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          // crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(listCuisines.length, (index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                listCuisines[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: KBlue,
+                                ),
+                              ),
+                            );
+                          }),
                         ),
                         SizedBox(
                           height: 15,
@@ -316,6 +343,37 @@ class _NestedTabBarState extends State<NestedTabBar>
         ),
       ),
     );
+  }
+
+
+  _fetchCuisines() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _cuisineResponse = await cuisineService
+        .getRestaurantsListCuisine(widget.restaurantId.toString());
+    _buildListCuisines();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+  _buildListCuisines() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    for (int i = 0; i < _cuisineResponse.data.length; i++) {
+      if(listCuisines.contains(_cuisineResponse.data[i].type)){
+        i++;
+      }else{
+        listCuisines.add(_cuisineResponse.data[i].type);
+      }
+    }
+    print(listCuisines);
+    setState(() {
+      _isLoading = false;
+    });
   }
 }
 
