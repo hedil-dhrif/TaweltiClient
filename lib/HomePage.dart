@@ -10,6 +10,7 @@ import 'package:tawelticlient/client/Profil.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
+import 'package:tawelticlient/widget/RechercheBar.dart';
 import 'package:tawelticlient/widget/RestaurantCard.dart';
 import 'Restaurant/RestaurantProfil.dart';
 import 'api/api_Response.dart';
@@ -145,104 +146,49 @@ class _HomePageState extends State<HomePage> {
           )),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.95,
-                padding: EdgeInsets.only(top: 5, bottom: 5),
-                child: TextField(
-                  onChanged: (value) => _runFilter(value),
-                  controller: editingController,
-                  decoration: InputDecoration(
-                    hintText: "Search",
-                    hintStyle: TextStyle(
-                      color: KBlue,
-                      fontSize: 20,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide(color: KBlue, width: 1),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: KBlue,
-                      size: 30,
-                    ),
-                  ),
+            RechercherBar(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15, left: 20),
+              child: Text(
+                'Recommended for you',
+                style: TextStyle(
+                  color: KBlue,
+                  fontSize: 20,
+                  letterSpacing: 1,
                 ),
               ),
             ),
-            Container(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Cuisine type: ',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: KBlue),
-                        ),
-                        Container(
-                          child: CheckboxGroup(
-                              labelStyle: TextStyle(fontSize: 17.5, color: KBlue),
-                              orientation: GroupedButtonsOrientation.VERTICAL,
-                              labels: <String>[
-                                "Cuisine Tunisienne",
-                                "Cuisine arabe",
-                                "Cuisine française",
-                                "Cuisine italienne",
-                              ],
-                             // onSelected: (List<String> checked) =>
-                              //findRestaurantUsingLoop(_apiResponse.data, checked),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Location: ',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: KBlue),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          child: CheckboxGroup(
-                              labelStyle: TextStyle(fontSize: 17.5, color: KBlue),
-                              orientation: GroupedButtonsOrientation.VERTICAL,
-                              labels: <String>[
-                                "Tunis",
-                                "Sidi bousaid",
-                                "Nabeul",
-                                "la marsa",
-                              ],
-                              onSelected: (List<String> checked) =>
-                                  findRestaurantUsingLocation(_apiResponse.data, checked)),
-                        ),
-                      ],
-                    ),
-                  ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  RestaurantRecommand(),
+                  RestaurantRecommand(),
+                  RestaurantRecommand(),
+                  RestaurantRecommand(),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20, left: 20),
+              child: Text(
+                'Upcomming events',
+                style: TextStyle(
+                  color: KBlue,
+                  fontSize: 20,
+                  letterSpacing: 1,
                 ),
               ),
             ),
             _foundRestaurants.length > 0
                 ? Container(
-                    height: MediaQuery.of(context).size.height * 0.45,
+                    padding: const EdgeInsets.only(bottom: 20, left: 20),
+                    height: MediaQuery.of(context).size.height * 0.4,
                     child: _buildListRestaurants(_foundRestaurants),
                   )
                 : Text(
@@ -319,31 +265,28 @@ class _HomePageState extends State<HomePage> {
   //   }
   // }
 
-  findRestaurantUsingLocation(List<Restaurant> restaurants, List<String> location) {
+  findRestaurantUsingLocation(
+      List<Restaurant> restaurants, List<String> location) {
     List<Restaurant> results = [];
     print(location);
-    if(location.length==null){
+    if (location.length == null) {
       setState(() {
-        results=_apiResponse.data;
+        results = _apiResponse.data;
       });
-    }
-    else{
+    } else {
       for (var i = 0; i < restaurants.length; i++) {
-        for(var j=0;j<location.length;j++){
+        for (var j = 0; j < location.length; j++) {
           if (restaurants[i].adresse == location[j].toLowerCase()) {
             results.add(restaurants[i]);
             print('Using loop: ${restaurants[i].NomResto}');
             setState(() {
-              _foundRestaurants=results;
+              _foundRestaurants = results;
             });
           }
         }
-
       }
     }
-
   }
-
 
   void logout() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -372,6 +315,37 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = false;
     });
+  }
+}
+
+class RestaurantRecommand extends StatelessWidget {
+  const RestaurantRecommand({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 15),
+      padding: EdgeInsets.symmetric(horizontal: 2.5),
+      height: MediaQuery.of(context).size.height * 0.23,
+      width: MediaQuery.of(context).size.width * 0.225,
+      decoration:
+          BoxDecoration(color: KBeige, borderRadius: BorderRadius.circular(50)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/restaurant.jpg'),
+            radius: 35,
+          ),
+          Text(
+            'Restaurant',
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          )
+        ],
+      ),
+    );
   }
 }
 

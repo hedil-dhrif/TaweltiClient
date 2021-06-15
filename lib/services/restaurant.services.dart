@@ -81,6 +81,21 @@ class RestaurantServices{
   }
 
 
+  Future<APIResponse<Restaurant>> getRestaurantcuisine(String restaurantId) {
+
+    return http
+        .get(
+      Uri.parse(API + 'restaurants/cuisine' + restaurantId),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+      return APIResponse<Restaurant>(data: Restaurant.fromJson(jsonData));
+      }
+      return APIResponse<Restaurant>(error: true, errorMessage: 'An error occured');
+    }).catchError((_) =>
+        APIResponse<Restaurant>(error: true, errorMessage: 'An error occured'));
+  }
 
   Future<APIResponse<bool>> updateRestaurant(String restoID, Restaurant item) {
     return http.put(Uri.parse(API + 'restaurant/UpdateRestaurant/' + restoID),  headers: <String, String>{
