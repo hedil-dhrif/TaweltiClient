@@ -6,6 +6,12 @@ import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/widget/NestedTab.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
+import 'package:tawelticlient/services/etablissement.services.dart';
+import 'package:tawelticlient/services/general.services.dart';
+import 'package:tawelticlient/services/ambiance.services.dart';
+import 'package:tawelticlient/models/etablissement.dart';
+import 'package:tawelticlient/models/general.dart';
+import 'package:tawelticlient/models/ambiance.dart';
 
 class RestaurantProfil extends StatefulWidget {
   final int restaurantId;
@@ -31,7 +37,10 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
   String kitchen;
   bool _enabled = true;
   Restaurant restaurant;
-  Cuisine cuisine;
+  String etablissement;
+  String general;
+  String ambiance;
+
   @override
   void initState() {
     print(widget.restaurantId);
@@ -114,6 +123,9 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
               web: web,
               userId: userId,
               kitchen: kitchen,
+              etablissement: etablissement,
+              general: general,
+              ambiance: ambiance,
             ),
           ],
         ),

@@ -5,9 +5,15 @@ import 'package:tawelticlient/DetailsEvent.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
+import 'package:tawelticlient/models/ambiance.dart';
+import 'package:tawelticlient/models/etablissement.dart';
 import 'package:tawelticlient/models/event.dart';
+import 'package:tawelticlient/models/general.dart';
 import 'package:tawelticlient/models/user.dart';
+import 'package:tawelticlient/services/ambiance.services.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
+import 'package:tawelticlient/services/etablissement.services.dart';
+import 'package:tawelticlient/services/general.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
@@ -23,8 +29,21 @@ class NestedTabBar extends StatefulWidget {
   final String phone;
   final String web;
   final String description;
+  final String etablissement;
+  final String general;
+  final String ambiance;
+
   NestedTabBar(
-      {this.restaurantId, this.adresse, this.description, this.userId, this.phone, this.web, this.kitchen});
+      {this.restaurantId,
+      this.adresse,
+      this.description,
+      this.userId,
+      this.phone,
+      this.web,
+      this.kitchen,
+      this.etablissement,
+      this.general,
+      this.ambiance});
   @override
   _NestedTabBarState createState() => _NestedTabBarState();
 }
@@ -35,12 +54,21 @@ class _NestedTabBarState extends State<NestedTabBar>
   UserServices get userService => GetIt.I<UserServices>();
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
   CuisineServices get cuisineService => GetIt.I<CuisineServices>();
+  AmbianceServices get ambianceService => GetIt.I<AmbianceServices>();
+  EtablissementServices get etablissementService => GetIt.I<EtablissementServices>();
+  GeneralServices get generalService => GetIt.I<GeneralServices>();
 
   List<Event> events = [];
-  final List<String> listCuisines=[];
+  final List<String> listCuisines = [];
+  final List<String> listAmbiances = [];
+  final List<String> listEtablissements = [];
+  final List<String> listGeneral = [];
 
   APIResponse<List<Event>> _apiResponse;
   APIResponse<List<Cuisine>> _cuisineResponse;
+  APIResponse<List<Ambiance>> _ambianceResponse;
+  APIResponse<List<Etablissement>> _etablissementResponse;
+  APIResponse<List<General>> _generalResponse;
 
   bool get isEditing => widget.restaurantId != null;
   bool _isLoading = false;
@@ -55,6 +83,9 @@ class _NestedTabBarState extends State<NestedTabBar>
     print(widget.restaurantId);
     _fetchEvents();
     _fetchCuisines();
+    _fetchAmbiances();
+    _fetchEtablissement();
+    _fetchGeneral();
     super.initState();
     _nestedTabController = new TabController(length: 3, vsync: this);
   }
@@ -71,6 +102,7 @@ class _NestedTabBarState extends State<NestedTabBar>
       _isLoading = false;
     });
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -137,15 +169,97 @@ class _NestedTabBarState extends State<NestedTabBar>
                           titre2: widget.kitchen,
                         ),
                         Wrap(
-                          // runSpacing: 5.0,
-                          // spacing: 5.0,
-                          // mainAxisAlignment: MainAxisAlignment.start,
-                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(listCuisines.length, (index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            return Container(
+                              margin: EdgeInsets.only(right: 10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: KBlue, width: 1),
+                                  borderRadius: BorderRadius.circular(50)
+                              ),
+                              padding: EdgeInsets.all(10.0),
                               child: Text(
                                 listCuisines[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: KBlue,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Information(
+                          titre1: 'Establishment: ',
+                          titre2: widget.etablissement,
+                        ),
+                        Wrap(
+                          children: List.generate(listEtablissements.length, (index) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: KBlue, width: 1),
+                                  borderRadius: BorderRadius.circular(50)
+                              ),
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                listEtablissements[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: KBlue,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Information(
+                          titre1: 'Ambiance: ',
+                          titre2: '',
+                        ),
+                        Wrap(
+                          children: List.generate(listAmbiances.length, (index) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: KBlue, width: 1),
+                                  borderRadius: BorderRadius.circular(50)
+                              ),
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                listAmbiances[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: KBlue,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Information(
+                          titre1: 'General: ',
+                          titre2: '',
+                        ),
+                        Wrap(
+                          children: List.generate(listGeneral.length, (index) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: KBlue, width: 1),
+                                borderRadius: BorderRadius.circular(50)
+                              ),
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                listGeneral[index].toString(),
                                 style: TextStyle(
                                   //fontWeight: FontWeight.w600,
                                   fontSize: 18,
@@ -205,113 +319,6 @@ class _NestedTabBarState extends State<NestedTabBar>
                   color: Color(0xFFF4F4F4),
                 ),
               ),
-              /*Container(
-                  padding: EdgeInsets.only(left: 20, top: 20),
-                  child: ListView(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ProfileCarousel(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Email: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: 'plaza@gnet.tn',
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Phone number : ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: ' 71 743 577',
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Location: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: widget.adresse,
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Description: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: KBlue),
-                                ),
-                                TextSpan(
-                                  text: widget.description,
-                                  style: TextStyle(fontSize: 20, color: KBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddReservation(
-                                              userId: widget.userId,
-                                              restaurantId: widget.restaurantId,
-                                            )));
-                              },
-                              child: Text('add reservation'))
-                        ],
-                      ),
-                    ],
-                  )),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: _buildEventsList(_apiResponse.data),
-              ),*/
             ],
           ),
         )
@@ -345,7 +352,6 @@ class _NestedTabBarState extends State<NestedTabBar>
     );
   }
 
-
   _fetchCuisines() async {
     setState(() {
       _isLoading = true;
@@ -358,15 +364,16 @@ class _NestedTabBarState extends State<NestedTabBar>
       _isLoading = false;
     });
   }
+
   _buildListCuisines() {
     setState(() {
       _isLoading = true;
     });
 
     for (int i = 0; i < _cuisineResponse.data.length; i++) {
-      if(listCuisines.contains(_cuisineResponse.data[i].type)){
+      if (listCuisines.contains(_cuisineResponse.data[i].type)) {
         i++;
-      }else{
+      } else {
         listCuisines.add(_cuisineResponse.data[i].type);
       }
     }
@@ -375,15 +382,109 @@ class _NestedTabBarState extends State<NestedTabBar>
       _isLoading = false;
     });
   }
+
+  _fetchEtablissement() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _etablissementResponse = await etablissementService
+        .getRestaurantsListEtablissement(widget.restaurantId.toString());
+    _buildListEtablissement();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildListEtablissement() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    for (int i = 0; i <_etablissementResponse.data.length; i++) {
+      if (listEtablissements.contains(_etablissementResponse.data[i].type)) {
+        i++;
+      } else {
+        listEtablissements.add(_etablissementResponse.data[i].type);
+      }
+    }
+    print(listEtablissements);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _fetchGeneral() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _generalResponse = await generalService
+        .getRestaurantsListGeneral(widget.restaurantId.toString());
+    _buildListGeneral();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildListGeneral() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    for (int i = 0; i < _generalResponse.data.length; i++) {
+      if (listGeneral.contains(_generalResponse.data[i].type)) {
+        i++;
+      } else {
+        listGeneral.add(_generalResponse.data[i].type);
+      }
+    }
+    print(listGeneral);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _fetchAmbiances() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _ambianceResponse = await ambianceService
+        .getRestaurantsListAmbiance(widget.restaurantId.toString());
+    _buildListAmbiance();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildListAmbiance() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    for (int i = 0; i < _ambianceResponse.data.length; i++) {
+      if (listAmbiances.contains( _ambianceResponse.data[i].type)) {
+        i++;
+      } else {
+        listAmbiances.add(_ambianceResponse.data[i].type);
+      }
+    }
+    print(listAmbiances);
+    setState(() {
+      _isLoading = false;
+    });
+  }
 }
 
 class Information extends StatelessWidget {
-
   final String titre1;
   final String titre2;
 
   const Information({
-    Key key, this.titre1, this.titre2,
+    Key key,
+    this.titre1,
+    this.titre2,
   }) : super(key: key);
 
   @override
@@ -394,9 +495,7 @@ class Information extends StatelessWidget {
           TextSpan(
             text: titre1,
             style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: KBlue),
+                fontWeight: FontWeight.bold, fontSize: 20, color: KBlue),
           ),
           TextSpan(
             text: titre2,
