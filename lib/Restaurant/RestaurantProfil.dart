@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/constants.dart';
-import 'package:tawelticlient/models/Cuisine.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/widget/NestedTab.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
-import 'package:tawelticlient/services/etablissement.services.dart';
-import 'package:tawelticlient/services/general.services.dart';
-import 'package:tawelticlient/services/ambiance.services.dart';
-import 'package:tawelticlient/models/etablissement.dart';
-import 'package:tawelticlient/models/general.dart';
-import 'package:tawelticlient/models/ambiance.dart';
 
 class RestaurantProfil extends StatefulWidget {
   final int restaurantId;

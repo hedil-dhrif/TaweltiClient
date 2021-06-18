@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tawelticlient/Restaurant/RestaurantProfil.dart';
 import 'package:tawelticlient/client/Profil.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/services/user.services.dart';
@@ -59,7 +57,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // This function is called whenever the text field changes
   void _runFilter(String enteredKeyword) {
     List<Restaurant> results = [];
     if (enteredKeyword.isEmpty) {
@@ -70,10 +67,8 @@ class _HomePageState extends State<HomePage> {
           .where((restaurant) => restaurant.NomResto.toLowerCase()
               .contains(enteredKeyword.toLowerCase()))
           .toList();
-      // we use the toLowerCase() method to make it case-insensitive
     }
 
-    // Refresh the UI
     setState(() {
       _foundRestaurants = results;
     });
@@ -242,29 +237,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // findRestaurantUsingLoop(List<Restaurant> restaurants, List<String> cuisineType) {
-  //   List<Restaurant> results = [];
-  //   print(cuisineType);
-  //   if(cuisineType.length==null){
-  //     setState(() {
-  //       results=_apiResponse.data;
-  //     });
-  //   }else{
-  //     for (var i = 0; i < restaurants.length; i++) {
-  //       for(var j=0;j<cuisineType.length;j++){
-  //         if (restaurants[i].cuisine == cuisineType[j].toLowerCase()) {
-  //           results.add(restaurants[i]);
-  //           print('Using loop: ${restaurants[i].NomResto}');
-  //           setState(() {
-  //             _foundRestaurants=results;
-  //           });
-  //         }
-  //       }
-  //
-  //     }
-  //   }
-  // }
-
   findRestaurantUsingLocation(
       List<Restaurant> restaurants, List<String> location) {
     List<Restaurant> results = [];
@@ -349,9 +321,3 @@ class RestaurantRecommand extends StatelessWidget {
   }
 }
 
-class CheckBoxModal {
-  String title;
-  bool checked;
-
-  CheckBoxModal({@required this.title, @required this.checked = false});
-}

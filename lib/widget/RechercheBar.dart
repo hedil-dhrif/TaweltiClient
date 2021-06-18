@@ -3,13 +3,8 @@ import 'package:tawelticlient/recherche/filtrage.dart';
 
 import '../constants.dart';
 
-
 class RechercherBar extends StatelessWidget {
-  final TextEditingController editingController;
-  const RechercherBar({
-    Key key,
-    this.editingController,
-  }) : super(key: key);
+  final TextEditingController editingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +35,8 @@ class RechercherBar extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Filtrage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Filtrage()));
           },
           child: Image.asset(
             'assets/filtre.png',

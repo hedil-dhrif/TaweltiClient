@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:tawelticlient/models/Cuisine.dart';
+import 'package:tawelticlient/models/Restaurant.dart';
 import '../constants.dart';
+import 'package:tawelticlient/services/cuisine.services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/api/api_Response.dart';
+import 'package:tawelticlient/services/user.services.dart';
 
 class Filtrage extends StatefulWidget {
   @override
@@ -14,6 +19,17 @@ class _FiltrageState extends State<Filtrage> {
   bool budclick = false;
   bool ambclick = false;
   bool genclick = false;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  UserServices get userService => GetIt.I<UserServices>();
+  CuisineServices get cuisineservice => GetIt.I<CuisineServices>();
+  bool _isLoading = false;
+  TextEditingController NameController = TextEditingController();
+  List<Restaurant> reservations = [];
+  List<Cuisine> cuisine = [];
+  APIResponse<List<Restaurant>> _apiResponse;
+  List<Restaurant> _foundRestaurants = [];
+  String errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -162,9 +178,9 @@ class _FiltrageState extends State<Filtrage> {
                   height: 10,
                 ),
                 FilterParameter(
-                    title: 'Ambiance :',
+                  title: 'Ambiance :',
                 ),
-                 Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -197,7 +213,7 @@ class _FiltrageState extends State<Filtrage> {
                       ],
                     )
                   ],
-                ) ,
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -238,7 +254,7 @@ class _FiltrageState extends State<Filtrage> {
                       ],
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width*0.02,
+                      width: MediaQuery.of(context).size.width * 0.02,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,18 +283,14 @@ class _FiltrageState extends State<Filtrage> {
                       ],
                     )
                   ],
-                ) ,
+                ),
                 GestureDetector(
-                  onTap: () {
-
-                  },
+                  onTap: () {},
                   child: Container(
                     margin: EdgeInsets.only(top: 25),
-                    padding: EdgeInsets.symmetric(vertical: 25, horizontal: 30),
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: KBlue
-                    ),
+                        borderRadius: BorderRadius.circular(10), color: KBlue),
                     child: Text(
                       'Check result',
                       style: TextStyle(
@@ -291,10 +303,32 @@ class _FiltrageState extends State<Filtrage> {
               ],
             ),
           ),
-
         ],
       ),
     );
+  }
+
+  findRestaurantUsingLoop(
+      List<Restaurant> restaurants, List<String> cuisineType) {
+    List<Restaurant> results = [];
+    print(cuisineType);
+    if (cuisineType.length == null) {
+      setState(() {
+        results = _apiResponse.data;
+      });
+    } else {
+      for (var i = 0; i < restaurants.length; i++) {
+        for (var j = 0; j < cuisineType.length; j++) {
+          if (cuisine[i].type == cuisineType[j].toLowerCase()) {
+            results.add(restaurants[i]);
+            print('Using loop: ${restaurants[i].NomResto}');
+            setState(() {
+              _foundRestaurants = results;
+            });
+          }
+        }
+      }
+    }
   }
 }
 
@@ -313,10 +347,7 @@ class FilterParameter extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-            fontSize: 22.5,
-            color: KBlue,
-          fontWeight: FontWeight.bold
-        ),
+            fontSize: 22.5, color: KBlue, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -353,7 +384,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           },
         ),
         Text(
-          widget.title ,
+          widget.title,
           style: TextStyle(color: KBlue, fontSize: 20),
         ),
       ],
