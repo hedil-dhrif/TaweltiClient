@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -16,6 +17,21 @@ import 'auth/signin.dart';
 import 'constants.dart';
 import 'services/restaurant.services.dart';
 
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if(null != _timer){
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,11 +43,14 @@ class _HomePageState extends State<HomePage> {
   UserServices get userService => GetIt.I<UserServices>();
   bool _isLoading = false;
   TextEditingController NameController = TextEditingController();
-  List<Restaurant> reservations = [];
+  List<Restaurant> restaurant = [];
+  List<Restaurant> filterrestaurant = [];
   APIResponse<List<Restaurant>> _apiResponse;
   TextEditingController editingController = TextEditingController();
   List<Restaurant> _foundRestaurants = [];
   String errorMessage;
+  String query = '';
+  final debouncer = Debouncer(milliseconds: 500);
   var user;
   int Id;
   List<String> searchCritere;
@@ -40,6 +59,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _getUserInfo();
     _fetchRestaurants();
+    restaurant = [];
+    filterrestaurant = [];
     setState(() {
       _isLoading = true;
     });
@@ -143,7 +164,16 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RechercherBar(),
+            RechercherBar(
+              changed: (string){
+                setState(() {
+                  debouncer.run(() {
+                    filterrestaurant = restaurant.where((u)=> (u.NomResto.toLowerCase().contains(string))).toList();
+                    print(string);
+                  });
+                });
+              },
+            ),
             Padding(
               padding: const EdgeInsets.only(bottom: 15, left: 20),
               child: Text(
@@ -184,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                 ? Container(
                     padding: const EdgeInsets.only(bottom: 20, left: 20),
                     height: MediaQuery.of(context).size.height * 0.4,
-                    child: _buildListRestaurants(_foundRestaurants),
+                    child: _buildListRestaurants(filterrestaurant),
                   )
                 : Text(
                     'No results found',
@@ -207,6 +237,7 @@ class _HomePageState extends State<HomePage> {
     print(_apiResponse.data);
     setState(() {
       _isLoading = false;
+      filterrestaurant = _apiResponse.data;
     });
   }
 

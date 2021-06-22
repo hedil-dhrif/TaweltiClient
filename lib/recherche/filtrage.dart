@@ -2,12 +2,205 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/widget/AppBar.dart';
 import '../constants.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/services/user.services.dart';
 
+class Filtrage extends StatefulWidget {
+  const Filtrage({Key key}) : super(key: key);
+
+  @override
+  _FiltrageState createState() => _FiltrageState();
+}
+
+class _FiltrageState extends State<Filtrage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80.0),
+        child: AppBarWidget(
+          title: 'Filter',
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _titleContainer("Type of establishment"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    child: Wrap(
+                  spacing: 5.0,
+                  runSpacing: 3.0,
+                  children: <Widget>[
+                    filterChipWidget(chipName: 'BeachBar'),
+                    filterChipWidget(chipName: 'Lounge'),
+                    filterChipWidget(chipName: 'tea room'),
+                  ],
+                )),
+              ),
+            ),
+            Divider(
+              color: Colors.blueGrey,
+              height: 10.0,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _titleContainer('Kitchen'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  child: Wrap(
+                    spacing: 5.0,
+                    runSpacing: 5.0,
+                    children: <Widget>[
+                      filterChipWidget(chipName: 'French'),
+                      filterChipWidget(chipName: 'Tunisan'),
+                      filterChipWidget(chipName: 'Italian'),
+                      filterChipWidget(chipName: 'Libanese'),
+                      filterChipWidget(chipName: 'Asian'),
+                      filterChipWidget(chipName: 'Mexican'),
+                      filterChipWidget(chipName: 'European'),
+                      filterChipWidget(chipName: 'Steak'),
+                      filterChipWidget(chipName: 'Sea Food'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Divider(
+              color: Colors.blueGrey,
+              height: 10.0,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _titleContainer("Budget"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    child: Wrap(
+                      spacing: 5.0,
+                      runSpacing: 3.0,
+                      children: <Widget>[
+                        filterChipWidget(chipName: '\$'),
+                        filterChipWidget(chipName: '\$\$'),
+                        filterChipWidget(chipName: '\$\$\$'),
+                      ],
+                    )),
+              ),
+            ),
+            Divider(
+              color: Colors.blueGrey,
+              height: 10.0,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _titleContainer("Ambiance"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    child: Wrap(
+                      spacing: 5.0,
+                      runSpacing: 3.0,
+                      children: <Widget>[
+                        filterChipWidget(chipName: 'Festive'),
+                        filterChipWidget(chipName: 'Calm'),
+                        filterChipWidget(chipName: 'Romantic'),
+                        filterChipWidget(chipName: 'Business'),
+                        filterChipWidget(chipName: 'Family'),
+                      ],
+                    )),
+              ),
+            ),
+            Divider(
+              color: Colors.blueGrey,
+              height: 10.0,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _titleContainer("General"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    child: Wrap(
+                      spacing: 5.0,
+                      runSpacing: 3.0,
+                      children: <Widget>[
+                        filterChipWidget(chipName: 'Requires reservation'),
+                        filterChipWidget(chipName: 'Car parking'),
+                        filterChipWidget(chipName: 'Smoking area'),
+                        filterChipWidget(chipName: 'No smoking area'),
+                        filterChipWidget(chipName: 'Children area'),
+                        filterChipWidget(chipName: 'restaurant tickets'),
+                        filterChipWidget(chipName: 'check'),
+                        filterChipWidget(chipName: 'Animals allowed'),
+                        filterChipWidget(chipName: 'Alcohol'),
+                        filterChipWidget(chipName: 'Shisha'),
+                        filterChipWidget(chipName: 'Indoors'),
+                        filterChipWidget(chipName: 'Outdoors'),
+                        filterChipWidget(chipName: 'TPE'),
+                        filterChipWidget(chipName: 'WIFI'),
+                        filterChipWidget(chipName: 'Karaoke'),
+                      ],
+                    )),
+              ),
+            ),
+            Divider(
+              color: Colors.blueGrey,
+              height: 10.0,
+            ),
+            SizedBox(height:20,),
+            TextButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  'Find restaurant',
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*
 class Filtrage extends StatefulWidget {
   @override
   _FiltrageState createState() => _FiltrageState();
@@ -257,7 +450,6 @@ class _FiltrageState extends State<Filtrage> {
                       width: MediaQuery.of(context).size.width * 0.02,
                     ),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         MyStatefulWidget(
                           title: 'Alcohol',
@@ -281,7 +473,7 @@ class _FiltrageState extends State<Filtrage> {
                           title: 'Karaoke',
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 GestureDetector(
@@ -388,6 +580,48 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           style: TextStyle(color: KBlue, fontSize: 20),
         ),
       ],
+    );
+  }
+}
+*/
+
+Widget _titleContainer(String myTitle) {
+  return Text(
+    myTitle,
+    style: TextStyle(
+        color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold),
+  );
+}
+
+class filterChipWidget extends StatefulWidget {
+  final String chipName;
+
+  filterChipWidget({Key key, this.chipName}) : super(key: key);
+
+  @override
+  _filterChipWidgetState createState() => _filterChipWidgetState();
+}
+
+class _filterChipWidgetState extends State<filterChipWidget> {
+  var _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      label: Text(widget.chipName),
+      labelStyle:
+          TextStyle(color: KBlue, fontSize: 16.0, fontWeight: FontWeight.bold),
+      selected: _isSelected,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      backgroundColor: Color(0xffededed),
+      onSelected: (isSelected) {
+        setState(() {
+          _isSelected = isSelected;
+        });
+      },
+      selectedColor: Color(0xffeadffd),
     );
   }
 }

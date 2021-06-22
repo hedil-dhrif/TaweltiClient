@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tawelticlient/recherche/filtrage.dart';
 
@@ -5,6 +7,9 @@ import '../constants.dart';
 
 class RechercherBar extends StatelessWidget {
   final TextEditingController editingController = TextEditingController();
+  final Function changed;
+
+  RechercherBar({Key key, this.changed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +20,7 @@ class RechercherBar extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
           child: TextField(
             controller: editingController,
+            onChanged: changed,
             decoration: InputDecoration(
               hintText: "Search",
               hintStyle: TextStyle(
