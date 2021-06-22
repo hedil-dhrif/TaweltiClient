@@ -223,7 +223,7 @@ class _FiltrageState extends State<Filtrage> {
   APIResponse<List<Restaurant>> _apiResponse;
   List<Restaurant> _foundRestaurants = [];
   String errorMessage;
-
+  List<String> listcriteres=[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
