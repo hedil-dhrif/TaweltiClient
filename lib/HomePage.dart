@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:filter_list/filter_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/client/Profil.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/models/ambiance.dart';
+import 'package:tawelticlient/services/ambiance.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/RechercheBar.dart';
@@ -17,6 +20,8 @@ import 'constants.dart';
 import 'services/restaurant.services.dart';
 
 class HomePage extends StatefulWidget {
+  final List<String> searchcriters ;
+  HomePage({this.searchcriters});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -25,6 +30,10 @@ class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
   UserServices get userService => GetIt.I<UserServices>();
+  AmbianceServices get ambianceService => GetIt.I<AmbianceServices>();
+  APIResponse<List<Ambiance>> _ambianceResponse;
+  final List<Ambiance> listAmbiances = [];
+
   bool _isLoading = false;
   TextEditingController NameController = TextEditingController();
   List<Restaurant> reservations = [];
@@ -40,6 +49,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _getUserInfo();
     _fetchRestaurants();
+    _fetchAmbiances();
     setState(() {
       _isLoading = true;
     });
@@ -73,6 +83,7 @@ class _HomePageState extends State<HomePage> {
       _foundRestaurants = results;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +299,39 @@ class _HomePageState extends State<HomePage> {
       _isLoading = false;
     });
   }
+
+  _fetchAmbiances() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _ambianceResponse = await ambianceService
+        .getListAmbiance();
+    _buildListAmbiance();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildListAmbiance() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    for (int i = 0; i < _ambianceResponse.data.length; i++) {
+      if (listAmbiances.contains( _ambianceResponse.data[i].type)) {
+        i++;
+      } else {
+        listAmbiances.add(_ambianceResponse.data[i]);
+      }
+    }
+    print(listAmbiances);
+    setState(() {
+      _isLoading = false;
+    });
+  }
 }
+
 
 class RestaurantRecommand extends StatelessWidget {
   const RestaurantRecommand({
@@ -319,5 +362,6 @@ class RestaurantRecommand extends StatelessWidget {
       ),
     );
   }
+
 }
 

@@ -8,6 +8,27 @@ class AmbianceServices{
   Client client = Client();
 
   static const API = 'http://10.0.2.2:3000/';
+
+
+  Future<APIResponse<List<Ambiance>>> getListAmbiance() {
+    return client
+        .get(
+      Uri.parse(API + 'ambiances'),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final events = <Ambiance>[];
+        for (var item in jsonData) {
+          events.add(Ambiance.fromJson(item));
+        }
+        return APIResponse<List<Ambiance>>(data: events);
+      }
+      return APIResponse<List<Ambiance>>(
+          error: true, errorMessage: 'An error occured');
+    }).catchError((_) => APIResponse<List<Ambiance>>(
+        error: true, errorMessage: 'An error occured'));
+  }
   Future<APIResponse<List<Ambiance>>> getRestaurantsListAmbiance(
       String restaurantId) {
     return client
