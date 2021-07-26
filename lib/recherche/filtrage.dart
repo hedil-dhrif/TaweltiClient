@@ -2,6 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/models/ambiance.dart';
+import 'package:tawelticlient/models/etablissement.dart';
+import 'package:tawelticlient/models/general.dart';
+import 'package:tawelticlient/recherche/result.dart';
+import 'package:tawelticlient/services/ambiance.services.dart';
+import 'package:tawelticlient/services/etablissement.services.dart';
+import 'package:tawelticlient/services/general.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import '../constants.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
@@ -17,6 +24,185 @@ class Filtrage extends StatefulWidget {
 }
 
 class _FiltrageState extends State<Filtrage> {
+  AmbianceServices get ambianceService => GetIt.I<AmbianceServices>();
+  CuisineServices get cuisineService => GetIt.I< CuisineServices>();
+  EtablissementServices get etablissementService => GetIt.I<EtablissementServices>();
+  GeneralServices get generalService => GetIt.I<GeneralServices>();
+
+  List<String> ambiance = [];
+  List<String> ambianceDB = [];
+  List<String> general = [];
+  List<String> etablissment = [];
+  List<String> cuisine = [];
+  List<String> budget = [];
+  List<Ambiance> filterAmbiances = [];
+  List<Cuisine> filterCuisines = [];
+  List<Etablissement> filterEtablissements = [];
+  List<General> filterGenerals = [];
+  List<int> results = [];
+
+  bool _isLoading = true;
+  APIResponse<List<Ambiance>> _apiResponse;
+  APIResponse<List<Cuisine>> _apiResponseCuisine;
+  APIResponse<List<Etablissement>> _apiResponseEtablissement;
+  APIResponse<List<General>> _apiResponseGeneral;
+
+  _fetchAmbiances() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponse = await ambianceService.getListAmbiance();
+    //_foundRestaurants = _apiResponse.data;
+    print(_apiResponse.data.length);
+    print(_apiResponse.data);
+    setState(() {
+      _isLoading = false;
+      filterAmbiances = _apiResponse.data;
+    });
+  }
+  _fetchCuisines() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponseCuisine = await cuisineService.getListCuisine();
+    //_foundRestaurants = _apiResponse.data;
+    print(_apiResponseCuisine.data.length);
+    print(_apiResponseCuisine.data);
+    setState(() {
+      _isLoading = false;
+    });
+    filterCuisines=_apiResponseCuisine.data;
+  }
+  _fetchEtablissement() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponseEtablissement = await etablissementService.getListEtablissement();
+    //_foundRestaurants = _apiResponse.data;
+    print(_apiResponseEtablissement.data.length);
+    print(_apiResponseEtablissement.data);
+    setState(() {
+      _isLoading = false;
+    });
+    filterEtablissements=_apiResponseEtablissement.data;
+  }
+  _fetchGenerals() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponseGeneral = await generalService.getListGeneral();
+    //_foundRestaurants = _apiResponse.data;
+    print(_apiResponseGeneral.data.length);
+    print(_apiResponseGeneral.data);
+    setState(() {
+      _isLoading = false;
+    });
+    filterGenerals=_apiResponseGeneral.data;
+  }
+
+  // _listAmbianceDb() {
+  //   filterAmbiances.forEach((element) {
+  //     ambianceDB.add(element.type);
+  //   });
+  // }
+
+  findRestaurantUsingAmbiance(List<String> ambiance) {
+    print(ambiance);
+    print(_apiResponse.data);
+    for (var i = 0; i < ambiance.length; i++) {
+      for (var j = 0; j < _apiResponse.data.length; j++) {
+        if (ambiance[i].toLowerCase() ==
+            _apiResponse.data[j].type.toLowerCase()) {
+          if (results.contains(_apiResponse.data[j].restaurantId)) {
+            print(
+                'Using loop: ${filterAmbiances[j].type},${filterAmbiances[j].restaurantId}');
+            j++;
+          } else {
+            results.add(_apiResponse.data[j].restaurantId);
+            print(
+                'Using loop: ${filterAmbiances[j].type},${filterAmbiances[j].restaurantId}');
+          }
+        }
+      }
+    }
+    print(results);
+  }
+  findRestaurantUsingCuisine(List<String> cuisine) {
+    print(cuisine);
+    print(_apiResponseCuisine.data);
+    for (var i = 0; i < cuisine.length; i++) {
+      for (var j = 0; j < _apiResponseCuisine.data.length; j++) {
+        if (cuisine[i].toLowerCase() ==
+            _apiResponseCuisine.data[j].type.toLowerCase()) {
+          if (results.contains(_apiResponseCuisine.data[j].restaurantId)) {
+            print(
+                'Using loop: ${filterCuisines[j].type},${filterCuisines[j].restaurantId}');
+            j++;
+          } else {
+            results.add(_apiResponseCuisine.data[j].restaurantId);
+            print(
+                'Using loop: ${filterCuisines[j].type},${filterCuisines[j].restaurantId}');
+          }
+        }
+      }
+    }
+    print(results);
+  }
+  findRestaurantUsingEtablissement(List<String> etablissement) {
+    print(etablissment);
+    print(_apiResponseEtablissement.data);
+    for (var i = 0; i < etablissment.length; i++) {
+      for (var j = 0; j < _apiResponseEtablissement.data.length; j++) {
+        if (etablissment[i].toLowerCase() ==
+            _apiResponseEtablissement.data[j].type.toLowerCase()) {
+          if (results.contains(_apiResponseEtablissement.data[j].restaurantId)) {
+            print(
+                'Using loop: ${filterEtablissements[j].type},${filterEtablissements[j].restaurantId}');
+            j++;
+          } else {
+            results.add(_apiResponseEtablissement.data[j].restaurantId);
+            print(
+                'Using loop: ${filterEtablissements[j].type},${filterEtablissements[j].restaurantId}');
+          }
+        }
+      }
+    }
+    print(results);
+  }
+  findRestaurantUsingGeneral(List<String>general) {
+    print(general);
+    print(_apiResponseGeneral.data);
+    for (var i = 0; i <general.length; i++) {
+      for (var j = 0; j < _apiResponseGeneral.data.length; j++) {
+        if (general[i].toLowerCase() ==
+            _apiResponseGeneral.data[j].type.toLowerCase()) {
+          if (results.contains(_apiResponseGeneral.data[j].restaurantId)) {
+            print(
+                'Using loop: ${filterGenerals[j].type},${filterGenerals[j].restaurantId}');
+            j++;
+          } else {
+            results.add(_apiResponseGeneral.data[j].restaurantId);
+            print(
+                'Using loop: ${filterGenerals[j].type},${filterGenerals[j].restaurantId}');
+          }
+        }
+      }
+    }
+    print(results);
+  }
+  @override
+  void initState() {
+    _fetchAmbiances();
+    _fetchCuisines();
+    _fetchGenerals();
+    _fetchEtablissement();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,9 +231,18 @@ class _FiltrageState extends State<Filtrage> {
                   spacing: 5.0,
                   runSpacing: 3.0,
                   children: <Widget>[
-                    filterChipWidget(chipName: 'BeachBar'),
-                    filterChipWidget(chipName: 'Lounge'),
-                    filterChipWidget(chipName: 'tea room'),
+                    FilterChipWidget(
+                      chipName: 'BeachBar',
+                      chips: etablissment,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Lounge',
+                      chips: etablissment,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'tea room',
+                      chips: etablissment,
+                    ),
                   ],
                 )),
               ),
@@ -72,15 +267,42 @@ class _FiltrageState extends State<Filtrage> {
                     spacing: 5.0,
                     runSpacing: 5.0,
                     children: <Widget>[
-                      filterChipWidget(chipName: 'French'),
-                      filterChipWidget(chipName: 'Tunisan'),
-                      filterChipWidget(chipName: 'Italian'),
-                      filterChipWidget(chipName: 'Libanese'),
-                      filterChipWidget(chipName: 'Asian'),
-                      filterChipWidget(chipName: 'Mexican'),
-                      filterChipWidget(chipName: 'European'),
-                      filterChipWidget(chipName: 'Steak'),
-                      filterChipWidget(chipName: 'Sea Food'),
+                      FilterChipWidget(
+                        chipName: 'Cuisine française',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Cuisine Tunisienne',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Cuisine italienne',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Libanese',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Asian',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Mexican',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'European',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Steak',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Sea Food',
+                        chips: cuisine,
+                      ),
                     ],
                   ),
                 ),
@@ -103,14 +325,23 @@ class _FiltrageState extends State<Filtrage> {
                 alignment: Alignment.centerLeft,
                 child: Container(
                     child: Wrap(
-                      spacing: 5.0,
-                      runSpacing: 3.0,
-                      children: <Widget>[
-                        filterChipWidget(chipName: '\$'),
-                        filterChipWidget(chipName: '\$\$'),
-                        filterChipWidget(chipName: '\$\$\$'),
-                      ],
-                    )),
+                  spacing: 5.0,
+                  runSpacing: 3.0,
+                  children: <Widget>[
+                    FilterChipWidget(
+                      chipName: '\$',
+                      chips: budget,
+                    ),
+                    FilterChipWidget(
+                      chipName: '\$\$',
+                      chips: budget,
+                    ),
+                    FilterChipWidget(
+                      chipName: '\$\$\$',
+                      chips: budget,
+                    ),
+                  ],
+                )),
               ),
             ),
             Divider(
@@ -130,16 +361,31 @@ class _FiltrageState extends State<Filtrage> {
                 alignment: Alignment.centerLeft,
                 child: Container(
                     child: Wrap(
-                      spacing: 5.0,
-                      runSpacing: 3.0,
-                      children: <Widget>[
-                        filterChipWidget(chipName: 'Festive'),
-                        filterChipWidget(chipName: 'Calm'),
-                        filterChipWidget(chipName: 'Romantic'),
-                        filterChipWidget(chipName: 'Business'),
-                        filterChipWidget(chipName: 'Family'),
-                      ],
-                    )),
+                  spacing: 5.0,
+                  runSpacing: 3.0,
+                  children: <Widget>[
+                    FilterChipWidget(
+                      chipName: 'Festive',
+                      chips: ambiance,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Calm',
+                      chips: ambiance,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Romantic',
+                      chips: ambiance,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Business',
+                      chips: ambiance,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Family',
+                      chips: ambiance,
+                    ),
+                  ],
+                )),
               ),
             ),
             Divider(
@@ -159,36 +405,92 @@ class _FiltrageState extends State<Filtrage> {
                 alignment: Alignment.centerLeft,
                 child: Container(
                     child: Wrap(
-                      spacing: 5.0,
-                      runSpacing: 3.0,
-                      children: <Widget>[
-                        filterChipWidget(chipName: 'Requires reservation'),
-                        filterChipWidget(chipName: 'Car parking'),
-                        filterChipWidget(chipName: 'Smoking area'),
-                        filterChipWidget(chipName: 'No smoking area'),
-                        filterChipWidget(chipName: 'Children area'),
-                        filterChipWidget(chipName: 'restaurant tickets'),
-                        filterChipWidget(chipName: 'check'),
-                        filterChipWidget(chipName: 'Animals allowed'),
-                        filterChipWidget(chipName: 'Alcohol'),
-                        filterChipWidget(chipName: 'Shisha'),
-                        filterChipWidget(chipName: 'Indoors'),
-                        filterChipWidget(chipName: 'Outdoors'),
-                        filterChipWidget(chipName: 'TPE'),
-                        filterChipWidget(chipName: 'WIFI'),
-                        filterChipWidget(chipName: 'Karaoke'),
-                      ],
-                    )),
+                  spacing: 5.0,
+                  runSpacing: 3.0,
+                  children: <Widget>[
+                    FilterChipWidget(
+                      chipName: 'Requires reservation',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Car parking',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Smoking area',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'No smoking area',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Children area',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'restaurant tickets',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'check',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Animals allowed',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Alcohol',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Shisha',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Indoors',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Outdoors',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'TPE',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'WIFI',
+                      chips: general,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Karaoke',
+                      chips: general,
+                    ),
+                  ],
+                )),
               ),
             ),
             Divider(
               color: Colors.blueGrey,
               height: 10.0,
             ),
-            SizedBox(height:20,),
+            SizedBox(
+              height: 20,
+            ),
             TextButton(
                 onPressed: () {
-
+                  findRestaurantUsingAmbiance(ambiance);
+                  findRestaurantUsingCuisine(cuisine);
+                  findRestaurantUsingEtablissement(etablissment);
+                  findRestaurantUsingGeneral(general);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ResultRecherche(
+                                restaurantsIDs: results,
+                              )));
                 },
                 child: Text(
                   'Find restaurant',
@@ -593,16 +895,16 @@ Widget _titleContainer(String myTitle) {
   );
 }
 
-class filterChipWidget extends StatefulWidget {
+class FilterChipWidget extends StatefulWidget {
   final String chipName;
-
-  filterChipWidget({Key key, this.chipName}) : super(key: key);
+  final List<String> chips;
+  FilterChipWidget({Key key, this.chipName, this.chips}) : super(key: key);
 
   @override
-  _filterChipWidgetState createState() => _filterChipWidgetState();
+  _FilterChipWidgetState createState() => _FilterChipWidgetState();
 }
 
-class _filterChipWidgetState extends State<filterChipWidget> {
+class _FilterChipWidgetState extends State<FilterChipWidget> {
   var _isSelected = false;
 
   @override
@@ -619,6 +921,7 @@ class _filterChipWidgetState extends State<filterChipWidget> {
       onSelected: (isSelected) {
         setState(() {
           _isSelected = isSelected;
+          widget.chips.add(widget.chipName);
         });
       },
       selectedColor: Color(0xffeadffd),

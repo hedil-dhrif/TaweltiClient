@@ -58,7 +58,7 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
         userId = restaurant.userId;
         //kitchen = cuisine.type;
         print(adresse);
-        print(kitchen);
+        //print(kitchen);
         print(description);
         print(name);
         print(userId);
@@ -112,13 +112,13 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
               restaurantId: widget.restaurantId,
               adresse: adresse,
               description: description,
-              phone: phone,
-              web: web,
+              // phone: 'phone',
+              // web: 'web',
               userId: userId,
-              kitchen: kitchen,
-              etablissement: etablissement,
-              general: general,
-              ambiance: ambiance,
+              // kitchen: kitchen,
+              // etablissement: etablissement,
+              // general: general,
+              // ambiance: ambiance,
             ),
           ],
         ),

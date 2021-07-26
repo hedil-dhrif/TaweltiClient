@@ -4,12 +4,14 @@ import 'package:tawelticlient/accueil.dart';
 import 'package:tawelticlient/auth/start.dart';
 import 'package:tawelticlient/models/ambiance.dart';
 import 'package:tawelticlient/services/ambiance.services.dart';
+import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:tawelticlient/services/etablissement.services.dart';
 import 'package:tawelticlient/services/event.services.dart';
 import 'package:tawelticlient/services/general.services.dart';
 import 'package:tawelticlient/services/reservation.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
+import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:get_it/get_it.dart';
 
@@ -26,6 +28,8 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => EtablissementServices());
   GetIt.I.registerLazySingleton(() => AmbianceServices());
   GetIt.I.registerLazySingleton(() => GeneralServices());
+  GetIt.I.registerLazySingleton(() => BookWaitSeatServices());
+  GetIt.I.registerLazySingleton(() => RestaurantTableServices());
 
 }
 

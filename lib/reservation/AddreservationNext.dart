@@ -24,10 +24,10 @@ class _AddReservationNextState extends State<AddReservationNext> {
           child: AppBar(
             iconTheme: IconThemeData(color: KBlue, size: 30),
             leading: IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddReservation()));
-              },
+              // onPressed: () {
+              //   Navigator.push(context,
+              //       MaterialPageRoute(builder: (context) => AddReservation()));
+              // },
               icon: Icon(CupertinoIcons.arrow_left),
             ),
             backgroundColor: Colors.white,

@@ -25,25 +25,26 @@ class NestedTabBar extends StatefulWidget {
   final int restaurantId;
   final int userId;
   final String adresse;
-  final String kitchen;
-  final String phone;
-  final String web;
+  //final String kitchen;
+  // final String phone;
+  // final String web;
   final String description;
-  final String etablissement;
-  final String general;
-  final String ambiance;
+  // final String etablissement;
+  // final String general;
+  // final String ambiance;
 
-  NestedTabBar(
-      {this.restaurantId,
-      this.adresse,
-      this.description,
-      this.userId,
-      this.phone,
-      this.web,
-      this.kitchen,
-      this.etablissement,
-      this.general,
-      this.ambiance});
+  NestedTabBar({
+    this.restaurantId,
+    this.adresse,
+    this.description,
+    this.userId,
+    // this.phone,
+    // this.web,
+    // this.kitchen,
+    // this.etablissement,
+    // this.general,
+    // this.ambiance
+  });
   @override
   _NestedTabBarState createState() => _NestedTabBarState();
 }
@@ -55,7 +56,8 @@ class _NestedTabBarState extends State<NestedTabBar>
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
   CuisineServices get cuisineService => GetIt.I<CuisineServices>();
   AmbianceServices get ambianceService => GetIt.I<AmbianceServices>();
-  EtablissementServices get etablissementService => GetIt.I<EtablissementServices>();
+  EtablissementServices get etablissementService =>
+      GetIt.I<EtablissementServices>();
   GeneralServices get generalService => GetIt.I<GeneralServices>();
 
   List<Event> events = [];
@@ -81,7 +83,7 @@ class _NestedTabBarState extends State<NestedTabBar>
   void initState() {
     super.initState();
     print(widget.restaurantId);
-    _fetchEvents();
+    // _fetchEvents();
     _fetchCuisines();
     _fetchAmbiances();
     _fetchEtablissement();
@@ -90,18 +92,18 @@ class _NestedTabBarState extends State<NestedTabBar>
     _nestedTabController = new TabController(length: 3, vsync: this);
   }
 
-  _fetchEvents() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    _apiResponse = await restaurantService
-        .getRestaurantsListEvents(widget.restaurantId.toString());
-    print(_apiResponse.data.length);
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  // _fetchEvents() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //
+  //   _apiResponse = await restaurantService
+  //       .getRestaurantsListEvents(widget.restaurantId.toString());
+  //   print(_apiResponse.data.length);
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -166,7 +168,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ),
                         Information(
                           titre1: 'Kitchen: ',
-                          titre2: widget.kitchen,
+                          titre2: 'kitchen',
                         ),
                         Wrap(
                           children: List.generate(listCuisines.length, (index) {
@@ -174,8 +176,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                               margin: EdgeInsets.only(right: 10),
                               decoration: BoxDecoration(
                                   border: Border.all(color: KBlue, width: 1),
-                                  borderRadius: BorderRadius.circular(50)
-                              ),
+                                  borderRadius: BorderRadius.circular(50)),
                               padding: EdgeInsets.all(10.0),
                               child: Text(
                                 listCuisines[index].toString(),
@@ -193,16 +194,16 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ),
                         Information(
                           titre1: 'Establishment: ',
-                          titre2: widget.etablissement,
+                          titre2: 'etablissement',
                         ),
                         Wrap(
-                          children: List.generate(listEtablissements.length, (index) {
+                          children:
+                              List.generate(listEtablissements.length, (index) {
                             return Container(
                               margin: EdgeInsets.only(right: 10),
                               decoration: BoxDecoration(
                                   border: Border.all(color: KBlue, width: 1),
-                                  borderRadius: BorderRadius.circular(50)
-                              ),
+                                  borderRadius: BorderRadius.circular(50)),
                               padding: EdgeInsets.all(10.0),
                               child: Text(
                                 listEtablissements[index].toString(),
@@ -223,13 +224,13 @@ class _NestedTabBarState extends State<NestedTabBar>
                           titre2: '',
                         ),
                         Wrap(
-                          children: List.generate(listAmbiances.length, (index) {
+                          children:
+                              List.generate(listAmbiances.length, (index) {
                             return Container(
                               margin: EdgeInsets.only(right: 10),
                               decoration: BoxDecoration(
                                   border: Border.all(color: KBlue, width: 1),
-                                  borderRadius: BorderRadius.circular(50)
-                              ),
+                                  borderRadius: BorderRadius.circular(50)),
                               padding: EdgeInsets.all(10.0),
                               child: Text(
                                 listAmbiances[index].toString(),
@@ -254,9 +255,8 @@ class _NestedTabBarState extends State<NestedTabBar>
                             return Container(
                               margin: EdgeInsets.only(right: 10),
                               decoration: BoxDecoration(
-                                border: Border.all(color: KBlue, width: 1),
-                                borderRadius: BorderRadius.circular(50)
-                              ),
+                                  border: Border.all(color: KBlue, width: 1),
+                                  borderRadius: BorderRadius.circular(50)),
                               padding: EdgeInsets.all(10.0),
                               child: Text(
                                 listGeneral[index].toString(),
@@ -274,7 +274,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ),
                         Information(
                           titre1: 'Phone number: ',
-                          titre2: widget.phone,
+                          titre2: 'widget.phone',
                         ),
                         /*Information(
                           titre1: 'Siteweb: ',
@@ -297,6 +297,14 @@ class _NestedTabBarState extends State<NestedTabBar>
                         SizedBox(
                           height: 15,
                         ),
+                        IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
+                            }),
                       ],
                     ),
                   )),
@@ -307,7 +315,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     children: [
                       Container(
                         height: MediaQuery.of(context).size.height * 0.5,
-                        child: _buildEventsList(_apiResponse.data),
+                        // child: _buildEventsList(_apiResponse.data),
                       ),
                     ],
                   ),
@@ -336,12 +344,12 @@ class _NestedTabBarState extends State<NestedTabBar>
             category: data[index].category,
             description: data[index].description,
             pressDetails: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DetailsEvent(
-                            eventId: data[index].id,
-                          ))).then((__) => _fetchEvents());
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => DetailsEvent(
+              //               eventId: data[index].id,
+              //             ))).then((__) => _fetchEvents());
             },
           );
         },
@@ -401,7 +409,7 @@ class _NestedTabBarState extends State<NestedTabBar>
       _isLoading = true;
     });
 
-    for (int i = 0; i <_etablissementResponse.data.length; i++) {
+    for (int i = 0; i < _etablissementResponse.data.length; i++) {
       if (listEtablissements.contains(_etablissementResponse.data[i].type)) {
         i++;
       } else {
@@ -464,7 +472,7 @@ class _NestedTabBarState extends State<NestedTabBar>
     });
 
     for (int i = 0; i < _ambianceResponse.data.length; i++) {
-      if (listAmbiances.contains( _ambianceResponse.data[i].type)) {
+      if (listAmbiances.contains(_ambianceResponse.data[i].type)) {
         i++;
       } else {
         listAmbiances.add(_ambianceResponse.data[i].type);

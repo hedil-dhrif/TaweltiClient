@@ -8,6 +8,25 @@ class EtablissementServices{
   Client client = Client();
 
   static const API = 'http://10.0.2.2:3000/';
+  Future<APIResponse<List<Etablissement>>> getListEtablissement(){
+    return client
+        .get(
+      Uri.parse(API + 'etablissements'),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final events = <Etablissement>[];
+        for (var item in jsonData) {
+          events.add(Etablissement.fromJson(item));
+        }
+        return APIResponse<List<Etablissement>>(data: events);
+      }
+      return APIResponse<List<Etablissement>>(
+          error: true, errorMessage: 'An error occured');
+    }).catchError((_) => APIResponse<List<Etablissement>>(
+        error: true, errorMessage: 'An error occured'));
+  }
   Future<APIResponse<List<Etablissement>>> getRestaurantsListEtablissement(
       String restaurantId) {
     return client

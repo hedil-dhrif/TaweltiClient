@@ -9,6 +9,25 @@ class GeneralServices{
   Client client = Client();
 
   static const API = 'http://10.0.2.2:3000/';
+  Future<APIResponse<List<General>>> getListGeneral() {
+    return client
+        .get(
+      Uri.parse(API + 'generals'),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final events = <General>[];
+        for (var item in jsonData) {
+          events.add(General.fromJson(item));
+        }
+        return APIResponse<List<General>>(data: events);
+      }
+      return APIResponse<List<General>>(
+          error: true, errorMessage: 'An error occured');
+    }).catchError((_) => APIResponse<List<General>>(
+        error: true, errorMessage: 'An error occured'));
+  }
   Future<APIResponse<List<General>>> getRestaurantsListGeneral(
       String restaurantId) {
     return client
