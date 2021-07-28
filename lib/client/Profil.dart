@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/constants.dart';
-import 'package:tawelticlient/models/user.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/NestedBarClient.dart';
 
@@ -73,37 +70,39 @@ class _ClientProfilState extends State<ClientProfil> {
           },
         ),
       ),      backgroundColor: Color(0xFFF4F4F4),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  //margin: EdgeInsets.only(top: 30),
-                  child: CircleAvatar(
-                    radius: 65,
-                    backgroundImage: AssetImage('assets/profil.jpg'),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    //margin: EdgeInsets.only(top: 30),
+                    child: CircleAvatar(
+                      radius: 65,
+                      backgroundImage: AssetImage('assets/profil.jpg'),
+                    ),
                   ),
-                ),
-                Container(
-                  //margin: EdgeInsets.only(left: 150),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.black87),borderRadius: BorderRadius.circular(4)),
-                  child: IconButton(icon: Icon(Icons.edit), onPressed: (){
-                    setState(() {
-                      _isEnabled=!_isEnabled;
+                  Container(
+                    //margin: EdgeInsets.only(left: 150),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.black87),borderRadius: BorderRadius.circular(4)),
+                    child: IconButton(icon: Icon(Icons.edit), onPressed: (){
+                      setState(() {
+                        _isEnabled=!_isEnabled;
 
-                    });
-                  }),
-                ),
-              ],
+                      });
+                    }),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          //SizedBox(height: 20,),
-          NestedBarClient(isEnabled: _isEnabled,),
-        ],
+            //SizedBox(height: 20,),
+            NestedBarClient(isEnabled: _isEnabled,),
+          ],
+        ),
       ),
     );
   }
@@ -118,8 +117,8 @@ class _ClientProfilState extends State<ClientProfil> {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
       Id = response.data.id;
-      NameController.text=response.data.username;
-      print(response.data.username);
+      NameController.text=response.data.first_name;
+      print(response.data.first_name);
       print(response.data.email);
       print(response.data.id);
       // _titleController.text = floor.nom;

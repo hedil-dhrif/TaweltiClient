@@ -308,8 +308,8 @@ class _HomePageState extends State<HomePage> {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
       Id = response.data.id;
-      NameController.text = response.data.username;
-      print(response.data.username);
+      NameController.text = response.data.first_name;
+      print(response.data.first_name);
       print(response.data.email);
       print(response.data.id);
       // _titleController.text = floor.nom;
