@@ -444,6 +444,7 @@ import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/client/Profil.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/table.dart';
+import 'package:tawelticlient/reservation/confResevPage.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
@@ -461,8 +462,9 @@ class _PassReservationState extends State<PassReservation> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   APIResponse<List<BookWaitSeat>> _apiResponse;
   APIResponse<List<RestaurantTable>> _apiResponse2;
- BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
-RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableServices>();
+  BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
+  RestaurantTableServices get restaurantTableService =>
+      GetIt.I<RestaurantTableServices>();
 
   TextEditingController NameController = TextEditingController();
   int _currentStep = 0;
@@ -475,10 +477,16 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
   int _counter = 0;
   DateTime _datetime;
   final List<int> listBWS = [];
+  final List<BookWaitSeat> DT = [];
   final List<int> listTables = [];
+  DateTime startTime;
+  DateTime endTime;
   //final List<int> availableTables=[];
-  final List<RestaurantTable> availableTables=[];
-
+  final List<RestaurantTable> availableTables = [];
+  final List<BookWaitSeat> availableBWS = [];
+  final List<BookWaitSeat> unavailableBWS = [];
+  TimeOfDay newTime;
+  String result = '0';
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -493,8 +501,8 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
 
   @override
   void initState() {
-   // _getUserInfo();
-   _fetchBWS();
+    // _getUserInfo();
+    _fetchBWS();
     _fetchTables();
     setState(() {
       _isLoading = true;
@@ -532,13 +540,14 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
       final hours = time.hour.toString().padLeft(2, '0');
       final minutes = time.minute.toString().padLeft(2, '0');
 
-      return '$hours:$minutes';
+      print('$hours:$minutes:00');
+      return '$hours:$minutes:00';
     }
   }
 
   Future pickTime(BuildContext context) async {
     final initialTime = TimeOfDay(hour: 9, minute: 0);
-    final newTime = await showTimePicker(
+    newTime = await showTimePicker(
       context: context,
       initialTime: time ?? initialTime,
     );
@@ -548,62 +557,66 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
     setState(() => time = newTime);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
         child: AppBarWidget(
-          // leading: GestureDetector(
-          //   onTap: () {
-          //     Navigator.push(context,
-          //         MaterialPageRoute(builder: (context) => ClientProfil()));
-          //   },
-          //   child: Padding(
-          //     padding: EdgeInsets.only(left: 10),
-          //     child: CircleAvatar(
-          //       radius: 30,
-          //       backgroundColor: KBlue,
-          //       backgroundImage: AssetImage('assets/profil.png'),
-          //     ),
-          //   ),
-          // ),
           title: 'Add reservation',
           onpressed: () {
             _scaffoldKey.currentState.openEndDrawer();
           },
         ),
       ),
-      body: Stepper(
-        //type: StepperType.horizontal,
-        steps: _mySteps(),
-        currentStep: this._currentStep,
-        onStepTapped: (step) {
-          setState(() {
-            this._currentStep = step;
-          });
-        },
-        onStepContinue: () {
-          setState(() {
-            // if (this._currentStep < this._mySteps().length - 1) {
-            //   this._currentStep = this._currentStep + 1;
-            // } else {
-            //   //Logic to check if everything is completed
-            //   print('Completed, check fields.');
-            // }
-            _buildListAvailbaleTablesWithNbPerson(_counter);
-          });
-        },
-        onStepCancel: () {
-          setState(() {
-            if (this._currentStep > 0) {
-              this._currentStep = this._currentStep - 1;
-            } else {
-              this._currentStep = 0;
-            }
-          });
-        },
+      body: Column(
+        children: [
+          Stepper(
+            //type: StepperType.horizontal,
+            steps: _mySteps(),
+            currentStep: this._currentStep,
+            onStepTapped: (step) {
+              setState(() {
+                this._currentStep = step;
+              });
+            },
+            onStepContinue: () {
+              setState(() {
+                if (this._currentStep < this._mySteps().length - 1) {
+                  this._currentStep = this._currentStep + 1;
+                } else {
+                  //Logic to check if everything is completed
+                  print('Completed, check fields.');
+                }
+                //  _buildListAvailbaleTablesWithNbPerson(_counter);
+                // _getAvailableTablesTimeAndDate();
+              });
+            },
+            onStepCancel: () {
+              setState(() {
+                if (this._currentStep > 0) {
+                  this._currentStep = this._currentStep - 1;
+                } else {
+                  this._currentStep = 0;
+                }
+              });
+            },
+          ),
+          TextButton(
+              onPressed: () {
+                _buildListAvailbaleTablesWithNbPerson(_counter);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmPage(
+                              bookWaitSeat: availableBWS[0],
+                          startTime: startTime,
+                          endTime: endTime,
+                            )));
+              },
+              child: Text('get reservation')),
+          Text(result),
+        ],
       ),
     );
   }
@@ -617,7 +630,7 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
         ),
         content: Container(
           padding: EdgeInsets.symmetric(horizontal: 25),
-          width: MediaQuery.of(context).size.width*0.7,
+          width: MediaQuery.of(context).size.width * 0.7,
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: KBlue),
             borderRadius: BorderRadius.circular(10),
@@ -665,7 +678,7 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              width: MediaQuery.of(context).size.width*0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               decoration: BoxDecoration(
                 border: Border.all(width: 1, color: KBlue),
@@ -690,13 +703,14 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
                       showDatePicker(
                         context: context,
                         initialDate:
-                        datetime == null ? DateTime.now() : datetime,
+                            datetime == null ? DateTime.now() : datetime,
                         initialDatePickerMode: DatePickerMode.day,
                         firstDate: DateTime(2021),
                         lastDate: DateTime(2040),
                       ).then((date) {
                         setState(() {
                           datetime = date;
+                          print(datetime);
                         });
                       });
                     },
@@ -713,34 +727,38 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
           'Pick the time',
           style: TextStyle(color: KBlue, fontSize: 20),
         ),
-        content: Container(
-          width: MediaQuery.of(context).size.width*0.8,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          decoration: BoxDecoration(
-            border: Border.all(width: 1, color: KBlue),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.timer,
-                color: KBlue,
-                size: 30,
+        content: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: KBlue),
+                borderRadius: BorderRadius.circular(10),
               ),
-              GestureDetector(
-                child: Text(
-                  getTextTime(),
-                  style: TextStyle(
-                    fontSize: 20,
+              child: Row(
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(
+                    Icons.timer,
+                    color: KBlue,
+                    size: 30,
                   ),
-                ),
-                onTap: () {
-                  pickTime(context);
-                },
+                  GestureDetector(
+                    child: Text(
+                      getTextTime(),
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    onTap: () {
+                      pickTime(context);
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         isActive: _currentStep >= 2,
       )
@@ -756,7 +774,7 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }
-     // Id = response.data.id;
+      // Id = response.data.id;
       NameController.text = response.data.first_name;
       print(response.data.first_name);
       print(response.data.email);
@@ -774,13 +792,14 @@ RestaurantTableServices get restaurantTableService => GetIt.I<RestaurantTableSer
       _isLoading = true;
     });
 
-    _apiResponse = await bwsService
-        .getRestaurantsListBWS(widget.restaurantId.toString());
-_buildListBWS();
+    _apiResponse =
+        await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
+    _buildListBWS();
     setState(() {
       _isLoading = false;
     });
   }
+
   _buildListBWS() {
     setState(() {
       _isLoading = true;
@@ -791,13 +810,16 @@ _buildListBWS();
         i++;
       } else {
         listBWS.add(_apiResponse.data[i].id);
+        DT.add(_apiResponse.data[i]);
       }
     }
     print(listBWS);
+    print(DT);
     setState(() {
       _isLoading = false;
     });
   }
+
   _fetchTables() async {
     setState(() {
       _isLoading = true;
@@ -812,6 +834,7 @@ _buildListBWS();
       _isLoading = false;
     });
   }
+
   _buildListTables() {
     setState(() {
       _isLoading = true;
@@ -821,7 +844,7 @@ _buildListBWS();
       if (listTables.contains(_apiResponse2.data[i].ids)) {
         i++;
       } else {
-        listTables.add(_apiResponse2.data[i].ids-1630);
+        listTables.add(_apiResponse2.data[i].ids - 1630);
         availableTables.add(_apiResponse2.data[i]);
       }
     }
@@ -831,18 +854,41 @@ _buildListBWS();
     });
   }
 
-  _buildListAvailbaleTablesWithNbPerson(int nbPerson){
-      for(int j =0; j<availableTables.length;j++){
-        if(availableTables[j].nbCouverts == nbPerson){
-           print(availableTables[j].ids);
+  _buildListAvailbaleTablesWithNbPerson(int nbPerson) {
+    var id;
+
+    for (int i = 0; i < DT.length; i++) {
+      for (int j = 0; j < availableTables.length; j++) {
+        if (availableTables[j].nbCouverts == nbPerson &&
+            DT[i].id == availableTables[j].ids - 1630) {
+          print(availableTables[j].ids - 1630);
+          print(DT[i].debut);
+          print(DT[i].fin);
+          startTime = DateTime(datetime.year, datetime.month, datetime.day,
+              newTime.hour, newTime.minute);
+          endTime = DateTime(datetime.year, datetime.month, datetime.day,
+              newTime.hour + 1, newTime.minute);
+          if (startTime.compareTo(DT[i].debut) >= 0 &&
+                  startTime.compareTo(DT[i].fin) <= 0 ||
+              (endTime.compareTo(DT[i].debut) >= 0 &&
+                  endTime.compareTo(DT[i].fin) <= 0)) {
+            print(DT[i].id);
+            print('is unavailable');
+            id = DT[i].id;
+            unavailableBWS.add(DT[i]);
+          } else {
+            print(DT[i].ids);
+            print('is available');
+            id = DT[i].id;
+            availableBWS.add(DT[i]);
+          }
         }
+      }
     }
+    id = availableBWS[0].id;
+    result = 'table with id= $id is available at date :$startTime';
   }
 }
-
-
-
-
 
 /*class GuestStepper extends StatelessWidget {
  const GuestStepper({

@@ -49,6 +49,7 @@ dependencies:
   get_it: ^7.1.1
   filter_list: ^1.0.0
   group_button: ^2.2.2
+  qr_flutter: ^4.0.0
 
 
 dev_dependencies:
