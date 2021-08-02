@@ -449,6 +449,8 @@ import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
+import 'package:tawelticlient/widget/DisabledInput.dart';
+import 'package:tawelticlient/widget/DisabledInputbox.dart';
 import '../constants.dart';
 
 class PassReservation extends StatefulWidget {
@@ -462,6 +464,11 @@ class _PassReservationState extends State<PassReservation> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   APIResponse<List<BookWaitSeat>> _apiResponse;
   APIResponse<List<RestaurantTable>> _apiResponse2;
+  TextEditingController FirstNameController = TextEditingController();
+  TextEditingController LastNameController = TextEditingController();
+  TextEditingController mailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
   RestaurantTableServices get restaurantTableService =>
       GetIt.I<RestaurantTableServices>();
@@ -481,6 +488,7 @@ class _PassReservationState extends State<PassReservation> {
   final List<int> listTables = [];
   DateTime startTime;
   DateTime endTime;
+  bool _validate = false;
   //final List<int> availableTables=[];
   final List<RestaurantTable> availableTables = [];
   final List<BookWaitSeat> availableBWS = [];
@@ -569,54 +577,56 @@ class _PassReservationState extends State<PassReservation> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          Stepper(
-            //type: StepperType.horizontal,
-            steps: _mySteps(),
-            currentStep: this._currentStep,
-            onStepTapped: (step) {
-              setState(() {
-                this._currentStep = step;
-              });
-            },
-            onStepContinue: () {
-              setState(() {
-                if (this._currentStep < this._mySteps().length - 1) {
-                  this._currentStep = this._currentStep + 1;
-                } else {
-                  //Logic to check if everything is completed
-                  print('Completed, check fields.');
-                }
-                //  _buildListAvailbaleTablesWithNbPerson(_counter);
-                // _getAvailableTablesTimeAndDate();
-              });
-            },
-            onStepCancel: () {
-              setState(() {
-                if (this._currentStep > 0) {
-                  this._currentStep = this._currentStep - 1;
-                } else {
-                  this._currentStep = 0;
-                }
-              });
-            },
-          ),
-          TextButton(
-              onPressed: () {
-                _buildListAvailbaleTablesWithNbPerson(_counter);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ConfirmPage(
-                              bookWaitSeat: availableBWS[0],
-                          startTime: startTime,
-                          endTime: endTime,
-                            )));
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stepper(
+              //type: StepperType.horizontal,
+              steps: _mySteps(),
+              currentStep: this._currentStep,
+              onStepTapped: (step) {
+                setState(() {
+                  this._currentStep = step;
+                });
               },
-              child: Text('get reservation')),
-          Text(result),
-        ],
+              onStepContinue: () {
+                setState(() {
+                  if (this._currentStep < this._mySteps().length - 1) {
+                    this._currentStep = this._currentStep + 1;
+                  } else {
+                    //Logic to check if everything is completed
+                    print('Completed, check fields.');
+                  }
+                  //  _buildListAvailbaleTablesWithNbPerson(_counter);
+                  // _getAvailableTablesTimeAndDate();
+                });
+              },
+              onStepCancel: () {
+                setState(() {
+                  if (this._currentStep > 0) {
+                    this._currentStep = this._currentStep - 1;
+                  } else {
+                    this._currentStep = 0;
+                  }
+                });
+              },
+            ),
+            TextButton(
+                onPressed: () {
+                  _buildListAvailbaleTablesWithNbPerson(_counter);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ConfirmPage(
+                                bookWaitSeat: availableBWS[0],
+                            startTime: startTime,
+                            endTime: endTime,
+                              )));
+                },
+                child: Text('get reservation')),
+            Text(result),
+          ],
+        ),
       ),
     );
   }
@@ -761,12 +771,58 @@ class _PassReservationState extends State<PassReservation> {
           ],
         ),
         isActive: _currentStep >= 2,
+      ),
+      Step(
+        title: Text(
+          'Validate info',
+          style: TextStyle(color: KBlue, fontSize: 20),
+        ),
+        content: Column(
+          children: [
+            DisabledInput(
+              validate: _validate,
+              inputHint: 'jhon',
+              color: KBlue,
+            ),
+            DisabledInput(
+              validate: _validate,
+              inputHint: '23698514',
+              color: KBlue,
+            ),
+          ],
+        ),
+        isActive: _currentStep >= 3,
       )
     ];
     return _steps;
   }
 
   _getUserProfile(user) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await userService.getUserProfile(user.toString()).then((response) {
+      if (response.error) {
+        errorMessage = response.errorMessage ?? 'An error occurred';
+      }
+      Id = response.data.id;
+      FirstNameController.text = response.data.first_name;
+      LastNameController.text = response.data.last_name;
+      mailController.text = response.data.email;
+      phoneController.text = response.data.phone;
+      print(response.data.first_name);
+      print(response.data.email);
+      print(response.data.id);
+      // _titleController.text = floor.nom;
+      // _contentController.text = note.noteContent;
+    });
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+
+  /*_getUserProfile(user) async {
     setState(() {
       _isLoading = true;
     });
@@ -785,7 +841,7 @@ class _PassReservationState extends State<PassReservation> {
     setState(() {
       _isLoading = false;
     });
-  }
+  }*/
 
   _fetchBWS() async {
     setState(() {

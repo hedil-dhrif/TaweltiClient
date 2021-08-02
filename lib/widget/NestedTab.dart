@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tawelticlient/DetailsEvent.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
