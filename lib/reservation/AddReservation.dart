@@ -474,6 +474,7 @@ class _PassReservationState extends State<PassReservation> {
       GetIt.I<RestaurantTableServices>();
 
   TextEditingController NameController = TextEditingController();
+  TextEditingController guestNameController = TextEditingController();
   int _currentStep = 0;
   String errorMessage;
   var user;
@@ -621,6 +622,7 @@ class _PassReservationState extends State<PassReservation> {
                                 bookWaitSeat: availableBWS[0],
                             startTime: startTime,
                             endTime: endTime,
+                            guestName: guestNameController.text,
                               )));
                 },
                 child: Text('get reservation')),
@@ -780,6 +782,7 @@ class _PassReservationState extends State<PassReservation> {
         content: Column(
           children: [
             DisabledInput(
+              controller:guestNameController ,
               validate: _validate,
               inputHint: 'jhon',
               color: KBlue,

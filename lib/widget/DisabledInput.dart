@@ -7,8 +7,9 @@ class DisabledInput extends StatefulWidget {
   String inputHint;
   Color color;
   bool validate;
+  TextEditingController controller;
 
-  DisabledInput({this.inputHint, this.color, this.validate});
+  DisabledInput({this.inputHint, this.color, this.validate,this.controller});
   @override
   _DisabledInputState createState() => _DisabledInputState();
 }
@@ -26,6 +27,7 @@ class _DisabledInputState extends State<DisabledInput> {
         border: Border.all(color: widget.color , width: 1),
       ),
       child: TextFormField(
+        controller: widget.controller,
         style: TextStyle(
             fontSize: 20,
             color: KBlue,

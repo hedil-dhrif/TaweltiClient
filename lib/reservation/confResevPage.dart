@@ -9,7 +9,8 @@ class ConfirmPage extends StatefulWidget {
   final BookWaitSeat bookWaitSeat;
   final DateTime startTime;
   final DateTime endTime;
-  ConfirmPage({this.bookWaitSeat, this.startTime, this.endTime});
+  final String guestName;
+  ConfirmPage({this.bookWaitSeat, this.startTime, this.endTime,this.guestName});
   @override
   _ConfirmPageState createState() => _ConfirmPageState();
 }
@@ -17,7 +18,6 @@ class ConfirmPage extends StatefulWidget {
 class _ConfirmPageState extends State<ConfirmPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   bool _isLoading = false;
-  String guestName = "malek souissi";
   BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
 
   @override
@@ -49,9 +49,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
             Text(widget.bookWaitSeat.restaurantId.toString()),
             Text(widget.startTime.toString()),
             Text(widget.endTime.toString()),
-            Text(guestName),
+            Text(widget.guestName),
             QrImage(
-              data: guestName + 'reservation date :' + widget.bookWaitSeat.debut.toString(),
+              data: widget.guestName + 'reservation date :' + widget.bookWaitSeat.debut.toString(),
               version: QrVersions.auto,
               size: 160,
               gapless: false,
@@ -80,7 +80,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
       fin: widget.endTime,
       confResv: '0',
       cancResv: '0',
-      guestName: guestName,
+      guestName: widget.guestName,
     );
     final result = await bwsService.addBWS(item);
     setState(() {
