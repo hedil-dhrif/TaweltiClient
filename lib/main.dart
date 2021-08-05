@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/accueil.dart';
 import 'package:tawelticlient/auth/start.dart';
-import 'package:tawelticlient/models/ambiance.dart';
 import 'package:tawelticlient/services/ambiance.services.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
@@ -53,7 +52,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
   void _checkIfLoggedIn() async{
-    // check if token is there
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var token = localStorage.getString('token');
     if(token!= null){

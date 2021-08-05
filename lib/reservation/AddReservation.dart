@@ -1,447 +1,8 @@
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get_it/get_it.dart';
-// import 'package:intl/intl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:tawelticlient/constants.dart';
-// import 'package:tawelticlient/models/reservation.dart';
-// import 'package:tawelticlient/services/reservation.services.dart';
-//
-// class AddReservation extends StatefulWidget {
-//   final int userId;
-//   final int restaurantId;
-//   AddReservation({this.restaurantId,this.userId});
-//   @override
-//   _AddReservationState createState() => _AddReservationState();
-// }
-//
-// class _AddReservationState extends State<AddReservation> {
-//   ReservationServices get reservationService => GetIt.I<ReservationServices>();
-//
-//   DateTime _datetime;
-//   int _counter = 0;
-//   bool _isLoading = false;
-//   TextEditingController guestNameController = TextEditingController();
-//   String valueChoose;
-//   List listItem = [
-//     'Outside',
-//     'Inside',
-//     'Garden',
-//   ];
-//   var user;
-//   @override
-//   void initState() {
-//     _getUserInfo();
-//     super.initState();
-//   }
-//   void _getUserInfo() async {
-//     SharedPreferences localStorage1 = await SharedPreferences.getInstance();
-//     var userId = localStorage1.getInt('id');
-//     print(userId);
-//     setState(() {
-//       user = userId;
-//       print(user);
-//     });
-//   }
-//   void _incrementCounter() {
-//     setState(() {
-//       _counter++;
-//     });
-//   }
-//
-//   void _decrementCounter() {
-//     setState(() {
-//       _counter--;
-//     });
-//   }
-//
-//   DateTime datetime;
-//
-//   String getText() {
-//     if (datetime == null) {
-//       return 'Select Date';
-//     } else {
-//       return DateFormat('dd-MM-yyyy').format(datetime);
-//     }
-//   }
-//
-//   TimeOfDay time;
-//
-//   String getTextTime() {
-//     if (time == null) {
-//       return 'Select Time';
-//     } else {
-//       final hours = time.hour.toString().padLeft(2, '0');
-//       final minutes = time.minute.toString().padLeft(2, '0');
-//
-//       return '$hours:$minutes';
-//     }
-//   }
-//
-//   Future pickTime(BuildContext context) async {
-//     final initialTime = TimeOfDay(hour: 9, minute: 0);
-//     final newTime = await showTimePicker(
-//       context: context,
-//       initialTime: time ?? initialTime,
-//     );
-//
-//     if (newTime == null) return;
-//
-//     setState(() => time = newTime);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: PreferredSize(
-//         preferredSize: Size.fromHeight(80.0),
-//         child: AppBar(
-//           elevation: 0,
-//           backgroundColor: Color(0xf6f6f6),
-//           iconTheme: IconThemeData(
-//             color: KBlue,
-//           ),
-//           leading: IconButton(
-//             onPressed: () {
-//              Navigator.of(context).pop();
-//             },
-//             icon: Icon(CupertinoIcons.arrow_left),
-//           ),
-//           title: Text(
-//             'Add Reservation',
-//             style: TextStyle(
-//                 fontSize: 25,
-//                 color: KBlue,
-//                 fontFamily: 'ProductSans',
-//                 letterSpacing: 1,
-//                 fontWeight: FontWeight.w100),
-//           ),
-//           bottom: PreferredSize(
-//             preferredSize: Size(MediaQuery.of(context).size.width,
-//                 MediaQuery.of(context).size.height * 0.08),
-//             child: Divider(
-//               thickness: 2,
-//               color: KBeige,
-//             ),
-//           ),
-//         ),
-//       ),
-//       body: ListView(
-//         //mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Center(
-//             child: Container(
-//               width: MediaQuery.of(context).size.width * 0.8,
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: <Widget>[
-//                   Text(
-//                     'Guest name :',
-//                     style: TextStyle(
-//                       fontSize: 20,
-//                       color: KBlue,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: 15,
-//                   ),
-//                   Container(
-//                     padding: EdgeInsets.symmetric(horizontal: 10),
-//                     decoration: BoxDecoration(
-//                       border: Border.all(width: 1, color: KBlue),
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     child: TextFormField(
-//                       controller: guestNameController,
-//                     ),
-//                   ),
-//                   Text(
-//                     'Guest number :',
-//                     style: TextStyle(
-//                       fontSize: 20,
-//                       color: KBlue,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: 15,
-//                   ),
-//                   Container(
-//                     padding: EdgeInsets.symmetric(horizontal: 10),
-//                     decoration: BoxDecoration(
-//                       border: Border.all(width: 1, color: KBlue),
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     child: Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text(
-//                           '$_counter',
-//                           style: TextStyle(
-//                             fontSize: 20,
-//                           ),
-//                         ),
-//                         Column(
-//                           children: [
-//                             GestureDetector(
-//                               child: Icon(
-//                                 Icons.arrow_drop_up,
-//                                 size: 30,
-//                                 color: KBlue,
-//                               ),
-//                               onTap: _incrementCounter,
-//                             ),
-//                             GestureDetector(
-//                               child: Icon(
-//                                 Icons.arrow_drop_down,
-//                                 size: 30,
-//                                 color: KBlue,
-//                               ),
-//                               onTap: _decrementCounter,
-//                             ),
-//                           ],
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: 20,
-//                   ),
-//                   Column(
-//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                     children: [
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             'Pick a date :',
-//                             style: TextStyle(
-//                               fontSize: 20,
-//                               color: KBlue,
-//                             ),
-//                           ),
-//                           SizedBox(
-//                             height: 20,
-//                           ),
-//                           Container(
-//                             width: MediaQuery.of(context).size.width*0.8,
-//                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-//                             decoration: BoxDecoration(
-//                               border: Border.all(width: 1, color: KBlue),
-//                               borderRadius: BorderRadius.circular(10),
-//                             ),
-//                             child: Row(
-//                               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                               children: [
-//                                 Icon(
-//                                   Icons.calendar_today_outlined,
-//                                   color: KBlue,
-//                                   size: 30,
-//                                 ),
-//                                 GestureDetector(
-//                                   child: Text(
-//                                     getText(),
-//                                     style: TextStyle(
-//                                       fontSize: 20,
-//                                     ),
-//                                   ),
-//                                   onTap: () {
-//                                     showDatePicker(
-//                                       context: context,
-//                                       initialDate:
-//                                       datetime == null ? DateTime.now() : datetime,
-//                                       initialDatePickerMode: DatePickerMode.day,
-//                                       firstDate: DateTime(2021),
-//                                       lastDate: DateTime(2040),
-//                                     ).then((date) {
-//                                       setState(() {
-//                                         datetime = date;
-//                                       });
-//                                     });
-//                                   },
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       SizedBox(height: 20,),
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             'Pick time :',
-//                             style: TextStyle(
-//                               fontSize: 20,
-//                               color: KBlue,
-//                             ),
-//                           ),
-//                           SizedBox(
-//                             height: 20,
-//                           ),
-//                           Container(
-//                             width: MediaQuery.of(context).size.width*0.8,
-//                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-//                             decoration: BoxDecoration(
-//                               border: Border.all(width: 1, color: KBlue),
-//                               borderRadius: BorderRadius.circular(10),
-//                             ),
-//                             child: Row(
-//                               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                               children: [
-//                                 Icon(
-//                                   Icons.timer,
-//                                   color: KBlue,
-//                                   size: 30,
-//                                 ),
-//                                 GestureDetector(
-//                                   child: Text(
-//                                     getTextTime(),
-//                                     style: TextStyle(
-//                                       fontSize: 20,
-//                                     ),
-//                                   ),
-//                                   onTap: () {
-//                                     pickTime(context);
-//                                   },
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                   // SizedBox(
-//                   //   height: 20,
-//                   // ),
-//                   // Text(
-//                   //   'Pick zone: ',
-//                   //   style: TextStyle(
-//                   //     fontSize: 20,
-//                   //     color: KBlue,
-//                   //   ),
-//                   // ),
-//                   // SizedBox(
-//                   //   height: 10,
-//                   // ),
-//                   // Container(
-//                   //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-//                   //   decoration: BoxDecoration(
-//                   //     border: Border.all(width: 1, color: KBlue),
-//                   //     borderRadius: BorderRadius.circular(10),
-//                   //   ),
-//                   //   child: DropdownButton(
-//                   //     hint: Text(
-//                   //       'Select Floor : ',
-//                   //       style: TextStyle(
-//                   //         fontSize: 20,
-//                   //       ),
-//                   //     ),
-//                   //     icon: Icon(
-//                   //       Icons.arrow_drop_down,
-//                   //     ),
-//                   //     iconSize: 35,
-//                   //     isExpanded: true,
-//                   //     underline: SizedBox(),
-//                   //     value: valueChoose,
-//                   //     onChanged: (newValue) {
-//                   //       setState(() {
-//                   //         valueChoose = newValue;
-//                   //       });
-//                   //     },
-//                   //     items: listItem.map((valueItem) {
-//                   //       return DropdownMenuItem(
-//                   //         value: valueItem,
-//                   //         child: Text(
-//                   //           valueItem,
-//                   //           style: TextStyle(
-//                   //             fontSize: 20,
-//                   //           ),
-//                   //         ),
-//                   //       );
-//                   //     }).toList(),
-//                   //   ),
-//                   // ),
-//                   SizedBox(
-//                     height: 40,
-//                   ),
-//                   GestureDetector(
-//                     onTap: () {
-//                       _addReservation();
-//                       // Navigator.push(
-//                       //     context,
-//                       //     MaterialPageRoute(
-//                       //         builder: (context) => AddReservationNext()));
-//                     },
-//                     child: Center(
-//                       child: Container(
-//                         width: MediaQuery.of(context).size.width * 0.8,
-//                         padding: EdgeInsets.all(10),
-//                         decoration: BoxDecoration(
-//                             color: KBlue,
-//                             borderRadius: BorderRadius.circular(10)),
-//                         child: Center(
-//                           child: Text(
-//                             'Submit',
-//                             style: TextStyle(
-//                                 fontSize: 20,
-//                                 color: KBackgroundColor,
-//                                 letterSpacing: 2),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//   _addReservation()async{
-//     setState(() {
-//       _isLoading = true;
-//     });
-//     final reservation = Reservation(
-//       userId: user,
-//       restaurantId: widget.restaurantId,
-//       nbPersonne: _counter,
-//       nomPersonne: guestNameController.text,
-//       dateReservation: getText(),
-//       heureReservation: getTextTime(),
-//     );
-//     final result = await reservationService.createReservation(reservation);
-//
-//     setState(() {
-//       _isLoading = false;
-//     });
-//
-//     showDialog(
-//         context: context,
-//         builder: (_) => AlertDialog(
-//           title: Text('Done'),
-//           content: Text('your reservation is added successfully'),
-//           actions: <Widget>[
-//             FlatButton(
-//               child: Text('Ok'),
-//               onPressed: () {
-//                 Navigator.of(context).pop();
-//               },
-//             )
-//           ],
-//         ));
-//   }
-// }
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/api/api_Response.dart';
-import 'package:tawelticlient/client/Profil.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/table.dart';
 import 'package:tawelticlient/reservation/confResevPage.dart';
@@ -450,7 +11,6 @@ import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/DisabledInput.dart';
-import 'package:tawelticlient/widget/DisabledInputbox.dart';
 import '../constants.dart';
 
 class PassReservation extends StatefulWidget {
@@ -489,6 +49,7 @@ class _PassReservationState extends State<PassReservation> {
   final List<int> listTables = [];
   DateTime startTime;
   DateTime endTime;
+  int id;
   bool _validate = false;
   //final List<int> availableTables=[];
   final List<RestaurantTable> availableTables = [];
@@ -522,11 +83,11 @@ class _PassReservationState extends State<PassReservation> {
   void _getUserInfo() async {
     SharedPreferences localStorage1 = await SharedPreferences.getInstance();
     var userId = localStorage1.getInt('id');
-    print(userId);
+    //print(userId);
     setState(() {
       user = userId;
       _getUserProfile(user);
-      print(user);
+      //print(user);
     });
   }
 
@@ -549,7 +110,7 @@ class _PassReservationState extends State<PassReservation> {
       final hours = time.hour.toString().padLeft(2, '0');
       final minutes = time.minute.toString().padLeft(2, '0');
 
-      print('$hours:$minutes:00');
+      //print('$hours:$minutes:00');
       return '$hours:$minutes:00';
     }
   }
@@ -596,7 +157,7 @@ class _PassReservationState extends State<PassReservation> {
                     this._currentStep = this._currentStep + 1;
                   } else {
                     //Logic to check if everything is completed
-                    print('Completed, check fields.');
+                    //print('Completed, check fields.');
                   }
                   //  _buildListAvailbaleTablesWithNbPerson(_counter);
                   // _getAvailableTablesTimeAndDate();
@@ -620,9 +181,10 @@ class _PassReservationState extends State<PassReservation> {
                       MaterialPageRoute(
                           builder: (context) => ConfirmPage(
                                 bookWaitSeat: availableBWS[0],
-                            startTime: startTime,
-                            endTime: endTime,
-                            guestName: guestNameController.text,
+                                startTime: startTime,
+                                endTime: endTime,
+                                TableId: availableTables[0].id,
+                                guestName: guestNameController.text,
                               )));
                 },
                 child: Text('get reservation')),
@@ -782,7 +344,7 @@ class _PassReservationState extends State<PassReservation> {
         content: Column(
           children: [
             DisabledInput(
-              controller:guestNameController ,
+              controller: guestNameController,
               validate: _validate,
               inputHint: 'jhon',
               color: KBlue,
@@ -813,8 +375,8 @@ class _PassReservationState extends State<PassReservation> {
       LastNameController.text = response.data.last_name;
       mailController.text = response.data.email;
       phoneController.text = response.data.phone;
-      print(response.data.first_name);
-      print(response.data.email);
+      //print(response.data.first_name);
+      //print(response.data.email);
       print(response.data.id);
       // _titleController.text = floor.nom;
       // _contentController.text = note.noteContent;
@@ -823,28 +385,6 @@ class _PassReservationState extends State<PassReservation> {
       _isLoading = false;
     });
   }
-
-
-  /*_getUserProfile(user) async {
-    setState(() {
-      _isLoading = true;
-    });
-    await userService.getUserProfile(user.toString()).then((response) {
-      if (response.error) {
-        errorMessage = response.errorMessage ?? 'An error occurred';
-      }
-      // Id = response.data.id;
-      NameController.text = response.data.first_name;
-      print(response.data.first_name);
-      print(response.data.email);
-      print(response.data.id);
-      // _titleController.text = floor.nom;
-      // _contentController.text = note.noteContent;
-    });
-    setState(() {
-      _isLoading = false;
-    });
-  }*/
 
   _fetchBWS() async {
     setState(() {
@@ -872,8 +412,8 @@ class _PassReservationState extends State<PassReservation> {
         DT.add(_apiResponse.data[i]);
       }
     }
-    print(listBWS);
-    print(DT);
+    //print(listBWS);
+    //print(DT);
     setState(() {
       _isLoading = false;
     });
@@ -886,7 +426,7 @@ class _PassReservationState extends State<PassReservation> {
 
     _apiResponse2 = await restaurantTableService
         .getRestaurantsListTables(widget.restaurantId.toString());
-    print(_apiResponse2.data);
+    //print(_apiResponse2.data);
 
     _buildListTables();
     setState(() {
@@ -907,7 +447,7 @@ class _PassReservationState extends State<PassReservation> {
         availableTables.add(_apiResponse2.data[i]);
       }
     }
-    print(listTables);
+    //print(listTables);
     setState(() {
       _isLoading = false;
     });
@@ -920,9 +460,9 @@ class _PassReservationState extends State<PassReservation> {
       for (int j = 0; j < availableTables.length; j++) {
         if (availableTables[j].nbCouverts == nbPerson &&
             DT[i].id == availableTables[j].ids - 1630) {
-          print(availableTables[j].ids - 1630);
-          print(DT[i].debut);
-          print(DT[i].fin);
+          //print(availableTables[j].ids - 1630);
+          //print(DT[i].debut);
+          //print(DT[i].fin);
           startTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour, newTime.minute);
           endTime = DateTime(datetime.year, datetime.month, datetime.day,
@@ -931,13 +471,13 @@ class _PassReservationState extends State<PassReservation> {
                   startTime.compareTo(DT[i].fin) <= 0 ||
               (endTime.compareTo(DT[i].debut) >= 0 &&
                   endTime.compareTo(DT[i].fin) <= 0)) {
-            print(DT[i].id);
-            print('is unavailable');
+            //print(DT[i].id);
+            //print('is unavailable');
             id = DT[i].id;
             unavailableBWS.add(DT[i]);
           } else {
-            print(DT[i].ids);
-            print('is available');
+           // print(DT[i].ids);
+           // print('is available');
             id = DT[i].id;
             availableBWS.add(DT[i]);
           }

@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
@@ -10,7 +12,13 @@ class ConfirmPage extends StatefulWidget {
   final DateTime startTime;
   final DateTime endTime;
   final String guestName;
-  ConfirmPage({this.bookWaitSeat, this.startTime, this.endTime,this.guestName});
+  final int TableId;
+  ConfirmPage(
+      {this.bookWaitSeat,
+      this.startTime,
+      this.endTime,
+      this.guestName,
+      this.TableId});
   @override
   _ConfirmPageState createState() => _ConfirmPageState();
 }
@@ -40,29 +48,73 @@ class _ConfirmPageState extends State<ConfirmPage> {
         ),
       ),
       body: Center(
-        child: Column(
-          children: [
-            Text(widget.bookWaitSeat.id.toString()),
-            Text(widget.bookWaitSeat.debut.toString()),
-            Text(widget.bookWaitSeat.fin.toString()),
-            Text(widget.bookWaitSeat.ids.toString()),
-            Text(widget.bookWaitSeat.restaurantId.toString()),
-            Text(widget.startTime.toString()),
-            Text(widget.endTime.toString()),
-            Text(widget.guestName),
-            QrImage(
-              data: widget.guestName + 'reservation date :' + widget.bookWaitSeat.debut.toString(),
-              version: QrVersions.auto,
-              size: 160,
-              gapless: false,
-            ),
-            TextButton(
-                onPressed: () {
-                  _addBWS();
-                  print('taped');
-                },
-                child: Text('confirm reservation')),
-          ],
+        child: Padding(
+          padding: EdgeInsets.only(top: 55),
+          child: Column(
+            children: [
+              Center(
+                child: Text(
+                  'Table number  ' + widget.TableId.toString(),
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: KBlue,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: Text(
+                  'Guest name:  ' + widget.guestName,
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Text(
+                  'Reservation time:  ' +
+                      widget.startTime.hour.toString() +
+                      ':' +
+                      widget.startTime.minute.toString(),
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Text(
+                  'Reservation date:  ' +
+                      widget.startTime.day.toString() +
+                      '-' +
+                      widget.startTime.month.toString() +
+                      '-' +
+                      widget.startTime.year.toString(),
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              QrImage(
+                data: widget.guestName +
+                    'reservation date :' +
+                    widget.bookWaitSeat.debut.toString(),
+                version: QrVersions.auto,
+                size: 175,
+                gapless: false,
+              ),
+              TextButton(
+                  onPressed: () {
+                    _addBWS();
+                    print('taped');
+                  },
+                  child: Text('confirm reservation')),
+            ],
+          ),
         ),
       ),
     );
@@ -75,7 +127,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
     final item = BookWaitSeat(
       restaurantId: widget.bookWaitSeat.restaurantId,
       id: widget.bookWaitSeat.id,
-     // ids: widget.bookWaitSeat.ids,
+      // ids: widget.bookWaitSeat.ids,
       debut: widget.startTime,
       fin: widget.endTime,
       confResv: '0',

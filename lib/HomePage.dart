@@ -345,7 +345,7 @@ class RestaurantRecommand extends StatelessWidget {
           Text(
             'Restaurant',
             style: TextStyle(color: Colors.white, fontSize: 15),
-          )
+          ),
         ],
       ),
     );
