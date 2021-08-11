@@ -16,9 +16,8 @@ import 'package:tawelticlient/services/general.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
+import 'package:tawelticlient/widget/EventList.dart';
 import 'package:tawelticlient/widget/profileCarousel.dart';
-
-import '../reservation/AddReservation.dart';
 
 class NestedTabBar extends StatefulWidget {
   final int restaurantId;
@@ -59,7 +58,7 @@ class _NestedTabBarState extends State<NestedTabBar>
       GetIt.I<EtablissementServices>();
   GeneralServices get generalService => GetIt.I<GeneralServices>();
 
-  List<Event> events = [];
+  final List<Event> events = [];
   final List<String> listCuisines = [];
   final List<String> listAmbiances = [];
   final List<String> listEtablissements = [];
@@ -87,22 +86,10 @@ class _NestedTabBarState extends State<NestedTabBar>
     _fetchAmbiances();
     _fetchEtablissement();
     _fetchGeneral();
+    _fetchEvents();
     super.initState();
     _nestedTabController = new TabController(length: 3, vsync: this);
   }
-
-  // _fetchEvents() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //
-  //   _apiResponse = await restaurantService
-  //       .getRestaurantsListEvents(widget.restaurantId.toString());
-  //   print(_apiResponse.data.length);
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
 
   @override
   void dispose() {
@@ -293,30 +280,14 @@ class _NestedTabBarState extends State<NestedTabBar>
                           titre1: 'Description: ',
                           titre2: widget.description,
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
-                            }),
                       ],
                     ),
                   )),
               SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.only(top: 30),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        // child: _buildEventsList(_apiResponse.data),
-                      ),
-                    ],
+                  child: EventList(
+                    restaurantId: widget.restaurantId,
                   ),
                 ),
               ),
@@ -331,6 +302,20 @@ class _NestedTabBarState extends State<NestedTabBar>
         )
       ],
     );
+  }
+
+  _fetchEvents() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponse = await restaurantService
+        .getRestaurantsListEvents(widget.restaurantId.toString());
+    print(_apiResponse.data.length);
+    _buildEventsList(events);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   _buildEventsList(List data) {

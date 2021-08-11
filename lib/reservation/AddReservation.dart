@@ -188,7 +188,6 @@ class _PassReservationState extends State<PassReservation> {
                               )));
                 },
                 child: Text('get reservation')),
-            Text(result),
           ],
         ),
       ),
@@ -341,20 +340,11 @@ class _PassReservationState extends State<PassReservation> {
           'Validate info',
           style: TextStyle(color: KBlue, fontSize: 20),
         ),
-        content: Column(
-          children: [
-            DisabledInput(
-              controller: guestNameController,
-              validate: _validate,
-              inputHint: 'jhon',
-              color: KBlue,
-            ),
-            DisabledInput(
-              validate: _validate,
-              inputHint: '23698514',
-              color: KBlue,
-            ),
-          ],
+        content: DisabledInput(
+          controller: guestNameController,
+          validate: _validate,
+          inputHint: 'jhon',
+          color: KBlue,
         ),
         isActive: _currentStep >= 3,
       )

@@ -4,15 +4,16 @@ import 'package:http/http.dart' show Client;
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/models/event.dart';
 
+
 class EventServices{
   Client client = Client();
 
   static const API = 'http://10.0.2.2:3000/';
 
-  Future<APIResponse<List<Event>>> getEventsList() {
+  Future<APIResponse<List<Event>>> getEventsList(String restaurantID) {
     return client
         .get(
-      Uri.parse(API + 'evenements'),
+      Uri.parse(API + 'event/getEvent/'+restaurantID),
     )
         .then((data) {
       if (data.statusCode == 200) {
@@ -30,10 +31,10 @@ class EventServices{
   }
 
 
-  Future<APIResponse<Event>> getEvent(String eventId) {
+  Future<APIResponse<Event>> getEvent(String restaurantID) {
     return client
         .get(
-      Uri.parse(API + 'evenements/' + eventId),
+      Uri.parse(API + 'event/getEvent/' +restaurantID),
     )
         .then((data) {
       if (data.statusCode == 200) {

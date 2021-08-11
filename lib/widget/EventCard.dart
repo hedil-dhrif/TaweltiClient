@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 import '../constants.dart';
 
 class EventCard extends StatefulWidget {
@@ -23,7 +22,7 @@ class _EventCardState extends State<EventCard> {
     return GestureDetector(
       onTap:widget.pressDetails,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.27,
+        //height: MediaQuery.of(context).size.height * 0.27,
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -33,7 +32,7 @@ class _EventCardState extends State<EventCard> {
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.15,
+              height: MediaQuery.of(context).size.height * 0.2,
               width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -60,7 +59,7 @@ class _EventCardState extends State<EventCard> {
                             ),
                           ),
                           TextSpan(
-                            text: widget.category,
+                            text: widget.category+'\n',
                             style: TextStyle(
                               color: KBlue,
                               fontWeight: FontWeight.bold,
