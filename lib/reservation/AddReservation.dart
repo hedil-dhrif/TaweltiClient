@@ -44,8 +44,8 @@ class _PassReservationState extends State<PassReservation> {
   int Id;
   int _counter = 0;
   DateTime _datetime;
-  final List<int> listBWS = [];
-  final List<BookWaitSeat> DT = [];
+  final List<BookWaitSeat> listBWS = [];
+  final List<BookWaitSeat> databaseBWS = [];
   final List<int> listTables = [];
   DateTime startTime;
   DateTime endTime;
@@ -86,7 +86,7 @@ class _PassReservationState extends State<PassReservation> {
     //print(userId);
     setState(() {
       user = userId;
-      _getUserProfile(user);
+      //_getUserProfile(user);
       //print(user);
     });
   }
@@ -176,16 +176,7 @@ class _PassReservationState extends State<PassReservation> {
             TextButton(
                 onPressed: () {
                   _buildListAvailbaleTablesWithNbPerson(_counter);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ConfirmPage(
-                                bookWaitSeat: availableBWS[0],
-                                startTime: startTime,
-                                endTime: endTime,
-                                TableId: availableTables[0].id,
-                                guestName: guestNameController.text,
-                              )));
+                  
                 },
                 child: Text('get reservation')),
           ],
@@ -352,35 +343,34 @@ class _PassReservationState extends State<PassReservation> {
     return _steps;
   }
 
-  _getUserProfile(user) async {
-    setState(() {
-      _isLoading = true;
-    });
-    await userService.getUserProfile(user.toString()).then((response) {
-      if (response.error) {
-        errorMessage = response.errorMessage ?? 'An error occurred';
-      }
-      Id = response.data.id;
-      FirstNameController.text = response.data.first_name;
-      LastNameController.text = response.data.last_name;
-      mailController.text = response.data.email;
-      phoneController.text = response.data.phone;
-      //print(response.data.first_name);
-      //print(response.data.email);
-      print(response.data.id);
-      // _titleController.text = floor.nom;
-      // _contentController.text = note.noteContent;
-    });
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  // _getUserProfile(user) async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   await userService.getUserProfile(user.toString()).then((response) {
+  //     if (response.error) {
+  //       errorMessage = response.errorMessage ?? 'An error occurred';
+  //     }
+  //     Id = response.data.id;
+  //     FirstNameController.text = response.data.first_name;
+  //     LastNameController.text = response.data.last_name;
+  //     mailController.text = response.data.email;
+  //    // phoneController.text = response.data.phone;
+  //     //print(response.data.first_name);
+  //     //print(response.data.email);
+  //     print(response.data.id);
+  //     // _titleController.text = floor.nom;
+  //     // _contentController.text = note.noteContent;
+  //   });
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   _fetchBWS() async {
     setState(() {
       _isLoading = true;
     });
-
     _apiResponse =
         await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
     _buildListBWS();
@@ -398,12 +388,12 @@ class _PassReservationState extends State<PassReservation> {
       if (listBWS.contains(_apiResponse.data[i].id)) {
         i++;
       } else {
-        listBWS.add(_apiResponse.data[i].id);
-        DT.add(_apiResponse.data[i]);
+        listBWS.add(_apiResponse.data[i]);
+        databaseBWS.add(_apiResponse.data[i]);
       }
     }
-    //print(listBWS);
-    //print(DT);
+    print(listBWS);
+    print(databaseBWS);
     setState(() {
       _isLoading = false;
     });
@@ -444,64 +434,84 @@ class _PassReservationState extends State<PassReservation> {
   }
 
   _buildListAvailbaleTablesWithNbPerson(int nbPerson) {
-    var id;
-
-    for (int i = 0; i < DT.length; i++) {
+    for (int i = 0; i < databaseBWS.length; i++) {
       for (int j = 0; j < availableTables.length; j++) {
         if (availableTables[j].nbCouverts == nbPerson &&
-            DT[i].id == availableTables[j].ids - 1630) {
-          //print(availableTables[j].ids - 1630);
-          //print(DT[i].debut);
-          //print(DT[i].fin);
+            databaseBWS[i].id == availableTables[j].ids - 1630) {
+          print(availableTables[j].ids - 1630);
+
           startTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour, newTime.minute);
           endTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour + 1, newTime.minute);
-          if (startTime.compareTo(DT[i].debut) >= 0 &&
-                  startTime.compareTo(DT[i].fin) <= 0 ||
-              (endTime.compareTo(DT[i].debut) >= 0 &&
-                  endTime.compareTo(DT[i].fin) <= 0)) {
-            //print(DT[i].id);
-            //print('is unavailable');
-            id = DT[i].id;
-            unavailableBWS.add(DT[i]);
-          } else {
-           // print(DT[i].ids);
-           // print('is available');
-            id = DT[i].id;
-            availableBWS.add(DT[i]);
+          final DateTime dbStartTime=DateTime(databaseBWS[i].debut.year, databaseBWS[i].debut.month, databaseBWS[i].debut.day,
+              databaseBWS[i].debut.hour +2, databaseBWS[i].debut.minute);
+          final DateTime dbEndTime=DateTime(databaseBWS[i].fin.year, databaseBWS[i].fin.month, databaseBWS[i].fin.day,
+              databaseBWS[i].fin.hour +2, databaseBWS[i].fin.minute);
+          print(dbStartTime);
+          print(dbEndTime);
+          print(startTime);
+          print(endTime);
+          if (startTime.compareTo(dbStartTime) >= 0 &&
+                  startTime.compareTo(dbEndTime) <= 0 ||
+              (endTime.compareTo(dbStartTime) >= 0 &&
+                  endTime.compareTo(dbEndTime) <= 0)) {
+            print(databaseBWS[i].id);
+            print('is unavailable');
+            id = databaseBWS[i].id;
+            unavailableBWS.add(databaseBWS[i]);
+            print(unavailableBWS.length);
+            _showMyDialog();
+          }
+          else {
+           print(databaseBWS[i].ids);
+           print('is available');
+            id = databaseBWS[i].id;
+            availableBWS.add(databaseBWS[i]);
+
+           Navigator.push(
+               context,
+               MaterialPageRoute(
+                   builder: (context) => ConfirmPage(
+                     bookWaitSeat: availableBWS,
+                     startTime: startTime,
+                     endTime: endTime,
+                     Tables: availableTables,
+                     guestName: guestNameController.text,
+                   )));
           }
         }
       }
     }
-    id = availableBWS[0].id;
-    result = 'table with id= $id is available at date :$startTime';
+    // id = availableBWS[0].id;
+    // result = 'table with id= $id is available at date :$startTime';
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Result'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('No available Tables at this time'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
-/*class GuestStepper extends StatelessWidget {
- const GuestStepper({
-   Key key,
-   @required this.context,
-   this.GuestNumber,
- }) : super(key: key);
- final String GuestNumber;
- final BuildContext context;
-
- @override
- Widget build(BuildContext context) {
-   return Container(
-     padding: EdgeInsets.symmetric(vertical: 10),
-     width: MediaQuery.of(context).size.width,
-     decoration: BoxDecoration(
-         border: Border.all(color: KBlue, width: 1),
-         borderRadius: BorderRadius.circular(5)),
-     child: Center(
-       child: Text(
-         GuestNumber,
-         style: TextStyle(color: KBlue, fontSize: 25),
-       ),
-     ),
-   );
- }
-}*/

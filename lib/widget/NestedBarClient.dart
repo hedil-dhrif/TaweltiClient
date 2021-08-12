@@ -233,7 +233,7 @@ class _NestedBarClientState extends State<NestedBarClient>
       FirstNameController.text = response.data.first_name;
       LastNameController.text = response.data.last_name;
       mailController.text = response.data.email;
-      phoneController.text = response.data.phone;
+     // phoneController.text = response.data.phone;
       print(response.data.first_name);
       print(response.data.email);
       print(response.data.id);

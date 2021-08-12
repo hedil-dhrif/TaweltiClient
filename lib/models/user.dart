@@ -4,8 +4,8 @@ class User {
   String last_name;
   String email;
   String password;
-  String resetLink;
-  String phone;
+  // String resetLink;
+  // String phone;
   //int RestaurantId;
   DateTime createdAt;
   DateTime updatedAt;
@@ -16,8 +16,8 @@ class User {
       this.last_name,
       this.email,
       this.password,
-      this.resetLink,
-      this.phone,
+      // this.resetLink,
+      // this.phone,
       this.createdAt,
       this.updatedAt});
   Map<String, dynamic> toJson() {
@@ -27,8 +27,8 @@ class User {
       "last_name": last_name,
       "email": email,
       "password": password,
-      "resetLink": resetLink,
-      "phone": phone,
+      // "resetLink": resetLink,
+      // "phone": phone,
     };
   }
 
@@ -39,8 +39,8 @@ class User {
       last_name: item['last_name'],
       email: item['email'],
       password: item['password'],
-      phone: item['phone'],
-      resetLink: item['resetLink'],
+      // phone: item['phone'],
+      // resetLink: item['resetLink'],
       createdAt: DateTime.parse(item['createdAt']),
       updatedAt:
           item['updatedAt'] != null ? DateTime.parse(item['updatedAt']) : null,

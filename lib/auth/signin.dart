@@ -193,9 +193,9 @@ class _SignInState extends State<SignIn> {
     SharedPreferences localStorage1 = await SharedPreferences.getInstance();
     localStorage1.setInt('id', json.decode(body['id'].toString()));
     print(body['id']);
-    // userId=body['id'];
+    userId=body['id'];
     // username=body['username'];
-    // print(userId);
+     print(userId);
     // print(body);
   }
 }

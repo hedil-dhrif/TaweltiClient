@@ -4,21 +4,22 @@ import 'package:get_it/get_it.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
+import 'package:tawelticlient/models/table.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 
 class ConfirmPage extends StatefulWidget {
-  final BookWaitSeat bookWaitSeat;
+  final List<BookWaitSeat> bookWaitSeat;
   final DateTime startTime;
   final DateTime endTime;
   final String guestName;
-  final int TableId;
+  final List<RestaurantTable> Tables;
   ConfirmPage(
       {this.bookWaitSeat,
       this.startTime,
       this.endTime,
       this.guestName,
-      this.TableId});
+      this.Tables});
   @override
   _ConfirmPageState createState() => _ConfirmPageState();
 }
@@ -31,7 +32,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
   @override
   void initState() {
     // TODO: implement initState
-    print(widget.bookWaitSeat.id);
+    for(int i =0;i<widget.bookWaitSeat.length;i++){
+      print(widget.bookWaitSeat[i].id);
+    }
     super.initState();
   }
 
@@ -54,7 +57,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
             children: [
               Center(
                 child: Text(
-                  'Table number  ' + widget.TableId.toString(),
+                  'Table number  ' + widget.Tables[0].id.toString(),
                   style: TextStyle(
                     fontSize: 30,
                     color: KBlue,
@@ -102,14 +105,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
               QrImage(
                 data: widget.guestName +
                     'reservation date :' +
-                    widget.bookWaitSeat.debut.toString(),
+                    widget.bookWaitSeat[0].debut.toString(),
                 version: QrVersions.auto,
                 size: 175,
                 gapless: false,
               ),
               TextButton(
                   onPressed: () {
-                    _addBWS();
+                    _buildListBWStoDB();
                     print('taped');
                   },
                   child: Text('confirm reservation')),
@@ -120,23 +123,42 @@ class _ConfirmPageState extends State<ConfirmPage> {
     );
   }
 
-  _addBWS() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final item = BookWaitSeat(
-      restaurantId: widget.bookWaitSeat.restaurantId,
-      id: widget.bookWaitSeat.id,
-      // ids: widget.bookWaitSeat.ids,
-      debut: widget.startTime,
-      fin: widget.endTime,
-      confResv: '0',
-      cancResv: '0',
-      guestName: widget.guestName,
-    );
-    final result = await bwsService.addBWS(item);
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  // _addBWS() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   final List<BookWaitSeat> item =[
+  //     BookWaitSeat(
+  //     restaurantId: widget.bookWaitSeat[0].restaurantId,
+  //     id: widget.bookWaitSeat[0].id,
+  //     // ids: widget.bookWaitSeat.ids,
+  //     debut: widget.startTime,
+  //     fin: widget.endTime,
+  //     confResv: '0',
+  //     cancResv: '0',
+  //     guestName: widget.guestName,
+  //   )];
+  //   final result = await bwsService.addBWS(item);
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
+
+
+  _buildListBWStoDB()async{
+    final List<BookWaitSeat> item=[];
+    for(int i=0 ; i <widget.bookWaitSeat.length;i++){
+      item.add(BookWaitSeat(
+        restaurantId: widget.bookWaitSeat[i].restaurantId,
+        id: widget.bookWaitSeat[i].id,
+        // ids: widget.bookWaitSeat.ids,
+        debut: widget.startTime,
+        fin: widget.endTime,
+        confResv: '0',
+        cancResv: '0',
+        guestName: widget.guestName,
+      ));
+    }
+
+    final result = await bwsService.addBWS(item);  }
 }

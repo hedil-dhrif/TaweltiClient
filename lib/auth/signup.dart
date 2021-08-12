@@ -27,6 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _validate = false;
 
   TextEditingController NameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   TextEditingController mailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -67,8 +68,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       MyCustomInputBox(
                         validate: _validate,
                         textController: NameController,
-                        label: 'Name',
+                        label: 'first Name',
                         inputHint: 'John',
+                        color: KBlue,
+                      ),
+                      MyCustomInputBox(
+                        validate: _validate,
+                        textController: NameController,
+                        label: 'last Name',
+                        inputHint: 'Doe',
                         color: KBlue,
                       ),
                       MyCustomInputBox(
@@ -117,6 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               passwordController.text.isEmpty ? _validate = true : _validate = false;
                               phoneController.text.isEmpty ? _validate = true : _validate = false;
                               NameController.text.isEmpty ? _validate = true : _validate = false;
+                              lastNameController.text.isEmpty ? _validate = true : _validate = false;
                             });
                             _handleLogin();
                           },
@@ -176,10 +185,11 @@ class _SignUpPageState extends State<SignUpPage> {
       _isLoading = true;
     });
     var data = {
-      'username' : NameController.text,
+      'first_name' : NameController.text,
+      'last_name' : lastNameController.text,
       'email' : mailController.text,
       'password' : passwordController.text,
-      'phone' : phoneController.text,
+      //'phone' : phoneController.text,
     };
     print(NameController.text);
     print(mailController.text);
@@ -224,7 +234,7 @@ class _SignUpPageState extends State<SignUpPage> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('user',  json.encode(body['user']));
     userId=body['id'];
-    username=body['username'];
+    username=body['first_name'];
     print(userId);
     print(body);
   }
