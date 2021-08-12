@@ -13,7 +13,7 @@ class EventServices{
   Future<APIResponse<List<Event>>> getEventsList(String restaurantID) {
     return client
         .get(
-      Uri.parse(API + 'event/getEvent/'+restaurantID),
+      Uri.parse(API + 'restaurants/evenement/'+restaurantID),
     )
         .then((data) {
       if (data.statusCode == 200) {
@@ -31,10 +31,10 @@ class EventServices{
   }
 
 
-  Future<APIResponse<Event>> getEvent(String restaurantID) {
+  Future<APIResponse<Event>> getEvent(String eventID) {
     return client
         .get(
-      Uri.parse(API + 'event/getEvent/' +restaurantID),
+      Uri.parse(API + 'evenements/' +eventID),
     )
         .then((data) {
       if (data.statusCode == 200) {

@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/services/event.services.dart';
 import 'package:tawelticlient/models/event.dart';
-
+import 'package:http/http.dart' as http;
 import '../DetailsEvent.dart';
 import '../constants.dart';
 import 'EventCard.dart';
@@ -45,6 +45,20 @@ class _EventListState extends State<EventList> {
     setState(() {
       _isLoading = false;
     });
+
+    // final response = await http
+    //     .get(Uri.parse('http://10.0.2.2:3000/restaurants/evenement/'+widget.restaurantId.toString()));
+    //
+    // if (response.statusCode == 200) {
+    //   // If the server did return a 200 OK response,
+    //   // then parse the JSON.
+    //   print(response.body);
+    //   return Event.fromJson(jsonDecode(response.body));
+    // } else {
+    //   // If the server did not return a 200 OK response,
+    //   // then throw an exception.
+    //   throw Exception('Failed to load album');
+    // }
   }
 
   @override
@@ -86,18 +100,19 @@ class _EventListState extends State<EventList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: KBlue,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Padding(
               padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               child: Container(
                   height: MediaQuery.of(context).size.height * 0.8,
-                  child: _buildEventsList(_apiResponse.data)),
+                  child: _buildEventsList(_apiResponse.data),
+                ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

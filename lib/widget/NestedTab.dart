@@ -283,12 +283,10 @@ class _NestedTabBarState extends State<NestedTabBar>
                       ],
                     ),
                   )),
-              SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.only(top: 30),
-                  child: EventList(
-                    restaurantId: widget.restaurantId,
-                  ),
+              Container(
+                padding: EdgeInsets.only(top: 30),
+                child: EventList(
+                  restaurantId: widget.restaurantId,
                 ),
               ),
               Container(
