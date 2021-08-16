@@ -30,6 +30,26 @@ class BookWaitSeatServices{
     }).catchError((_) => APIResponse<List<BookWaitSeat>>(
         error: true, errorMessage: 'An error occured'));
   }
+  Future<APIResponse<List<BookWaitSeat>>> getUserListBWS(
+      String userId) {
+    return client
+        .get(
+      Uri.parse(API + 'users/BWS/' + userId),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final events = <BookWaitSeat>[];
+        for (var item in jsonData) {
+          events.add(BookWaitSeat.fromJson(item));
+        }
+        return APIResponse<List<BookWaitSeat>>(data: events);
+      }
+      return APIResponse<List<BookWaitSeat>>(
+          error: true, errorMessage: 'An error occured');
+    }).catchError((_) => APIResponse<List<BookWaitSeat>>(
+        error: true, errorMessage: 'An error occured'));
+  }
 
   Future<APIResponse<bool>> addBWS(List<BookWaitSeat> item) {
     return client

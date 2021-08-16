@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/reservation.dart';
+import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/reservation.services.dart';
 import 'package:tawelticlient/reservation/AddReservation.dart';
 import 'package:tawelticlient/widget/floorDelete.dart';
@@ -22,15 +25,17 @@ class ReservationtList extends StatefulWidget {
 }
 
 class _ReservationtListState extends State<ReservationtList> {
-  ReservationServices get reservationService => GetIt.I<ReservationServices>();
-  List<Reservation> reservations = [];
-  APIResponse<List<Reservation>> _apiResponse;
+  BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
+  List<BookWaitSeat> reservations = [];
+  APIResponse<List<BookWaitSeat>> _apiResponse;
   bool _isLoading = false;
   CalendarController _controller;
   Map<DateTime, List<dynamic>> _events;
   List<dynamic> _selectedEvents;
   TextEditingController _eventController;
   SharedPreferences prefs;
+  String dateReservatin;
+  String timeReservatin;
  var user;
   @override
   void initState() {
@@ -198,14 +203,14 @@ class _ReservationtListState extends State<ReservationtList> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: KBeige,
-        child: Icon(Icons.add),
-        // onPressed: () {
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => AddReservation()));
-        // },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: KBeige,
+      //   child: Icon(Icons.add),
+      //   // onPressed: () {
+      //   //   Navigator.push(
+      //   //       context, MaterialPageRoute(builder: (context) => AddReservation()));
+      //   // },
+      // ),
     );
   }
 
@@ -215,7 +220,8 @@ class _ReservationtListState extends State<ReservationtList> {
       _isLoading = true;
     });
 
-    _apiResponse = await reservationService.getUsersListReservations(user.toString());
+    _apiResponse =
+    await bwsService.getUserListBWS(user.toString());
     print(_apiResponse.data);
     setState(() {
       _isLoading = false;
@@ -227,33 +233,36 @@ class _ReservationtListState extends State<ReservationtList> {
       child: ListView.separated(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
+          dateReservatin= DateFormat('dd-MM-yyyy').format(data[index].debut);
+          timeReservatin= DateFormat('hh:mm').format(data[index].debut);
           return GestureDetector(
             onTap: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => DetailReservation(reservationId: data[index].id,))).then((__) => _fetchReservations(user));
             },
             child: WaitCard(
-              delete:()async{
-                final result = await showDialog(
-                    context: context, builder: (_) => FloorDelete());
 
-                if (result) {
-                  final deleteResult = await reservationService
-                      .deleteReservation(data[index].id.toString());
-                  _fetchReservations(user);
-
-                  var message = 'The reservation was deleted successfully';
-
-                  return deleteResult?.data ?? false;
-                }
-                print(result);
-                return result;
-              },
-              guestname: data[index].nomPersonne,
-              nbPersonne: data[index].nbPersonne.toString(),
+              // delete:()async{
+              //   final result = await showDialog(
+              //       context: context, builder: (_) => FloorDelete());
+              //
+              //   if (result) {
+              //     final deleteResult = await reservationService
+              //         .deleteReservation(data[index].id.toString());
+              //     _fetchReservations(user);
+              //
+              //     var message = 'The reservation was deleted successfully';
+              //
+              //     return deleteResult?.data ?? false;
+              //   }
+              //   print(result);
+              //   return result;
+              // },
+              guestname: data[index].guestName,
+              nbPersonne: '2',
               reservationId: data[index].id,
-              reservationDate: data[index].id.toString(),
-              reservationTime: data[index].heureReservation,
+              reservationDate: dateReservatin,
+              reservationTime: timeReservatin,
             ),
           );
         },

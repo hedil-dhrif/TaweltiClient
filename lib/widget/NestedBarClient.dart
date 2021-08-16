@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/api/api.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/reservation.dart';
 import 'package:tawelticlient/models/user.dart';
+import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/reservation.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/DisabledInputbox.dart';
@@ -29,6 +32,7 @@ class _NestedBarClientState extends State<NestedBarClient>
   @override
   TabController _nestedTabController;
   UserServices get userService => GetIt.I<UserServices>();
+  BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
   bool _isLoading = false;
   TextEditingController FirstNameController = TextEditingController();
   TextEditingController LastNameController = TextEditingController();
@@ -37,14 +41,15 @@ class _NestedBarClientState extends State<NestedBarClient>
   TextEditingController phoneController = TextEditingController();
   // bool get isEditing => widget.userId != null;
   ReservationServices get reservationService => GetIt.I<ReservationServices>();
-  List<Reservation> reservations = [];
-  APIResponse<List<Reservation>> _apiResponse;
+  List<BookWaitSeat> reservations = [];
+  APIResponse<List<BookWaitSeat>> _apiResponse;
   String errorMessage;
   var user;
   User userData;
   int Id;
   bool _validate = false;
-
+  String dateReservatin;
+  String timeReservatin;
   @override
   void initState() {
     //_getUserInfo();
@@ -211,7 +216,8 @@ class _NestedBarClientState extends State<NestedBarClient>
                   Container(
                       height: MediaQuery.of(context).size.height * 0.6,
                       padding: EdgeInsets.only(top: 10, left: 20),
-                      child: _buildEventsList(_apiResponse.data)),
+                      child: _buildEventsList(_apiResponse.data)
+     ),
                 ],
               ),
             ),
@@ -252,7 +258,7 @@ class _NestedBarClientState extends State<NestedBarClient>
     });
 
     _apiResponse =
-        await reservationService.getUsersListReservations(user.toString());
+        await bwsService.getUserListBWS(user.toString());
     print(_apiResponse.data);
     setState(() {
       _isLoading = false;
@@ -264,26 +270,31 @@ class _NestedBarClientState extends State<NestedBarClient>
       child: ListView.separated(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
+          final DateTime dbStartTime=DateTime(data[index].debut.year, data[index].debut.month,data[index].debut.day,
+              data[index].debut.hour +2, data[index].debut.minute);
+          dateReservatin= DateFormat('dd-MM-yyyy').format(data[index].debut);
+          timeReservatin= DateFormat('hh:mm').format(dbStartTime);
+
           return Dismissible(
             key: ValueKey(data[index].id),
             direction: DismissDirection.startToEnd,
             onDismissed: (direction) {},
-            confirmDismiss: (direction) async {
-              final result = await showDialog(
-                  context: context, builder: (_) => FloorDelete());
-
-              if (result) {
-                final deleteResult = await reservationService
-                    .deleteReservation(data[index].id.toString());
-                _fetchReservations(user);
-
-                var message = 'The reservation was deleted successfully';
-
-                return deleteResult?.data ?? false;
-              }
-              print(result);
-              return result;
-            },
+            // confirmDismiss: (direction) async {
+            //   // final result = await showDialog(
+            //   //     context: context, builder: (_) => FloorDelete());
+            //   //
+            //   // if (result) {
+            //   //   final deleteResult = await reservationService
+            //   //       .deleteReservation(data[index].id.toString());
+            //   //   _fetchReservations(user);
+            //   //
+            //   //   var message = 'The reservation was deleted successfully';
+            //   //
+            //   //   return deleteResult?.data ?? false;
+            //   // }
+            //   // print(result);
+            //   // return result;
+            // },
             background: Container(
                 color: Colors.red,
                 padding: EdgeInsets.only(left: 16),
@@ -293,19 +304,22 @@ class _NestedBarClientState extends State<NestedBarClient>
                 )),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailReservation(
-                              reservationId: data[index].id,
-                            ))).then((__) => _fetchReservations(user));
-              },
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => DetailReservation(
+                //               reservationId: data[index].id,
+                //             ))).then((__) => _fetchReservations(user));
+                print(timeReservatin);
+                print(dateReservatin);
+
+                },
               child: RestauCard(
-                guestname: data[index].nomPersonne,
-                nbPersonne: data[index].nbPersonne.toString(),
+                guestname: data[index].guestName,
+                nbPersonne: '2',
                 reservationId: data[index].id,
-                reservationDate: data[index].id.toString(),
-                reservationTime: data[index].heureReservation,
+                reservationDate: dateReservatin,
+                reservationTime: timeReservatin,
               ),
             ),
           );

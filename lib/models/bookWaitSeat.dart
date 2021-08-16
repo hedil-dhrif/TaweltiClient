@@ -10,6 +10,7 @@ class BookWaitSeat {
   DateTime debut;
   DateTime fin;
   int etat;
+  int userId;
 
   BookWaitSeat(
       {this.id,
@@ -22,18 +23,20 @@ class BookWaitSeat {
       this.guestName,
       this.restaurantId,
       this.createdAt,
+      this.userId,
       this.updatedAt});
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       //'ids':ids,
       'confResv': confResv,
-      'cancResv':cancResv,
+      'cancResv': cancResv,
       'etat': etat,
       'debut': debut.toIso8601String(),
       'fin': fin.toIso8601String(),
       'RestaurantId': restaurantId,
       'guestName': guestName,
+      'UserId': userId,
     };
   }
 
@@ -43,6 +46,7 @@ class BookWaitSeat {
       ids: item['ids'],
       confResv: item['confResv'],
       etat: item['etat'],
+      userId: item['UserId'],
       guestName: item['guestName'],
       restaurantId: item['RestaurantId'],
       debut: DateTime.parse(item['debut']),

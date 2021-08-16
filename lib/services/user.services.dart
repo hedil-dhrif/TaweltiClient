@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/user.dart';
 
 class UserServices {
@@ -36,6 +37,22 @@ class UserServices {
           error: true, errorMessage: 'An error occured');
     }).catchError((_) => APIResponse<Restaurant>(
             error: true, errorMessage: 'An error occured'));
+  }
+
+  Future<APIResponse<BookWaitSeat>> getUserBWS(String userId) {
+    return http
+        .get(
+      Uri.parse(API + 'users/BWS/' + userId),
+    )
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        return APIResponse<BookWaitSeat>(data: BookWaitSeat.fromJson(jsonData));
+      }
+      return APIResponse<BookWaitSeat>(
+          error: true, errorMessage: 'An error occured');
+    }).catchError((_) => APIResponse<BookWaitSeat>(
+        error: true, errorMessage: 'An error occured'));
   }
 
   Future<APIResponse<bool>> updateUser(String userID, User item) {

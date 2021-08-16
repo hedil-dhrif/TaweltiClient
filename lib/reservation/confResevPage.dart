@@ -149,6 +149,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
     final List<BookWaitSeat> item=[];
     for(int i=0 ; i <widget.bookWaitSeat.length;i++){
       item.add(BookWaitSeat(
+        userId: 30,
         restaurantId: widget.bookWaitSeat[i].restaurantId,
         id: widget.bookWaitSeat[i].id,
         // ids: widget.bookWaitSeat.ids,

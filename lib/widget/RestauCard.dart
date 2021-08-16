@@ -35,85 +35,91 @@ class _RestauCardState extends State<RestauCard> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'guest name:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'guest name:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Reservation date:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        'Reservation date:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Reservation time:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        'Reservation time:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Guest number:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        'Guest number:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    // Text(
-                    //   'Table code:',
-                    //   style: TextStyle(
-                    //     fontSize: 20,
-                    //     color: KBlue,
-                    //   ),
-                    // ),
-                  ],
+                      // Text(
+                      //   'Table code:',
+                      //   style: TextStyle(
+                      //     fontSize: 20,
+                      //     color: KBlue,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  flex: 4,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.guestname,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.guestname,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.reservationDate,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        widget.reservationDate,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.reservationTime,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        widget.reservationTime,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.nbPersonne,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: KBlue,
+                      Text(
+                        widget.nbPersonne,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: KBlue,
+                        ),
                       ),
-                    ),
-                    // Text(
-                    //   'T20',
-                    //   style: TextStyle(
-                    //     fontSize: 20,
-                    //     color: KBlue,
-                    //   ),
-                    //),
-                  ],
+                      // Text(
+                      //   'T20',
+                      //   style: TextStyle(
+                      //     fontSize: 20,
+                      //     color: KBlue,
+                      //   ),
+                      //),
+                    ],
+                  ),
                 ),
               ],
             ),
