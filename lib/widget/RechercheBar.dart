@@ -6,18 +6,19 @@ import 'package:tawelticlient/recherche/filtrage.dart';
 import '../constants.dart';
 
 class RechercherBar extends StatelessWidget {
-  final TextEditingController editingController = TextEditingController();
+  final TextEditingController editingController;
   final Function changed;
 
-  RechercherBar({Key key, this.changed}) : super(key: key);
+  RechercherBar({Key key, this.changed,this.editingController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
-          width: MediaQuery.of(context).size.width * 0.75,
-          padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+          height: 60,
+          width: MediaQuery.of(context).size.width * 0.85,
+         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
           child: TextField(
             controller: editingController,
             onChanged: changed,
@@ -25,16 +26,16 @@ class RechercherBar extends StatelessWidget {
               hintText: "Search",
               hintStyle: TextStyle(
                 color: KBlue,
-                fontSize: 20,
+                fontSize: 15,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide(color: KBlue, width: 1),
               ),
               prefixIcon: Icon(
                 Icons.search,
                 color: KBlue,
-                size: 30,
+                size: 24,
               ),
             ),
           ),
@@ -46,8 +47,8 @@ class RechercherBar extends StatelessWidget {
           },
           child: Image.asset(
             'assets/filtre.png',
-            height: 40,
-            width: 40,
+            height: 24,
+            width: 24,
           ),
         )
       ],

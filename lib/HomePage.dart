@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -164,57 +165,65 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // TextField(
+            //   onChanged: (value) => _runFilter(value),
+            //   decoration: InputDecoration(
+            //       labelText: 'Search', suffixIcon: Icon(Icons.search)),
+            // ),
             RechercherBar(
-              changed: (string){
-                setState(() {
-                  debouncer.run(() {
-                    filterrestaurant = restaurant.where((u)=> (u.NomResto.toLowerCase().contains(string))).toList();
-                    print(string);
-                  });
-                });
+              changed: (value){
+                  _runFilter(value);
+                  // debouncer.run(() {
+                  //   filterrestaurant = restaurant.where((u)=> (u.NomResto.toLowerCase().contains(string))).toList();
+                  //   print(string);
+                  // });
               },
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 15, left: 20),
+              padding: const EdgeInsets.only(bottom: 15, left: 10),
               child: Text(
                 'Recommended for you',
                 style: TextStyle(
+                  fontWeight: FontWeight.bold,
                   color: KBlue,
                   fontSize: 20,
-                  letterSpacing: 1,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  RestaurantRecommand(),
-                  RestaurantRecommand(),
-                  RestaurantRecommand(),
-                  RestaurantRecommand(),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10, left: 10),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    RestaurantRecommand(),
+                    RestaurantRecommand(),
+                    RestaurantRecommand(),
+                    RestaurantRecommand(),
+                  ],
+                ),
               ),
             ),
-            SizedBox(
-              height: 15,
-            ),
+
             Padding(
-              padding: const EdgeInsets.only(bottom: 20, left: 20),
+              padding: const EdgeInsets.only(bottom: 0, left: 20),
               child: Text(
-                'Upcomming events',
+                'Popular',
                 style: TextStyle(
                   color: KBlue,
                   fontSize: 20,
-                  letterSpacing: 1,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.bold,
+
                 ),
               ),
             ),
             _foundRestaurants.length > 0
                 ? Container(
-                    padding: const EdgeInsets.only(bottom: 20, left: 20),
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: _buildListRestaurants(filterrestaurant),
+                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: _buildListRestaurants(_foundRestaurants),
                   )
                 : Text(
                     'No results found',
@@ -243,12 +252,10 @@ class _HomePageState extends State<HomePage> {
 
   _buildListRestaurants(_apiResponse) {
     //List ListPhotos=['assets/plaza_corniche.jpg','assets/the_cliff.jpg','assets/villa_didon.jpg','assets/maison_bleue.jpg','assets/maison_bleue.jpg','assets/maison_bleue.jpg',];
-    return GridView.count(
+    return ListView.builder(
       // Create a grid with 2 columns. If you change the scrollDirection to
-      // horizontal, this produces 2 rows.
-      crossAxisCount: 2,
-      // Generate 100 widgets that display their index in the List.
-      children: List.generate(_apiResponse.length, (index) {
+      itemCount: _apiResponse.length,
+      itemBuilder:(BuildContext context,index){
         return GestureDetector(
           onTap: () {
             Navigator.push(
@@ -258,14 +265,23 @@ class _HomePageState extends State<HomePage> {
                           restaurantId: _apiResponse[index].id,
                         )));
           },
-          child: RestaurantCard(
-            image: 'assets/resto.png',
-            title: _apiResponse[index].NomResto,
-            soustitle: _apiResponse[index].adresse,
+          // child: RestaurantCard(
+          //   image: 'assets/resto.png',
+          //   title: _apiResponse[index].NomResto,
+          //   soustitle: _apiResponse[index].adresse,
+          // ),
+          child:Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: RestoCard(
+              id: _apiResponse[index].id.toString(),
+              imagePath: 'assets/resto.png',
+              name: _apiResponse[index].NomResto,
+              adresse: _apiResponse[index].adresse,
+              ratings: 5,
+            ),
           ),
         );
-      }),
-    );
+      });
   }
 
   findRestaurantUsingLocation(
@@ -328,25 +344,118 @@ class RestaurantRecommand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15),
-      padding: EdgeInsets.symmetric(horizontal: 2.5),
-      height: MediaQuery.of(context).size.height * 0.23,
-      width: MediaQuery.of(context).size.width * 0.225,
-      decoration:
-          BoxDecoration(color: KBeige, borderRadius: BorderRadius.circular(50)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage('assets/restaurant.jpg'),
-            radius: 35,
-          ),
-          Text(
-            'Restaurant',
-            style: TextStyle(color: Colors.white, fontSize: 15),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Container(
+        //borderRadius: BorderRadius.circular(5),
+       // height: MediaQuery.of(context).size.height * 0.2,
+        width: MediaQuery.of(context).size.width * 0.5,
+        decoration:
+            BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          children: [
+            Container(
+                height: 100.0,
+                width: 340.0,
+                child:Stack(
+                  children: [
+                    Container(
+                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+
+                      child: CarouselSlider(
+                        options: CarouselOptions(height: 400.0),
+                        items: [5,1,1,1].map((i) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    color: Colors.amber
+                                ),
+                                child:FittedBox(
+                                    fit: BoxFit.cover,
+                                    child: Image.asset('assets/restaurant.jpg',)),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    Positioned(right: 5,
+                        top: 10,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.white,
+                          // decoration: BoxDecoration(
+                          //   borderRadius: BorderRadius.circular(10),
+                          //   color: Colors.blue
+                          // ),
+                            child: Center(child: Icon(Icons.favorite,color: Colors.black12,size: 15,)))),
+                    Positioned(
+                      top: 10,
+                      left: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          color: Colors.black45
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 16.0,
+                            ),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            Text(
+                              "(" + 5.toString() + " Reviews)",
+                              style: TextStyle(color: Colors.grey,fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    flex:8,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'the Cliff',
+                            style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue),
+                          ),
+                          Text(
+                            'Avenue Sidi Dhrif, La Marsa',
+                            style: TextStyle(
+                                fontSize: 12.0,
+                                color: KBlue),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          ],
+        ),
       ),
     );
   }

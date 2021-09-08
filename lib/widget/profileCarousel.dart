@@ -1,17 +1,26 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/api/api_Response.dart';
+import 'package:tawelticlient/models/file.dart';
+import 'package:tawelticlient/services/file.services.dart';
 
 import '../constants.dart';
 
 class ProfileCarousel extends StatefulWidget {
+  final String restaurantId;
+  ProfileCarousel({this.restaurantId});
   @override
   _ProfileCarouselState createState() => _ProfileCarouselState();
 }
 
 class _ProfileCarouselState extends State<ProfileCarousel> {
+  bool _isLoading = false;
 
   int _currentIndex=0;
-
+  FileServices get fileService => GetIt.I<FileServices>();
+  APIResponse<List<File>> _apiResponseFiles;
+  List<Item1> restaurantFiles=[];
   List cardList=[
     Item1(),
     Item2(),
@@ -25,6 +34,13 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
     }
     return result;
   }
+
+  @override
+  void initState() {
+    _fetchRestaurantFiles();
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,7 +48,7 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
         children: <Widget>[
           CarouselSlider(
             options: CarouselOptions(
-              height: 200.0,
+              height: 250.0,
               autoPlay: false,
               aspectRatio: 2.0,
               onPageChanged: (index, reason) {
@@ -41,13 +57,14 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
                 });
               },
             ),
-            items: cardList.map((card){
+            items: restaurantFiles.map((card){
               return Builder(
                   builder:(BuildContext context){
                     return Container(
-                      height: MediaQuery.of(context).size.height*0.30,
+                     // height: MediaQuery.of(context).size.height*0.40,
                       width: MediaQuery.of(context).size.width,
-                      child: Card(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
                         child: card,
                       ),
                     );
@@ -55,38 +72,50 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
               );
             }).toList(),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: map<Widget>(cardList, (index, url) {
-              return Container(
-                width: 10.0,
-                height: 10.0,
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentIndex == index ? KBlue : Colors.grey,
-                ),
-              );
-            }),
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: map<Widget>(restaurantFiles, (index, url) {
+          //     return Container(
+          //       width: 10.0,
+          //       height: 10.0,
+          //       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+          //       decoration: BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         color: _currentIndex == index ? KBlue : Colors.grey,
+          //       ),
+          //     );
+          //   }),
+          // ),
         ],
       )
     );
   }
+
+  _fetchRestaurantFiles() async{
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponseFiles = await fileService.getListAmbiance(widget.restaurantId);
+    print( _apiResponseFiles.data.length);
+    print( _apiResponseFiles.data);
+    for(int i=0;i<_apiResponseFiles.data.length;i++){
+      restaurantFiles.add(Item1(url: _apiResponseFiles.data[i].url,));
+      print(restaurantFiles[i].url);
+    }    setState(() {
+      _isLoading = false;
+    });
+  }
+
 }
 class Item1 extends StatelessWidget {
-  const Item1({Key key}) : super(key: key);
+  final String url;
+  const Item1({this.url});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            colorFilter: ColorFilter.mode(
-                Color(0xFFFEFEFE), BlendMode.dstATop),
-            image: ExactAssetImage('assets/détail1.jpeg'),
-            fit: BoxFit.cover),
-      ),
+      child: Image.network(url),
     );
   }
 }

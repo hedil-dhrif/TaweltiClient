@@ -1,10 +1,12 @@
-import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/api/api_Response.dart';
+import 'package:tawelticlient/models/fileEvent.dart';
 import 'package:tawelticlient/services/event.services.dart';
+import 'package:tawelticlient/services/fileEvent.services.dart';
 import 'package:tawelticlient/widget/DisabledInputbox.dart';
 import 'package:tawelticlient/widget/EventList.dart';
 import 'package:tawelticlient/models/event.dart';
@@ -31,9 +33,9 @@ class _DetailsEventState extends State<DetailsEvent> {
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _startController = TextEditingController();
   TextEditingController _endController = TextEditingController();
+
   void initState() {
     super.initState();
-
     if (isEditing) {
       setState(() {
         _isLoading = true;
@@ -100,16 +102,6 @@ class _DetailsEventState extends State<DetailsEvent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/events.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
             SizedBox(
               height: 20,
             ),
@@ -239,4 +231,6 @@ class _DetailsEventState extends State<DetailsEvent> {
       ),
     );
   }
+
+
 }

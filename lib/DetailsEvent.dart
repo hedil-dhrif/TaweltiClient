@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/event.dart';
+import 'package:tawelticlient/models/fileEvent.dart';
 import 'package:tawelticlient/services/event.services.dart';
+import 'package:tawelticlient/services/fileEvent.services.dart';
 import 'package:tawelticlient/widget/ImageBox.dart';
-
+import 'package:http/http.dart' as http;
 import 'widget/DisabledInputbox.dart';
 
 class DetailsEvent extends StatefulWidget {
@@ -23,12 +28,16 @@ class _DetailsEventState extends State<DetailsEvent> {
   Event event;
   bool _isLoading= false;
   bool _isEnabled =false;
+  APIResponse<List<FileEvent>> _apiResponseFiles;
+  List<FileEvent> eventFiles=[];
+  FileEventServices get fileEventsService => GetIt.I<FileEventServices>();
+
   String _name;
   String _category;
   String _description;
   void initState() {
     super.initState();
-
+print(widget.eventId);
     if (isEditing) {
       setState(() {
         _isLoading = true;
@@ -49,7 +58,7 @@ class _DetailsEventState extends State<DetailsEvent> {
 
       });
     }
-
+_fetchEventsFiles();
     super.initState();
   }
   @override
@@ -91,16 +100,7 @@ class _DetailsEventState extends State<DetailsEvent> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/events.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+         _buildList(),
           SizedBox(
             height: 20,
           ),
@@ -210,6 +210,51 @@ class _DetailsEventState extends State<DetailsEvent> {
           //
           // ),
         ],
+      ),
+    );
+  }
+
+  _fetchEventsFiles() async{
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponseFiles = await fileEventsService.getListAmbiance(widget.eventId.toString());
+    print( _apiResponseFiles.data.length);
+    print( _apiResponseFiles.data);
+    for(int i=0;i<_apiResponseFiles.data.length;i++){
+      eventFiles.add( _apiResponseFiles.data[i]);
+      print(eventFiles[i].url);
+    }    setState(() {
+      _isLoading = false;
+    });
+
+    // final response = await http
+    //     .get(Uri.parse('http://10.0.2.2:3000/fileEvent/info/'+widget.eventId.toString()));
+    //
+    // if (response.statusCode == 200) {
+    //   // If the server did return a 200 OK response,
+    //   // then parse the JSON.
+    //   print(jsonDecode(response.body));
+    //   //return FileEvent.fromJson(jsonDecode(response.body));
+    // } else {
+    //   // If the server did not return a 200 OK response,
+    //   // then throw an exception.
+    //   throw Exception('Failed to load album');
+    // }
+  }
+
+  _buildList() {
+    return Container(
+      height: MediaQuery.of(context).size.height*0.3,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: eventFiles.length,
+        itemBuilder: (context, int i) {
+          return Container(
+            child: Image.network(eventFiles[i].url),
+          );
+        },
       ),
     );
   }
