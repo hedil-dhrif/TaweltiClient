@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tawelticlient/constants.dart';
+import 'package:tawelticlient/download.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/table.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
@@ -28,7 +32,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   bool _isLoading = false;
   BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
-
+  String randomValue;
   @override
   void initState() {
     // TODO: implement initState
@@ -110,12 +114,18 @@ class _ConfirmPageState extends State<ConfirmPage> {
                 size: 175,
                 gapless: false,
               ),
-              TextButton(
-                  onPressed: () {
-                    _buildListBWStoDB();
-                    print('taped');
-                  },
-                  child: Text('confirm reservation')),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        _buildListBWStoDB();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>FileDownload(random:randomValue ,)));
+                        print('taped');
+                      },
+                      child: Text('confirm reservation')),
+
+                ],
+              ),
             ],
           ),
         ),
@@ -146,6 +156,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
 
   _buildListBWStoDB()async{
+    Random random=Random();
+    randomValue=random.nextInt(10000).toString();
+    print(randomValue);
     final List<BookWaitSeat> item=[];
     for(int i=0 ; i <widget.bookWaitSeat.length;i++){
       item.add(BookWaitSeat(
@@ -158,8 +171,12 @@ class _ConfirmPageState extends State<ConfirmPage> {
         confResv: '0',
         cancResv: '0',
         guestName: widget.guestName,
+        random: randomValue,
       ));
     }
 
-    final result = await bwsService.addBWS(item);  }
+    final result = await bwsService.addBWS(item);
+    print(jsonDecode(result));
+
+  }
 }

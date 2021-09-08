@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +14,7 @@ import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/DisabledInput.dart';
 import '../constants.dart';
-
+import 'package:http/http.dart' as http;
 class PassReservation extends StatefulWidget {
   final int restaurantId;
   PassReservation({this.restaurantId});
@@ -71,6 +73,7 @@ class _PassReservationState extends State<PassReservation> {
 
   @override
   void initState() {
+    print(widget.restaurantId);
     // _getUserInfo();
     _fetchBWS();
     _fetchTables();
@@ -175,7 +178,8 @@ class _PassReservationState extends State<PassReservation> {
             ),
             TextButton(
                 onPressed: () {
-                  _buildListAvailbaleTablesWithNbPerson(_counter);
+                 // _fetchBWS();
+                 _buildListAvailbaleTablesWithNbPerson(_counter);
                   
                 },
                 child: Text('get reservation')),
@@ -373,10 +377,29 @@ class _PassReservationState extends State<PassReservation> {
     });
     _apiResponse =
         await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
+    print(_apiResponse.data);
     _buildListBWS();
     setState(() {
       _isLoading = false;
     });
+    // final response = await http
+    //     .get(Uri.parse('http://10.0.2.2:3000/BWS/GetALlBookWaitSeat/45'));
+    //
+    // if (response.statusCode == 200) {
+    //   // If the server did return a 200 OK response,
+    //   // then parse the JSON.
+    //   final jsonData = json.decode(response.body);
+    //   final events = <BookWaitSeat>[];
+    //   for (var item in jsonData) {
+    //     events.add(BookWaitSeat.fromJson(item));
+    //   }
+    //   print(events);
+    //   return events;
+    // } else {
+    //   // If the server did not return a 200 OK response,
+    //   // then throw an exception.
+    //   throw Exception('Failed to load album');
+    // }
   }
 
   _buildListBWS() {

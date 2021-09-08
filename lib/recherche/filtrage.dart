@@ -482,7 +482,7 @@ class _FiltrageState extends State<Filtrage> {
             TextButton(
                 onPressed: () {
                   findRestaurantUsingAmbiance(ambiance);
-                  findRestaurantUsingCuisine(cuisine);
+                  //findRestaurantUsingCuisine(cuisine);
                   findRestaurantUsingEtablissement(etablissment);
                   findRestaurantUsingGeneral(general);
                   Navigator.push(

@@ -55,7 +55,6 @@ class _AccueilState extends State<Accueil> {
     }
 
     return Scaffold(
-
       body: PersistentTabView(
         context,
         controller: _controller,

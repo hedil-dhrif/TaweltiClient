@@ -51,7 +51,7 @@ class BookWaitSeatServices{
         error: true, errorMessage: 'An error occured'));
   }
 
-  Future<APIResponse<bool>> addBWS(List<BookWaitSeat> item) {
+  addBWS(List<BookWaitSeat> item) {
     return client
         .post(Uri.parse(API + 'BWS/CreateBookwaitseatTRUE'),
         headers: <String, String>{
@@ -59,12 +59,27 @@ class BookWaitSeatServices{
         },
         body: jsonEncode(item.map((i) => i.toJson()).toList()))
         .then((data) {
-      if (data.statusCode == 201) {
-        return APIResponse<bool>(data: true);
+      if (data.statusCode == 200) {
+        return data.body;
       }
       return APIResponse<bool>(error: true, errorMessage: 'An error occured');
     }).catchError((_) =>
         APIResponse<bool>(error: true, errorMessage: 'An error occured'));
+  }
+
+  printInvoicePDF(String id)async {
+    final response = await client
+        .get(Uri.parse('http://10.0.2.2:3000/printInvoice/700'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return jsonDecode(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
 }
