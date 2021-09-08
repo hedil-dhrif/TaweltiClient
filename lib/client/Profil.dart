@@ -98,7 +98,6 @@ class _ClientProfilState extends State<ClientProfil> {
                 ],
               ),
             ),
-
             //SizedBox(height: 20,),
             NestedBarClient(isEnabled: _isEnabled,),
           ],
@@ -129,7 +128,4 @@ class _ClientProfilState extends State<ClientProfil> {
     });
 
   }
-
-
-
 }

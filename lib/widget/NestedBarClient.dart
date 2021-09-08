@@ -134,13 +134,13 @@ class _NestedBarClientState extends State<NestedBarClient>
                           color: KBlue,
                         ),
                         DisabledInputBox(
-                            validate: _validate,
-                            enabled: widget.isEnabled,
-                            controller: LastNameController,
-                            label: 'Last name:',
-                            inputHint: 'Doe',
-                            color: KBlue,
-                          ),
+                          validate: _validate,
+                          enabled: widget.isEnabled,
+                          controller: LastNameController,
+                          label: 'Last name:',
+                          inputHint: 'Doe',
+                          color: KBlue,
+                        ),
                         DisabledInputBox(
                           validate: _validate,
                           enabled: widget.isEnabled,
@@ -214,10 +214,9 @@ class _NestedBarClientState extends State<NestedBarClient>
                     ),
                   ),
                   Container(
-                      height: MediaQuery.of(context).size.height * 0.6,
+                      height: MediaQuery.of(context).size.height,
                       padding: EdgeInsets.only(top: 10, left: 20),
-                      child: _buildEventsList(_apiResponse.data)
-     ),
+                      child: _buildEventsList(_apiResponse.data)),
                 ],
               ),
             ),
@@ -239,7 +238,7 @@ class _NestedBarClientState extends State<NestedBarClient>
       FirstNameController.text = response.data.first_name;
       LastNameController.text = response.data.last_name;
       mailController.text = response.data.email;
-     // phoneController.text = response.data.phone;
+      // phoneController.text = response.data.phone;
       print(response.data.first_name);
       print(response.data.email);
       print(response.data.id);
@@ -257,8 +256,7 @@ class _NestedBarClientState extends State<NestedBarClient>
       _isLoading = true;
     });
 
-    _apiResponse =
-        await bwsService.getUserListBWS(user.toString());
+    _apiResponse = await bwsService.getUserListBWS(user.toString());
     print(_apiResponse.data);
     setState(() {
       _isLoading = false;
@@ -270,10 +268,14 @@ class _NestedBarClientState extends State<NestedBarClient>
       child: ListView.separated(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          final DateTime dbStartTime=DateTime(data[index].debut.year, data[index].debut.month,data[index].debut.day,
-              data[index].debut.hour +2, data[index].debut.minute);
-          dateReservatin= DateFormat('dd-MM-yyyy').format(data[index].debut);
-          timeReservatin= DateFormat('hh:mm').format(dbStartTime);
+          final DateTime dbStartTime = DateTime(
+              data[index].debut.year,
+              data[index].debut.month,
+              data[index].debut.day,
+              data[index].debut.hour + 2,
+              data[index].debut.minute);
+          dateReservatin = DateFormat('dd-MM-yyyy').format(data[index].debut);
+          timeReservatin = DateFormat('hh:mm').format(dbStartTime);
 
           return Dismissible(
             key: ValueKey(data[index].id),
@@ -312,8 +314,7 @@ class _NestedBarClientState extends State<NestedBarClient>
                 //             ))).then((__) => _fetchReservations(user));
                 print(timeReservatin);
                 print(dateReservatin);
-
-                },
+              },
               child: RestauCard(
                 guestname: data[index].guestName,
                 nbPersonne: '2',

@@ -303,7 +303,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = true;
     });
-    await userService.getUserProfile(user.toString()).then((response) {
+    await userService.getUserProfile('29').then((response) {
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }

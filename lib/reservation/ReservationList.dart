@@ -105,21 +105,22 @@ class _ReservationtListState extends State<ReservationtList> {
                 letterSpacing: 1,
                 fontWeight: FontWeight.w100),
           ),
-          bottom: PreferredSize(
+          /*bottom: PreferredSize(
             preferredSize: Size(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height * 0.08),
             child: Divider(
               thickness: 2,
               color: KBeige,
             ),
-          ),
+          ),*/
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
+            /*Container(
               color: Colors.white,
               child: TableCalendar(
                 events: _events,
@@ -174,10 +175,10 @@ class _ReservationtListState extends State<ReservationtList> {
                 calendarController: _controller,
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 20,),*/
             Container(
               margin: EdgeInsets.only(left: 10),
-              height: MediaQuery.of(context).size.height*0.6,
+              height: MediaQuery.of(context).size.height,
                child:_buildEventsList(_apiResponse.data),
             ),
 
@@ -267,7 +268,7 @@ class _ReservationtListState extends State<ReservationtList> {
           );
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
-          color: Colors.black87,
+          color: Colors.white,
         ),
       ),
     );

@@ -101,11 +101,11 @@ class _DetailsEventState extends State<DetailsEvent> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.35,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/events.jpg'),
+                  image: AssetImage('assets/event.jpeg'),
                   fit: BoxFit.cover,
                 ),
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 import '../constants.dart';
 import 'TowSidedRoundedButton.dart';
 
@@ -12,8 +11,14 @@ class WaitCard extends StatefulWidget {
   final String nbPersonne;
   final Function delete;
 
-
-  WaitCard({this.nbPersonne,this.guestname,this.reservationDate,this.reservationTime,this.reservationId,this.delete,});
+  WaitCard({
+    this.nbPersonne,
+    this.guestname,
+    this.reservationDate,
+    this.reservationTime,
+    this.reservationId,
+    this.delete,
+  });
   @override
   _WaitCardState createState() => _WaitCardState();
 }
@@ -22,11 +27,13 @@ class _WaitCardState extends State<WaitCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: MediaQuery.of(context).size.width * 0.9,
+      margin: EdgeInsets.only(top: 20, bottom: 10, right: 10, left: 10),
+      padding: EdgeInsets.only(left: 20),
+      height: MediaQuery.of(context).size.height * 0.27,
+      width: MediaQuery.of(context).size.width * 0.75,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,9 +46,9 @@ class _WaitCardState extends State<WaitCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
                           'guest name:',
@@ -86,34 +93,35 @@ class _WaitCardState extends State<WaitCard> {
                     flex: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
                           widget.guestname,
                           style: TextStyle(
-                            fontSize: 20,
-                            color: KBlue,
-                          ),
+                              fontSize: 20,
+                              color: KBlue,
+                              fontWeight: FontWeight.w300),
                         ),
                         Text(
                           widget.reservationDate,
                           style: TextStyle(
-                            fontSize: 20,
-                            color: KBlue,
-                          ),
+                              fontSize: 20,
+                              color: KBlue,
+                              fontWeight: FontWeight.w300),
                         ),
                         Text(
                           widget.reservationTime,
                           style: TextStyle(
-                            fontSize: 20,
-                            color: KBlue,
-                          ),
+                              fontSize: 20,
+                              color: KBlue,
+                              fontWeight: FontWeight.w300),
                         ),
                         Text(
                           widget.nbPersonne,
                           style: TextStyle(
-                            fontSize: 20,
-                            color: KBlue,
-                          ),
+                              fontSize: 20,
+                              color: KBlue,
+                              fontWeight: FontWeight.w300),
                         ),
                         // Text(
                         //   'T20',
@@ -137,10 +145,10 @@ class _WaitCardState extends State<WaitCard> {
                 TwoSideRoundedButton(
                   text: 'cancel',
                   press: widget.delete,
-                  bottomradious: 20,
+                  bottomradious: 10,
                   topradious: 0,
                   textcolor: Colors.white,
-                  conatinercolor: KBlue,
+                  conatinercolor: KBeige.withOpacity(0.7),
                 ),
               ],
             ),

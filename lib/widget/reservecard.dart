@@ -27,7 +27,8 @@ class _ReservationCardState extends State<ReservationCard> {
             context, MaterialPageRoute(builder: (context) => DetailReservation()));
       },
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.2,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        height: MediaQuery.of(context).size.height * 0.15,
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
           color: Colors.white,
