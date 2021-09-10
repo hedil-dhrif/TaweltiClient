@@ -61,6 +61,7 @@ dependencies:
   ndialog: ^4.1.0
   permission_handler:
   downloads_path_provider_28:
+  readmore: ^2.1.0
 
 
 

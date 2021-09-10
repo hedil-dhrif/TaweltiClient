@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tawelticlient/accueil.dart';
 import 'package:tawelticlient/api/api.dart';
 import 'package:tawelticlient/auth/signin.dart';
 import 'package:tawelticlient/widget/CustomInputBox.dart';
@@ -10,9 +9,7 @@ import 'package:tawelticlient/widget/MyCostumTitleWidget.dart';
 import 'package:tawelticlient/widget/SubmitButton.dart';
 
 import '../HomePage.dart';
-import '../accueil.dart';
 import '../constants.dart';
-
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -25,8 +22,10 @@ class _SignUpPageState extends State<SignUpPage> {
   int userId;
   String username;
   bool _validate = false;
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  bool value = true;
 
-  TextEditingController NameController = TextEditingController();
+  TextEditingController FirstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController mailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -65,40 +64,97 @@ class _SignUpPageState extends State<SignUpPage> {
                         MyTitle: 'Sign Up',
                         size: 35,
                       ),
-                      MyCustomInputBox(
-                        validate: _validate,
-                        textController: NameController,
-                        label: 'first Name',
-                        inputHint: 'John',
-                        color: KBlue,
-                      ),
-                      MyCustomInputBox(
-                        validate: _validate,
-                        textController: NameController,
-                        label: 'last Name',
-                        inputHint: 'Doe',
-                        color: KBlue,
-                      ),
-                      MyCustomInputBox(
-                        validate: _validate,
-                        textController: phoneController,
-                        label: 'phone',
-                        inputHint: '+216 ** *** ***',
-                        color: KBlue,
-                      ),
-                      MyCustomInputBox(
-                        validate: _validate,
-                        textController: mailController,
-                        label: 'Email',
-                        inputHint: 'example@example.com',
-                        color: KBlue,
-                      ),
-                      MyCustomInputBox(
-                        validate: _validate,
-                        textController: passwordController,
-                        label: 'Password',
-                        inputHint: '8+ Characters,1 Capital letter',
-                        color: KBlue,
+                      Form(
+                        key: _formkey,
+                        child: Column(
+                          children: [
+                            MyCustomInputBox(
+                              validate: _validate,
+                              textController: FirstNameController,
+                              label: 'first Name',
+                              inputHint: 'John',
+                              color: KBlue,
+                              obscure: false,
+                              valid: (value) {
+                                if (value.isNotEmpty && value.length > 4) {
+                                  return null;
+                                } else if (value.isNotEmpty &&
+                                    value.length < 3) {
+                                  return 'saisir un prénom correcte';
+                                } else if (value.isEmpty) {
+                                  return 'il faut saisir un prénom';
+                                }
+                              },
+                            ),
+                            MyCustomInputBox(
+                              valid: (value) {
+                                if (value.isNotEmpty && value.length > 4) {
+                                  return null;
+                                } else if (value.isNotEmpty &&
+                                    value.length < 3) {
+                                  return 'saisir un nom correcte';
+                                } else if (value.isEmpty) {
+                                  return 'il faut saisir un nom';
+                                }
+                              },
+                              validate: _validate,
+                              obscure: false,
+                              textController: lastNameController,
+                              label: 'last Name',
+                              inputHint: 'Doe',
+                              color: KBlue,
+                            ),
+                            MyCustomInputBox(
+                              validate: _validate,
+                              textController: phoneController,
+                              label: 'phone',
+                              inputHint: '+216 ** *** ***',
+                              color: KBlue,
+                              obscure: false,
+                              valid: (input) {
+                                final isDigitsOnly = int.tryParse(input);
+                                if (input != isDigitsOnly &&
+                                    input.length != 8) {
+                                  return 'le nombre de téléphone doit être 8 chiffres';
+                                }
+                              },
+                            ),
+                            MyCustomInputBox(
+                              validate: _validate,
+                              textController: mailController,
+                              label: 'E-mail',
+                              obscure: false,
+                              inputHint: 'example@example.com',
+                              color: KBlue,
+                              valid: (value) {
+                                if (value.isNotEmpty &&
+                                    RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                                  return null;
+                                } else if (value.isNotEmpty &&
+                                    !RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                                  return 'vérifier votre email';
+                                } else if (value.isEmpty) {
+                                  return 'il faut saisir un email';
+                                }
+                              },
+                            ),
+                            MyCustomInputBox(
+                              validate: _validate,
+                              obscure: true,
+                              textController: passwordController,
+                              label: 'mot de passe',
+                              inputHint: '8+ Characters,1 Capital letter',
+                              color: KBlue,
+                              valid: (value) {
+                                if (value.isEmpty) {
+                                  return 'il faut saisir en mot de passe';
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -119,15 +175,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           scrWidth: scrWidth,
                           scrHeight: scrHeight,
                           tap: () {
-
                             setState(() {
-                              mailController.text.isEmpty ? _validate = true : _validate = false;
-                              passwordController.text.isEmpty ? _validate = true : _validate = false;
-                              phoneController.text.isEmpty ? _validate = true : _validate = false;
-                              NameController.text.isEmpty ? _validate = true : _validate = false;
-                              lastNameController.text.isEmpty ? _validate = true : _validate = false;
+                              if (!_formkey.currentState.validate()) {
+                                return;
+                              }
+                              _handleLogin();
                             });
-                            _handleLogin();
+
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                           },
                           title: 'Create Account',
                           bcolor: KBlue,
@@ -180,18 +235,19 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
   void _handleLogin() async {
     setState(() {
       _isLoading = true;
     });
     var data = {
-      'first_name' : NameController.text,
-      'last_name' : lastNameController.text,
-      'email' : mailController.text,
-      'password' : passwordController.text,
+      'first_name': FirstNameController.text,
+      'last_name': lastNameController.text,
+      'email': mailController.text,
+      'password': passwordController.text,
       //'phone' : phoneController.text,
     };
-    print(NameController.text);
+    print(FirstNameController.text);
     print(mailController.text);
     print(passwordController.text);
     print(phoneController.text);
@@ -199,60 +255,51 @@ class _SignUpPageState extends State<SignUpPage> {
     var res = await CallApi().postData(data, 'users/register');
     var body = json.decode(res.body);
     print(body);
-   if(body['Status']==200){
-
+    if (body['Status'] == 200) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', body['token']);
-      token=body['token'];
+      token = body['token'];
       _getProfile();
       //localStorage.setString('user', json.encode(body['user']));
 
       Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) => HomePage()));
-    }else {
+          context, new MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
       showError(body['error']);
     }
 
     //}
 
-
-
-
     setState(() {
       _isLoading = false;
     });
-
-
-
   }
 
-  void _getProfile()async{
-    var res = await CallApi().getProfile('users/profile',token);
+  void _getProfile() async {
+    var res = await CallApi().getProfile('users/profile', token);
     var body = json.decode(res.body);
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    localStorage.setString('user',  json.encode(body['user']));
-    userId=body['id'];
-    username=body['first_name'];
+    localStorage.setString('user', json.encode(body['user']));
+    userId = body['id'];
+    username = body['first_name'];
     print(userId);
     print(body);
   }
 
-  showError(msg){
+  showError(msg) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text('Done'),
-          content: Text(msg.toString()),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        ));
+              title: Text('Done'),
+              content: Text(msg.toString()),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
   }
 }

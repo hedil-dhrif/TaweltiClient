@@ -23,8 +23,8 @@ class _SignInState extends State<SignIn> {
   int userId;
   String username;
   bool _validate = false;
-
-
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  bool value = true;
   TextEditingController mailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   @override
@@ -47,102 +47,122 @@ class _SignInState extends State<SignIn> {
                     image: ExactAssetImage('assets/uppernejma.png'),
                     fit: BoxFit.cover),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset(
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
                       'assets/logoBlue.png',
-                    height: 100,
-                  ),
-                  SizedBox(height: 20,),
-                  // MyCostumTitle(
-                  //   MyTitle: 'Sign In',
-                  //   size: 35,
-                  // ),
-                  MyCustomInputBox(
-                    validate: _validate,
-                    textController:mailController ,
-                    label: 'email',
-                    inputHint: 'email',
-                    color: KBlue,
-                  ),
-                  MyCustomInputBox(
-                    validate: _validate,
-                    textController: passwordController,
-                    label: 'Password',
-                    inputHint: '8+ Characters,1 Capital letter',
-                    color: KBlue,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GetPassword()));
-                    },
-                    child: Text(
-                      'forgot my password',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: KBlue,
+                      height: 100,
+                    ),
+                    SizedBox(height: 20,),
+                    // MyCostumTitle(
+                    //   MyTitle: 'Sign In',
+                    //   size: 35,
+                    // ),
+                    MyCustomInputBox(
+                      validate: _validate,
+                      textController: mailController,
+                      label: 'E-mail',
+                      obscure: false,
+                      inputHint: 'example@example.com',
+                      color: KBlue,
+                      valid: (value) {
+                        if (value.isNotEmpty &&
+                            RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                          return null;
+                        } else if (value.isNotEmpty &&
+                            !RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                          return 'vérifier votre email';
+                        } else if (value.isEmpty) {
+                          return 'il faut saisir un email';
+                        }
+                      },
+                    ),
+                    MyCustomInputBox(
+                      validate: _validate,
+                      obscure: true,
+                      textController: passwordController,
+                      label: 'mot de passe',
+                      inputHint: '8+ Characters,1 Capital letter',
+                      color: KBlue,
+                      valid: (value) {
+                        if (value.isEmpty) {
+                          return 'il faut saisir en mot de passe';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GetPassword()));
+                      },
+                      child: Text(
+                        'forgot my password',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: KBlue,
+                        ),
                       ),
                     ),
-                  ),
-                  //SizedBox(height: MediaQuery.of(context).size.height*0.055,),
-                  SubmiButton(
-                    scrWidth: scrWidth,
-                    scrHeight: scrHeight,
-                    tap: () {
-                      setState(() {
-                        mailController.text.isEmpty ? _validate = true : _validate = false;
-                        passwordController.text.isEmpty ? _validate = true : _validate = false;
-                      });
-                      _login();
-                      /*Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddRestaurant()));*/
-                    },
-                    title: 'Sign In',
-                    bcolor: KBlue,
-                    size: 20,
-                    color: Colors.white70,
-                  ),
-                  GestureDetector(
-                    onTap: () {
+                    //SizedBox(height: MediaQuery.of(context).size.height*0.055,),
+                    SubmiButton(
+                      scrWidth: scrWidth,
+                      scrHeight: scrHeight,
+                      tap: () {
+                        setState(() {
+                          if (!_formkey.currentState.validate()) {
+                            return;
+                          }
+                          _login();
+                        });
+                      },
+                      title: 'Sign In',
+                      bcolor: KBlue,
+                      size: 20,
+                      color: Colors.white70,
+                    ),
+                    GestureDetector(
+                      onTap: () {
 
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpPage()));
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Don\'t have an account? ',
-                            style: TextStyle(
-                              fontFamily: 'Product Sans',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff8f9db5).withOpacity(0.45),
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignUpPage()));
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Don\'t have an account? ',
+                              style: TextStyle(
+                                fontFamily: 'Product Sans',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff8f9db5).withOpacity(0.45),
+                              ),
                             ),
-                          ),
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: TextStyle(
-                              fontFamily: 'Product Sans',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: KBlue,
+                            TextSpan(
+                              text: 'Sign Up',
+                              style: TextStyle(
+                                fontFamily: 'Product Sans',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -195,7 +215,7 @@ class _SignInState extends State<SignIn> {
     print(body['id']);
     userId=body['id'];
     // username=body['username'];
-     print(userId);
+    print(userId);
     // print(body);
   }
 }

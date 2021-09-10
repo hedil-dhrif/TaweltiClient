@@ -7,8 +7,10 @@ class MyCustomInputBox extends StatefulWidget {
   Color color;
   TextEditingController textController;
   bool validate;
+  Function valid;
+  bool obscure;
 
-  MyCustomInputBox({this.label, this.inputHint, this.color, this.textController, this.validate});
+  MyCustomInputBox({this.label, this.inputHint, this.color, this.textController, this.validate, this.valid, this.obscure});
   @override
   _MyCustomInputBoxState createState() => _MyCustomInputBoxState();
 }
@@ -38,7 +40,8 @@ class _MyCustomInputBoxState extends State<MyCustomInputBox> {
         Padding(
           padding: const EdgeInsets.fromLTRB(40, 0, 40, 15),
           child: TextFormField(
-            obscureText: widget.label == 'Password' ? true : false,
+            validator: widget.valid,
+            obscureText: widget.obscure,
             onChanged: (value) {
               setState(() {
                 isSubmitted = true;
