@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+//import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
@@ -41,7 +41,7 @@ class _FileDownloadState extends State<FileDownload> {
     print(widget.random);
     dio=Dio();
     //final result =bwsService.printInvoicePDF('700');
-    courseContent.add(Course(title:"Chapter 2",path:"http://10.0.2.2:3000/PrintInvoice/"+widget.random+".pdf"));
+    courseContent.add(Course(title:"Chapter 2",path:"http://37.187.198.241:3000/PrintInvoice/"+widget.random+".pdf"));
     // String url =courseContent[0].path;
     // String extension=url.substring(url.lastIndexOf("/"));
   }
@@ -90,10 +90,12 @@ class _FileDownloadState extends State<FileDownload> {
   //   return directory.path;
   // }
 
-  Future<Directory> _getDownloadDirectory() async {
+  _getDownloadDirectory() async {
     if (Platform.isAndroid) {
-      print(DownloadsPathProvider.downloadsDirectory);
-      return await DownloadsPathProvider.downloadsDirectory;
+      // print(DownloadsPathProvider.downloadsDirectory);
+      // return await DownloadsPathProvider.downloadsDirectory;
+      // return ExtStorage.getExternalStoragePublicDirectory(
+      //     ExtStorage.DIRECTORY_DOWNLOADS);
     }
 
     // in this example we are using only Android and iOS so I can assume

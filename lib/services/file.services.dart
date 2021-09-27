@@ -8,7 +8,7 @@ import 'package:tawelticlient/models/file.dart';
 class FileServices{
   Client client = Client();
 
-  static const API = 'http://10.0.2.2:3000/';
+  static const API = 'http://37.187.198.241:3000/';
 
 
   Future<APIResponse<List<File>>> getListAmbiance(String id) {

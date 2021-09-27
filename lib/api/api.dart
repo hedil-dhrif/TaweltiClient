@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'api_Response.dart';
 
 class CallApi {
-  final String _url = 'http://10.0.2.2:3000/';
+  final String _url = 'http://37.187.198.241:3000/';
   Client client = Client();
 
   postData(data, apiUrl) async {
@@ -20,7 +20,7 @@ class CallApi {
 
   Future register(client, item) async {
     final response = await client.post(
-        Uri.parse('http://10.0.2.2:3000/users/register'),
+        Uri.parse('http://37.187.198.241/users/register'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -32,6 +32,22 @@ class CallApi {
       throw Exception('exception occured!!!!!!');
     }
   }
+
+
+  // Future googleoauth(client, item) async {
+  //   final response = await client.post(
+  //       Uri.parse('http://37.187.198.241/users/register'),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8'
+  //       },
+  //       body: jsonEncode(item.toJson()));
+  //
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('exception occured!!!!!!');
+  //   }
+  // }
 
   updateData(data, apiUrl,userId) async {
     var fullUrl = _url + apiUrl + userId;

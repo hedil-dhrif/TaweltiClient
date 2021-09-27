@@ -40,7 +40,7 @@ class _EventListState extends State<EventList> {
 
     _apiResponse =
         await eventService.getEventsList(widget.restaurantId.toString());
-    _buildEventsList(events);
+   // _buildEventsList(events);
     setState(() {
       _isLoading = false;
     });
@@ -48,7 +48,8 @@ class _EventListState extends State<EventList> {
 
   @override
   void initState() {
-    _fetchEvents();
+    print(widget.restaurantId);
+   // _fetchEvents();
     super.initState();
     _controller = CalendarController();
     _eventController = TextEditingController();
@@ -93,7 +94,7 @@ class _EventListState extends State<EventList> {
               padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               child: Container(
                   height: MediaQuery.of(context).size.height * 0.8,
-                  child: _buildEventsList(_apiResponse.data),
+                  child: _buildEventsList(),
                 ),
             ),
           ),
@@ -102,65 +103,65 @@ class _EventListState extends State<EventList> {
     );
   }
 
-  _buildEventsList(List data) {
-    if (data.length > 0) {
-      return Container(
-        child: ListView.separated(
-          itemCount: data.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Dismissible(
-              key: ValueKey(data[index].id),
-              direction: DismissDirection.startToEnd,
-              onDismissed: (direction) {},
-              confirmDismiss: (direction) async {
-                final result = await showDialog(
-                    context: context, builder: (_) => FloorDelete());
-
-                if (result) {
-                  final deleteResult =
-                      await eventService.deleteEvent(data[index].id.toString());
-                  _fetchEvents();
-
-                  var message = 'The event was deleted successfully';
-
-                  return deleteResult?.data ?? false;
-                }
-                print(result);
-                return result;
-              },
-              background: Container(
-                  color: Colors.red,
-                  padding: EdgeInsets.only(left: 16),
-                  child: Align(
-                    child: Icon(Icons.delete, color: Colors.white),
-                    alignment: Alignment.centerLeft,
-                  )),
-              child: EventCard(
-                EventName: data[index].nom,
-                category: data[index].category,
-                description: data[index].description,
-                pressDetails: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetailsEvent(
-                                eventId: data[index].id,
-                              ))).then((__) => _fetchEvents());
-                },
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) => const Divider(
-            color: Colors.black87,
-          ),
-        ),
-      );
-    } else {
+  _buildEventsList() {
+    // if (data.length > 0) {
+    //   return Container(
+    //     child: ListView.separated(
+    //       itemCount: data.length,
+    //       itemBuilder: (BuildContext context, int index) {
+    //         return Dismissible(
+    //           key: ValueKey(data[index].id),
+    //           direction: DismissDirection.startToEnd,
+    //           onDismissed: (direction) {},
+    //           confirmDismiss: (direction) async {
+    //             final result = await showDialog(
+    //                 context: context, builder: (_) => FloorDelete());
+    //
+    //             if (result) {
+    //               final deleteResult =
+    //                   await eventService.deleteEvent(data[index].id.toString());
+    //               _fetchEvents();
+    //
+    //               var message = 'The event was deleted successfully';
+    //
+    //               return deleteResult?.data ?? false;
+    //             }
+    //             print(result);
+    //             return result;
+    //           },
+    //           background: Container(
+    //               color: Colors.red,
+    //               padding: EdgeInsets.only(left: 16),
+    //               child: Align(
+    //                 child: Icon(Icons.delete, color: Colors.white),
+    //                 alignment: Alignment.centerLeft,
+    //               )),
+    //           child: EventCard(
+    //             EventName: data[index].nom,
+    //             category: data[index].category,
+    //             description: data[index].description,
+    //             pressDetails: () {
+    //               Navigator.push(
+    //                   context,
+    //                   MaterialPageRoute(
+    //                       builder: (context) => DetailsEvent(
+    //                             eventId: data[index].id,
+    //                           ))).then((__) => _fetchEvents());
+    //             },
+    //           ),
+    //         );
+    //       },
+    //       separatorBuilder: (BuildContext context, int index) => const Divider(
+    //         color: Colors.black87,
+    //       ),
+    //     ),
+    //   );
+    // } else {
       return Center(
           child: Text(
         'no events yet',
         style: TextStyle(fontSize: 20, color: Colors.white),
       ));
-    }
+    //}
   }
 }

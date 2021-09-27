@@ -49,6 +49,7 @@ class _PassReservationState extends State<PassReservation> {
   final List<BookWaitSeat> listBWS = [];
   final List<BookWaitSeat> databaseBWS = [];
   final List<int> listTables = [];
+  final List<RestaurantTable> listAllTables = [];
   DateTime startTime;
   DateTime endTime;
   int id;
@@ -178,7 +179,8 @@ class _PassReservationState extends State<PassReservation> {
             ),
             TextButton(
                 onPressed: () {
-                 // _fetchBWS();
+                  // _fetchBWS();
+                  // _fetchTables();
                  _buildListAvailbaleTablesWithNbPerson(_counter);
                   
                 },
@@ -372,69 +374,85 @@ class _PassReservationState extends State<PassReservation> {
   // }
 
   _fetchBWS() async {
-    setState(() {
-      _isLoading = true;
-    });
-    _apiResponse =
-        await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
-    print(_apiResponse.data);
-    _buildListBWS();
-    setState(() {
-      _isLoading = false;
-    });
-    // final response = await http
-    //     .get(Uri.parse('http://10.0.2.2:3000/BWS/GetALlBookWaitSeat/45'));
-    //
-    // if (response.statusCode == 200) {
-    //   // If the server did return a 200 OK response,
-    //   // then parse the JSON.
-    //   final jsonData = json.decode(response.body);
-    //   final events = <BookWaitSeat>[];
-    //   for (var item in jsonData) {
-    //     events.add(BookWaitSeat.fromJson(item));
-    //   }
-    //   print(events);
-    //   return events;
-    // } else {
-    //   // If the server did not return a 200 OK response,
-    //   // then throw an exception.
-    //   throw Exception('Failed to load album');
-    // }
-  }
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    // _apiResponse =
+    //     await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
+    // print(_apiResponse.data);
+    // _buildListBWS();
+    // setState(() {
+    //   _isLoading = false;
+    // });
+    final response = await http
+        .get(Uri.parse('http://37.187.198.241:3000/BWS/GetALlBookWaitSeat/${widget.restaurantId}'));
 
-  _buildListBWS() {
-    setState(() {
-      _isLoading = true;
-    });
-
-    for (int i = 0; i < _apiResponse.data.length; i++) {
-      if (listBWS.contains(_apiResponse.data[i].id)) {
-        i++;
-      } else {
-        listBWS.add(_apiResponse.data[i]);
-        databaseBWS.add(_apiResponse.data[i]);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final jsonData = json.decode(response.body);
+      for (var item in jsonData) {
+        listBWS.add(BookWaitSeat.fromJson(item));
       }
+      print(listBWS);
+      return listBWS;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
     }
-    print(listBWS);
-    print(databaseBWS);
-    setState(() {
-      _isLoading = false;
-    });
   }
+
+  // _buildListBWS() {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //
+  //   for (int i = 0; i < _apiResponse.data.length; i++) {
+  //     if (listBWS.contains(_apiResponse.data[i].id)) {
+  //       i++;
+  //     } else {
+  //       listBWS.add(_apiResponse.data[i]);
+  //       databaseBWS.add(_apiResponse.data[i]);
+  //     }
+  //   }
+  //   print(listBWS);
+  //   print(databaseBWS);
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   _fetchTables() async {
-    setState(() {
-      _isLoading = true;
-    });
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    //
+    // _apiResponse2 = await restaurantTableService
+    //     .getRestaurantsListTables(widget.restaurantId.toString());
+    // //print(_apiResponse2.data);
+    //
+    // setState(() {
+    //   _isLoading = false;
+    // });
+    final response = await http
+        .get(Uri.parse('http://37.187.198.241:3000/user/RestaurantWithTable/${widget.restaurantId}'));
 
-    _apiResponse2 = await restaurantTableService
-        .getRestaurantsListTables(widget.restaurantId.toString());
-    //print(_apiResponse2.data);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final jsonData = json.decode(response.body);
+      for (var item in jsonData) {
+        listAllTables.add(RestaurantTable.fromJson(item));
+      }
+      print(listAllTables);
+      return     _buildListTables();
 
-    _buildListTables();
-    setState(() {
-      _isLoading = false;
-    });
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   _buildListTables() {
@@ -442,12 +460,12 @@ class _PassReservationState extends State<PassReservation> {
       _isLoading = true;
     });
 
-    for (int i = 0; i < _apiResponse2.data.length; i++) {
-      if (listTables.contains(_apiResponse2.data[i].ids)) {
+    for (int i = 0; i < listAllTables.length; i++) {
+      if (listTables.contains(listAllTables[i].ids)) {
         i++;
       } else {
-        listTables.add(_apiResponse2.data[i].ids - 1630);
-        availableTables.add(_apiResponse2.data[i]);
+        listTables.add(listAllTables[i].ids - 1630);
+        availableTables.add(listAllTables[i]);
       }
     }
     //print(listTables);
@@ -457,20 +475,20 @@ class _PassReservationState extends State<PassReservation> {
   }
 
   _buildListAvailbaleTablesWithNbPerson(int nbPerson) {
-    for (int i = 0; i < databaseBWS.length; i++) {
+    for (int i = 0; i < listBWS.length; i++) {
       for (int j = 0; j < availableTables.length; j++) {
         if (availableTables[j].nbCouverts == nbPerson &&
-            databaseBWS[i].id == availableTables[j].ids - 1630) {
+            listBWS[i].id == availableTables[j].ids - 1630) {
           print(availableTables[j].ids - 1630);
 
           startTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour, newTime.minute);
           endTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour + 1, newTime.minute);
-          final DateTime dbStartTime=DateTime(databaseBWS[i].debut.year, databaseBWS[i].debut.month, databaseBWS[i].debut.day,
-              databaseBWS[i].debut.hour +2, databaseBWS[i].debut.minute);
-          final DateTime dbEndTime=DateTime(databaseBWS[i].fin.year, databaseBWS[i].fin.month, databaseBWS[i].fin.day,
-              databaseBWS[i].fin.hour +2, databaseBWS[i].fin.minute);
+          final DateTime dbStartTime=DateTime(listBWS[i].debut.year, listBWS[i].debut.month, listBWS[i].debut.day,
+              listBWS[i].debut.hour +2, listBWS[i].debut.minute);
+          final DateTime dbEndTime=DateTime(listBWS[i].fin.year, listBWS[i].fin.month, listBWS[i].fin.day,
+              listBWS[i].fin.hour +2, listBWS[i].fin.minute);
           print(dbStartTime);
           print(dbEndTime);
           print(startTime);
@@ -481,16 +499,16 @@ class _PassReservationState extends State<PassReservation> {
                   endTime.compareTo(dbEndTime) <= 0)) {
             print(databaseBWS[i].id);
             print('is unavailable');
-            id = databaseBWS[i].id;
-            unavailableBWS.add(databaseBWS[i]);
+            id = listBWS[i].id;
+            unavailableBWS.add(listBWS[i]);
             print(unavailableBWS.length);
             _showMyDialog();
           }
           else {
-           print(databaseBWS[i].ids);
+           print(listBWS[i].ids);
            print('is available');
-            id = databaseBWS[i].id;
-            availableBWS.add(databaseBWS[i]);
+            id = listBWS[i].id;
+            availableBWS.add(listBWS[i]);
 
            Navigator.push(
                context,

@@ -79,6 +79,7 @@ import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/models/file.dart';
 import 'package:tawelticlient/services/file.services.dart';
+import 'package:http/http.dart' as http;
 
 class RestoCard extends StatefulWidget {
   final String id;
@@ -105,7 +106,6 @@ class RestoCard extends StatefulWidget {
 class _RestoCardState extends State<RestoCard> {
   var cardText = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
   bool _isLoading = false;
-
   int _currentIndex=0;
   FileServices get fileService => GetIt.I<FileServices>();
   APIResponse<List<File>> _apiResponseFiles;
@@ -113,11 +113,14 @@ class _RestoCardState extends State<RestoCard> {
 @override
   void initState() {
     // TODO: implement initState
+  print(widget.id);
   _fetchRestaurantFiles();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
+    double width=MediaQuery.of(context).size.width;
+
     return ClipRRect(
       borderRadius: BorderRadius.all(
         Radius.circular(5.0),
@@ -126,7 +129,7 @@ class _RestoCardState extends State<RestoCard> {
         children: <Widget>[
           Container(
             height: 220.0,
-            width: 340.0,
+            width: width*0.9,
               child:CarouselSlider(
                 options: CarouselOptions(height: 400.0),
                 items: restaurantFiles.map((i) {
@@ -149,7 +152,7 @@ class _RestoCardState extends State<RestoCard> {
           Positioned(
             left: 0.0,
             bottom: 0.0,
-            width: 340.0,
+            width: width*0.9,
             height: 100.0,
             child: Container(
               decoration: BoxDecoration(
@@ -248,5 +251,6 @@ class _RestoCardState extends State<RestoCard> {
     }    setState(() {
       _isLoading = false;
     });
+
   }
 }

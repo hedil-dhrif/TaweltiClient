@@ -181,13 +181,18 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 15, left: 10),
-              child: Text(
-                'Recommended for you',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: KBlue,
-                  fontSize: 20,
-                  letterSpacing: 0.5,
+              child: TextButton(
+                onPressed: (){
+                  _getUserInfo();
+                },
+                child: Text(
+                  'Recommended for you',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: KBlue,
+                    fontSize: 20,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),

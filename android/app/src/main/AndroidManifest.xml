@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tawelti.tawelticlient">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="tawelticlient"
        android:requestLegacyExternalStorage="true"
@@ -40,14 +42,23 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-       <provider
-           android:name="androidx.core.content.FileProvider"
-           android:authorities="com.snj07.flutter_app_stw.flutter_downloader.provider"
-           android:exported="false"
-           android:grantUriPermissions="true">
-           <meta-data
-               android:name="android.support.FILE_PROVIDER_PATHS"
-               android:resource="@xml/provider_paths" />
-       </provider>
     </application>
+    <queries>
+        <!-- If your app opens https URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- If your app makes calls -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+        <!-- If your app emails -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
 </manifest>

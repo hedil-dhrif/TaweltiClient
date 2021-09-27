@@ -7,7 +7,7 @@ import 'package:tawelticlient/models/event.dart';
 
 class RestaurantServices{
 
-  static const API = 'http://10.0.2.2:3000/';
+  static const API = 'http://37.187.198.241:3000/';
 
   Future<APIResponse<List<Restaurant>>> getRestaurantsList() {
     return http

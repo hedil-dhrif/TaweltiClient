@@ -49,7 +49,6 @@ dependencies:
   filter_list: ^1.0.0
   group_button: ^2.2.2
   qr_flutter: ^4.0.0
-  flutter_downloader:
   path_provider:
   flutter_file_utils:
   dio: ^4.0.0
@@ -60,8 +59,19 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   ndialog: ^4.1.0
   permission_handler:
-  downloads_path_provider_28:
-  readmore: ^2.1.0
+  flutter_social_content_share: ^1.0.1
+  share: any
+  like_button: ^2.0.3
+  url_launcher:
+  readmore:
+  google_sign_in: ^5.1.0
+  flutter_facebook_auth:
+  flutter_facebook_auth_platform_interface:
+
+
+
+
+
 
 
 

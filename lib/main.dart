@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/accueil.dart';
+import 'package:tawelticlient/auth/googleAuth.dart';
 import 'package:tawelticlient/auth/start.dart';
 import 'package:tawelticlient/download.dart';
 import 'package:tawelticlient/download.dart';
@@ -18,6 +19,8 @@ import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/social_share.dart';
+import 'package:tawelticlient/url.dart';
 
 import 'accueil.dart';
 import 'auth/start.dart';
@@ -72,8 +75,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: FileDownload(),
-      home:_isLoggedIn?Accueil():StartPage(),
+      home: SignInDemo(),
+     //home:_isLoggedIn?Accueil():StartPage(),
     );
   }
 }
