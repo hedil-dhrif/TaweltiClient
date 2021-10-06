@@ -773,7 +773,7 @@ class _FilterPageState extends State<FilterPage> {
                  context,
                  MaterialPageRoute(
                      builder: (context) => ResultRecherche(
-                       //restaurantsIDs: results,
+                       restaurantsIDs: results,
                      )));
          },
          child: Padding(
