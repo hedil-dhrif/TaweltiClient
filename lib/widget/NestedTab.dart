@@ -1,3 +1,4 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -172,7 +173,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         style: TextStyle(fontSize: 16, color: KBlue),
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 7.5,
                       ),
                       Row(
                         children: [
@@ -202,9 +203,11 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ],
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 7.5,
                       ),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             'Food : ',
@@ -216,23 +219,26 @@ class _NestedTabBarState extends State<NestedTabBar>
                           SizedBox(
                             width: 5,
                           ),
-                          Wrap(
-                            children:
-                                List.generate(listCuisines.length, (index) {
-                              return Text(
-                                listCuisines[index].toString() + ' , ',
-                                style: TextStyle(
-                                  //fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: KBlue,
-                                ),
-                              );
-                            }),
+                          Container(
+                            width: MediaQuery.of(context).size.width*0.75,
+                            child: Wrap(
+                              children:
+                                  List.generate(listCuisines.length, (index) {
+                                return Text(
+                                  listCuisines[index].toString() + ', ',
+                                  style: TextStyle(
+                                    //fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: KBlue,
+                                  ),
+                                );
+                              }),
+                            ),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 7.5,
                       ),
                       Row(
                         children: [
@@ -250,7 +256,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                             children:
                                 List.generate(listAmbiances.length, (index) {
                               return Text(
-                                listAmbiances[index].toString(),
+                                listAmbiances[index].toString() + ', ',
                                 style: TextStyle(
                                   //fontWeight: FontWeight.w600,
                                   fontSize: 16,
@@ -262,7 +268,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ],
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 7.5,
                       ),
                       Text(
                         'Other : ',
@@ -428,7 +434,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         width: 15,
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.4,
                         padding: EdgeInsets.only(top: 5),
                         child: EventList(
                           restaurantId: widget.restaurantId,

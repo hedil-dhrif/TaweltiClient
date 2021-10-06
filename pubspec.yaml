@@ -72,16 +72,7 @@ dependencies:
   geocoder:
   geocoding: ^2.0.0
   time_picker_widget: ^1.0.0+10
-
-
-
-
-
-
-
-
-
-
+  expandable_text: ^2.2.0
 
 dev_dependencies:
   flutter_test:
