@@ -6,7 +6,7 @@ import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/user.dart';
 
 class UserServices {
-  static const API = 'http://37.187.198.241:3000/';
+  static const API = 'http://10.0.2.2:3000/';
 
   Future<APIResponse<User>> getUserProfile(String userId) {
     return http

@@ -9,12 +9,12 @@ import 'package:http/http.dart' as http;
 class RestaurantTableServices{
 
 
-  static const API = 'http://37.187.198.241:3000/';
+  static const API = 'http://10.0.2.2:3000/';
 
 
   Future <APIResponse<List<RestaurantTable>>> getRestaurantsListTables(String restaurantId) async {
     final response = await http
-        .get(Uri.parse('http://37.187.198.241:3000/user/RestaurantWithTable/'+restaurantId));
+        .get(Uri.parse('http://10.0.2.2:3000/user/RestaurantWithTable/'+restaurantId));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

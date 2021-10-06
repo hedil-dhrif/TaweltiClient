@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/download.dart';
@@ -14,15 +16,22 @@ import 'package:tawelticlient/widget/AppBar.dart';
 
 class ConfirmPage extends StatefulWidget {
   final List<BookWaitSeat> bookWaitSeat;
+  final List<String> demandeSpecial;
   final DateTime startTime;
   final DateTime endTime;
   final String guestName;
   final List<RestaurantTable> Tables;
+  final int user;
+  final int guestNumber;
+
   ConfirmPage(
       {this.bookWaitSeat,
       this.startTime,
       this.endTime,
       this.guestName,
+        this.demandeSpecial,
+        this.user,
+        this.guestNumber,
       this.Tables});
   @override
   _ConfirmPageState createState() => _ConfirmPageState();
@@ -33,6 +42,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
   bool _isLoading = false;
   BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
   String randomValue;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -54,77 +64,69 @@ class _ConfirmPageState extends State<ConfirmPage> {
           },
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 55),
+      body: Padding(
+        padding: EdgeInsets.only(top: 55),
+        child: Center(
           child: Column(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Text(
-                  'Table number  ' + widget.Tables[0].id.toString(),
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: KBlue,
-                  ),
+              //Text(DateTime.now().day.toString()+'-'+DateTime.now().month.toString()+'-'+DateTime.now().year.toString(),style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,color: KBeige),),
+              Text(
+                'Table number  ' + widget.Tables[0].id.toString(),
+                style: TextStyle(
+                  fontSize: 24,
+                  color: KBlue,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
-              Center(
-                child: Text(
-                  'Guest name:  ' + widget.guestName,
-                  style: TextStyle(fontSize: 20),
-                ),
+              Text(
+                 widget.guestName,
+                style: TextStyle(fontSize: 20),
               ),
+              Text(widget.guestNumber.toString()+' guests'),
+
               SizedBox(
                 height: 10,
               ),
-              Center(
-                child: Text(
-                  'Reservation time:  ' +
-                      widget.startTime.hour.toString() +
-                      ':' +
-                      widget.startTime.minute.toString(),
-                  style: TextStyle(fontSize: 20),
-                ),
+              Text(
+                DateFormat.yMMMd().format(widget.startTime) ,
+                style: TextStyle(fontSize: 20,color: KBeige,fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Text(
-                  'Reservation date:  ' +
-                      widget.startTime.day.toString() +
-                      '-' +
-                      widget.startTime.month.toString() +
-                      '-' +
-                      widget.startTime.year.toString(),
-                  style: TextStyle(fontSize: 20),
-                ),
+              Text(
+                DateFormat.jm().format(widget.startTime) ,
+                style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 20,
               ),
-              QrImage(
-                data: widget.guestName +
-                    'reservation date :' +
-                    widget.bookWaitSeat[0].debut.toString(),
-                version: QrVersions.auto,
-                size: 175,
-                gapless: false,
+              Center(
+                child: QrImage(
+                  data: widget.guestName +
+                      'reservation date :' +
+                      widget.bookWaitSeat[0].debut.toString(),
+                  version: QrVersions.auto,
+                  size: 175,
+                  gapless: false,
+                ),
               ),
-              Row(
-                children: [
-                  TextButton(
+              SizedBox(height: 50,),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: KBeige.withOpacity(0.8),
+                  child: TextButton(
                       onPressed: () {
                         _buildListBWStoDB();
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FileDownload(random:randomValue ,)));
                         print('taped');
                       },
-                      child: Text('confirm reservation')),
-
-                ],
+                      child: Text('confirm reservation',style: TextStyle(color: Colors.white,fontSize: 18),)),
+                ),
               ),
             ],
           ),
@@ -162,7 +164,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
     final List<BookWaitSeat> item=[];
     for(int i=0 ; i <widget.bookWaitSeat.length;i++){
       item.add(BookWaitSeat(
-        userId: 30,
+        userId: widget.user,
         restaurantId: widget.bookWaitSeat[i].restaurantId,
         id: widget.bookWaitSeat[i].id,
         // ids: widget.bookWaitSeat.ids,
@@ -172,6 +174,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
         cancResv: '0',
         guestName: widget.guestName,
         random: randomValue,
+        other: widget.demandeSpecial.toString()
       ));
     }
 

@@ -199,19 +199,20 @@ class SignInDemoState extends State<SignInDemo> {
 
   void loginFacebook() async {
     final facebookLogin = FacebookAuth;
-    final facebookLoginResult = await FacebookAuth.instance.login();
-
-    print(facebookLoginResult.accessToken);
+    const FACEBOOK_PERMISSIONS = ['public_profile', 'email'];
+    final facebookLoginResult = await FacebookAuthPlatform.instance.login(permissions: FACEBOOK_PERMISSIONS);
+    //final LoginResult facebookLoginResult = await FacebookAuth.instance.login();
+    print(facebookLoginResult);
     print(facebookLoginResult.accessToken.token);
-    print(facebookLoginResult.accessToken.expires);
-    //print(facebookLoginResult.accessToken.permissions);
-    print(facebookLoginResult.accessToken.userId);
-    //print(facebookLoginResult.accessToken.isValid());
+   print(facebookLoginResult.accessToken.expires);
+   // print(facebookLoginResult.accessToken.permissions);
+   print(facebookLoginResult.accessToken.userId);
+   // print(facebookLoginResult.accessToken.isValid());
 
    // print(facebookLoginResult.errorMessage);
     print(facebookLoginResult.status);
 
-    final token = facebookLoginResult.accessToken.token;
+   final token = facebookLoginResult.accessToken.token;
 
     /// for profile details also use the below code
     final graphResponse = await http.get(
@@ -228,5 +229,16 @@ class SignInDemoState extends State<SignInDemo> {
      "id": "<user id here>"
     }
    */
+  }
+  Future signInWithFacebook() async {
+    const FACEBOOK_PERMISSIONS = ['public_profile', 'email'];
+
+    FacebookAuth.instance.login(permissions: FACEBOOK_PERMISSIONS).then((value) {
+      AccessToken accessToken=value.accessToken;
+      print(accessToken.token);
+      FacebookAuth.instance.getUserData().then((result) => print(result));
+    });
+
+
   }
 }

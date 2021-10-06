@@ -8,7 +8,7 @@ import 'package:http/http.dart' show Client;
 class BookWaitSeatServices{
   Client client = Client();
 
-  static const API = 'http://37.187.198.241:3000/';
+  static const API = 'http://10.0.2.2:3000/';
 
   Future<APIResponse<List<BookWaitSeat>>> getRestaurantsListBWS(
       String restaurantId) {

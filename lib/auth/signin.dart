@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/api/api.dart';
+import 'package:tawelticlient/auth/forget_password.dart';
+import 'package:tawelticlient/auth/show_dialog.dart';
 import 'package:tawelticlient/auth/signup.dart';
 import 'package:tawelticlient/widget/CustomInputBox.dart';
 import 'package:tawelticlient/widget/SubmitButton.dart';
+import 'package:http/http.dart' as http;
 
 import '../accueil.dart';
 import '../constants.dart';
@@ -98,10 +101,29 @@ class _SignInState extends State<SignIn> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => GetPassword()));
+
+                        CustomShowDialog.instance.showFormDialog(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => GetPassword()));
+                            ForgetPassword(
+                              screenHeight: MediaQuery.of(context).size.height,
+                              emailController: mailController,
+                            ), acceptButton: () async {
+                          print(mailController.text);
+                          // if (_formkey.currentState.validate()) {
+                          //   _formkey.currentState.save();
+                          Navigator.of(context).pop();
+                          await CallApi()
+                              .forgetPassword(mailController.text)
+                              .then((value) {
+                            showSnackbarMessage(value['message'], value['ok'] ? true : false);
+                            mailController.clear();
+                          });
+                          //}
+                        });
                       },
                       child: Text(
                         'forgot my password',
@@ -120,6 +142,7 @@ class _SignInState extends State<SignIn> {
                           if (!_formkey.currentState.validate()) {
                             return;
                           }
+                          //postData();
                           _login();
                         });
                       },
@@ -172,19 +195,25 @@ class _SignInState extends State<SignIn> {
   }
 
   void _login() async{
-
+  
     setState(() {
       _isLoading = true;
     });
-
     var data = {
-      'email' : mailController.text,
-      'password' : passwordController.text
+
+      'email': mailController.text,
+      'password': passwordController.text,
+      //'phone' : phoneController.text,
     };
+    print(mailController.text);
+    print(passwordController.text);
 
     var res = await CallApi().postData(data, 'users/login');
-    var body = json.decode(res.body);
-    //if(body['status_code']==200){
+   // var body = json.decode(res.body);
+    print(res.body);
+   var body = jsonDecode(res.body.toString());
+    print(body);
+   // if(body['status']==200){
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('token', body['token']);
     token=body['token'];
@@ -207,6 +236,38 @@ class _SignInState extends State<SignIn> {
 
   }
 
+
+  Future postData() async{
+    var data = {
+      'email' : mailController.text,
+      'password' : passwordController.text,
+    };
+    print(data['password']);
+    final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/users/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(data));
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('exception occured!!!!!!');
+    }
+  }
+
+  showSnackbarMessage(String message, bool isSuccess) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: CustomMessageDialog.instance.showMessageDialog(
+          context: context, isSuccess: isSuccess, message: message),
+      duration: Duration(milliseconds: Styles.instance.snackbarMessageDuration),
+    ));
+  }
+
+
   void _getProfile()async{
     var res = await CallApi().getProfile('users/profile',token);
     var body = json.decode(res.body);
@@ -218,4 +279,61 @@ class _SignInState extends State<SignIn> {
     print(userId);
     // print(body);
   }
+}
+
+class CustomMessageDialog {
+  static CustomMessageDialog _instance;
+  static CustomMessageDialog get instance {
+    if (_instance == null) _instance = CustomMessageDialog._initialize();
+    return _instance;
+  }
+
+  Widget showMessageDialog({BuildContext context, String message, bool isSuccess}) {
+    return Container(
+      child: Row(
+        children: [
+          Flexible(
+            flex: 1,
+            child: Icon(
+              isSuccess ? Icons.done : Icons.error_outline,
+              color: isSuccess ? Styles.instance.successIconColor : Styles.instance.errorIconColor,
+              size: Styles.instance.messageDialogIconSize,
+            ),
+          ),
+          const SizedBox(width: 15),
+          Flexible(
+            flex: 3,
+            child: Text(
+              message,
+              style: TextStyle(fontSize: 17.5, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  CustomMessageDialog._initialize();
+}
+
+
+class Styles {
+  static Styles _instance;
+  static Styles get instance {
+    if (_instance == null) _instance = Styles._initialize();
+    return _instance;
+  }
+
+  Styles._initialize();
+
+  TextStyle defaultButtonTextStyle = TextStyle(fontSize: 18, color: Colors.white);
+  TextStyle defaultTitleStyle = TextStyle(fontSize: 18, color: Colors.black, letterSpacing: 1.3);
+  Color defaultPrefixIconColor = Colors.white; double defaultPrefixIconSize = 32.0;
+  Color formPrefixIconColor = Colors.black;
+  TextStyle snackbarTitleStyle = TextStyle(fontSize: 17, color: Colors.white, letterSpacing: 1.1);
+
+  Color successIconColor = Colors.green;
+  Color errorIconColor = Colors.red;
+  double messageDialogIconSize = 24;
+  int snackbarMessageDuration = 1300;
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mapbox_search/mapbox_search.dart';
+import 'package:mapbox_search_flutter/mapbox_search_flutter.dart';
+import 'package:smart_select/smart_select.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/models/ambiance.dart';
@@ -9,12 +12,15 @@ import 'package:tawelticlient/recherche/result.dart';
 import 'package:tawelticlient/services/ambiance.services.dart';
 import 'package:tawelticlient/services/etablissement.services.dart';
 import 'package:tawelticlient/services/general.services.dart';
-import 'package:tawelticlient/widget/AppBar.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:tawelticlient/services/restaurant.services.dart';
 import '../constants.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/services/user.services.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Filtrage extends StatefulWidget {
   const Filtrage({Key key}) : super(key: key);
@@ -25,8 +31,9 @@ class Filtrage extends StatefulWidget {
 
 class _FiltrageState extends State<Filtrage> {
   AmbianceServices get ambianceService => GetIt.I<AmbianceServices>();
-  CuisineServices get cuisineService => GetIt.I< CuisineServices>();
-  EtablissementServices get etablissementService => GetIt.I<EtablissementServices>();
+  CuisineServices get cuisineService => GetIt.I<CuisineServices>();
+  EtablissementServices get etablissementService =>
+      GetIt.I<EtablissementServices>();
   GeneralServices get generalService => GetIt.I<GeneralServices>();
 
   List<String> ambiance = [];
@@ -42,25 +49,66 @@ class _FiltrageState extends State<Filtrage> {
   List<int> results = [];
 
   bool _isLoading = true;
-  APIResponse<List<Ambiance>> _apiResponse;
+  APIResponse<List<Ambiance>> _apiResponseAmbiance;
   APIResponse<List<Cuisine>> _apiResponseCuisine;
   APIResponse<List<Etablissement>> _apiResponseEtablissement;
   APIResponse<List<General>> _apiResponseGeneral;
+  Position _currentPosition;
+  String _currentAddress;
+  final Geolocator geolocator = Geolocator();
+  RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
+  List<Restaurant> _foundRestaurants = [];
+  APIResponse<List<Restaurant>> _apiResponse;
 
+
+  _fetchRestaurants() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _apiResponse = await restaurantService.getRestaurantsList();
+    _foundRestaurants = _apiResponse.data;
+    print(_apiResponse.data.length);
+    print(_apiResponse.data);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  List<String> list = [
+    'Nabeul,tunisie',
+    'Hamamet Sud,tunisie',
+    'Hamamet nord,tunisie',
+    'Kelibia,tunisie',
+    'Tunis,tunisie',
+    'carthage,tunisie',
+    'menzah,tunisie',
+    'Gammart,tunisie',
+    'Nasr,tunisie',
+    'Lagoulette,tunisie',
+    'Sousse,tunisie',
+    'Kantaoui,tunisie',
+    'Djerba,tunisie',
+    'Monastir,tunisie'
+  ];
+
+
+  String value = 'hamamet';
   _fetchAmbiances() async {
     setState(() {
       _isLoading = true;
     });
 
-    _apiResponse = await ambianceService.getListAmbiance();
+    _apiResponseAmbiance = await ambianceService.getListAmbiance();
     //_foundRestaurants = _apiResponse.data;
     print(_apiResponse.data.length);
     print(_apiResponse.data);
     setState(() {
       _isLoading = false;
-      filterAmbiances = _apiResponse.data;
+      filterAmbiances = _apiResponseAmbiance.data;
     });
   }
+
   _fetchCuisines() async {
     setState(() {
       _isLoading = true;
@@ -73,22 +121,25 @@ class _FiltrageState extends State<Filtrage> {
     setState(() {
       _isLoading = false;
     });
-    filterCuisines=_apiResponseCuisine.data;
+    filterCuisines = _apiResponseCuisine.data;
   }
+
   _fetchEtablissement() async {
     setState(() {
       _isLoading = true;
     });
 
-    _apiResponseEtablissement = await etablissementService.getListEtablissement();
+    _apiResponseEtablissement =
+        await etablissementService.getListEtablissement();
     //_foundRestaurants = _apiResponse.data;
     print(_apiResponseEtablissement.data.length);
     print(_apiResponseEtablissement.data);
     setState(() {
       _isLoading = false;
     });
-    filterEtablissements=_apiResponseEtablissement.data;
+    filterEtablissements = _apiResponseEtablissement.data;
   }
+
   _fetchGenerals() async {
     setState(() {
       _isLoading = true;
@@ -101,7 +152,7 @@ class _FiltrageState extends State<Filtrage> {
     setState(() {
       _isLoading = false;
     });
-    filterGenerals=_apiResponseGeneral.data;
+    filterGenerals = _apiResponseGeneral.data;
   }
 
   // _listAmbianceDb() {
@@ -116,13 +167,13 @@ class _FiltrageState extends State<Filtrage> {
     for (var i = 0; i < ambiance.length; i++) {
       for (var j = 0; j < _apiResponse.data.length; j++) {
         if (ambiance[i].toLowerCase() ==
-            _apiResponse.data[j].type.toLowerCase()) {
-          if (results.contains(_apiResponse.data[j].restaurantId)) {
+            _apiResponseAmbiance.data[j].type.toLowerCase()) {
+          if (results.contains(_apiResponseAmbiance.data[j].restaurantId)) {
             print(
                 'Using loop: ${filterAmbiances[j].type},${filterAmbiances[j].restaurantId}');
             j++;
           } else {
-            results.add(_apiResponse.data[j].restaurantId);
+            results.add(_apiResponseAmbiance.data[j].restaurantId);
             print(
                 'Using loop: ${filterAmbiances[j].type},${filterAmbiances[j].restaurantId}');
           }
@@ -131,6 +182,7 @@ class _FiltrageState extends State<Filtrage> {
     }
     print(results);
   }
+
   findRestaurantUsingCuisine(List<String> cuisine) {
     print(cuisine);
     print(_apiResponseCuisine.data);
@@ -152,6 +204,7 @@ class _FiltrageState extends State<Filtrage> {
     }
     print(results);
   }
+
   findRestaurantUsingEtablissement(List<String> etablissement) {
     print(etablissment);
     print(_apiResponseEtablissement.data);
@@ -159,7 +212,8 @@ class _FiltrageState extends State<Filtrage> {
       for (var j = 0; j < _apiResponseEtablissement.data.length; j++) {
         if (etablissment[i].toLowerCase() ==
             _apiResponseEtablissement.data[j].type.toLowerCase()) {
-          if (results.contains(_apiResponseEtablissement.data[j].restaurantId)) {
+          if (results
+              .contains(_apiResponseEtablissement.data[j].restaurantId)) {
             print(
                 'Using loop: ${filterEtablissements[j].type},${filterEtablissements[j].restaurantId}');
             j++;
@@ -173,10 +227,11 @@ class _FiltrageState extends State<Filtrage> {
     }
     print(results);
   }
-  findRestaurantUsingGeneral(List<String>general) {
+
+  findRestaurantUsingGeneral(List<String> general) {
     print(general);
     print(_apiResponseGeneral.data);
-    for (var i = 0; i <general.length; i++) {
+    for (var i = 0; i < general.length; i++) {
       for (var j = 0; j < _apiResponseGeneral.data.length; j++) {
         if (general[i].toLowerCase() ==
             _apiResponseGeneral.data[j].type.toLowerCase()) {
@@ -194,283 +249,352 @@ class _FiltrageState extends State<Filtrage> {
     }
     print(results);
   }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    getLocation();
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+  }
+
+  getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print(position.latitude);
+    print(position.longitude);
+
+    getCurrentAddress(position.latitude,position.longitude);
+  }
+
+  List<Address> resultAdress = [];
+
+
+  getCurrentAddress(latitude,longitude) async {
+    var address;
+
+    final coordinates = new Coordinates(latitude,longitude);
+    resultAdress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = resultAdress.first;
+    if (first != null) {
+      address = first.featureName;
+      address = " $address, ${first.subLocality}";
+      address = " $address, ${first.subLocality}";
+      address = " $address, ${first.locality}";
+      address = " $address, ${first.countryName}";
+      address = " $address, ${first.postalCode}";
+
+      // locationController.text = address;
+      print(address);
+      print(first.countryName);
+      setState(() {
+        value=first.countryName.toString();
+
+      });
+    }
+    return address;
+  }
+
+  _findRestaurantsWithLocation(value){
+    _foundRestaurants.forEach((element) {
+      if(element.adresse.toUpperCase().contains(value.substring(0, 4).toUpperCase())){
+        print(element.NomResto);
+      }
+    });
+  }
+
+
+  var placesSearch = PlacesSearch(
+    apiKey:
+        'pk.eyJ1IjoibWFsZWs3NTEiLCJhIjoiY2t1YTh3d3Y4MGVmdzJubXZhbjNuZnE1aiJ9.fOE93kvySi-HSIgEhixglQ',
+    limit: 5,
+  );
+  Future<List<MapBoxPlace>> getPlaces() {
+    print(placesSearch.getPlaces("New York"));
+    placesSearch.getPlaces("New York");
+  }
+
+
   @override
   void initState() {
+    _fetchRestaurants();
     _fetchAmbiances();
     _fetchCuisines();
     _fetchGenerals();
     _fetchEtablissement();
+    _determinePosition();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: AppBarWidget(
-          title: 'Filter',
-        ),
-      ),
+
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _titleContainer("Type of establishment"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+            TextButton(
+              onPressed: (){
+               // _determinePosition();
+                _findRestaurantsWithLocation(value);
+              },
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Container(
-                    child: Wrap(
-                  spacing: 5.0,
-                  runSpacing: 3.0,
-                  children: <Widget>[
-                    FilterChipWidget(
-                      chipName: 'BeachBar',
-                      chips: etablissment,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Lounge',
-                      chips: etablissment,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'tea room',
-                      chips: etablissment,
-                    ),
+                child: _titleContainer("Location"),
+              ),
+            ),
+            TextButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                         // mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            MapBoxPlaceSearchWidget(
+                             // height: 50,
+                              popOnSelect: true,
+                              apiKey:
+                                  "pk.eyJ1IjoibWFsZWs3NTEiLCJhIjoiY2t1YTh3d3Y4MGVmdzJubXZhbjNuZnE1aiJ9.fOE93kvySi-HSIgEhixglQ",
+                              searchHint: 'Your Hint here',
+                              onSelected: (place) {
+                                list.add(place.text);
+                                setState(() {
+                                  value=place.text;
+                                  _findRestaurantsWithLocation(value);
+                                });
+                              },
+                              context: context,
+                            ),
+                            Container(
+                              height:MediaQuery.of(context).size.height*0.4,
+                              child: ListView.builder(
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(list[index]),
+                                      //leading: new Icon(Icons.share),
+                                      onTap: () {
+                                        setState(() {
+                                          value = list[index];
+                                          _findRestaurantsWithLocation(value);
+                                        });
+
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  }),
+                            ),
+                          ],
+                        );
+                      });
+                },
+                child: Row(
+                  children: [
+                    Icon(Icons.place_outlined),
+                    Text(value),
+                    Icon(Icons.arrow_drop_down_rounded)
                   ],
                 )),
-              ),
-            ),
-            Divider(
-              color: Colors.blueGrey,
-              height: 10.0,
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child: _titleContainer("Type of establishment"),
             ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _titleContainer('Kitchen'),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
+              child: Container(
                   child: Wrap(
-                    spacing: 5.0,
-                    runSpacing: 5.0,
-                    children: <Widget>[
-                      FilterChipWidget(
-                        chipName: 'Cuisine française',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Cuisine Tunisienne',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Cuisine italienne',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Libanese',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Asian',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Mexican',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'European',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Steak',
-                        chips: cuisine,
-                      ),
-                      FilterChipWidget(
-                        chipName: 'Sea Food',
-                        chips: cuisine,
-                      ),
-                    ],
+                //spacing: 5.0,
+                //runSpacing: 3.0,
+                children: <Widget>[
+                  FilterChipWidget(
+                    chipName: 'BeachBar',
+                    chips: etablissment,
                   ),
-                ),
-              ),
+                  FilterChipWidget(
+                    chipName: 'Lounge',
+                    chips: etablissment,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'tea room',
+                    chips: etablissment,
+                  ),
+                ],
+              )),
             ),
+
             Divider(
               color: Colors.blueGrey,
               height: 10.0,
             ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _titleContainer("Budget"),
-              ),
+              child: _titleContainer("Budget"),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                    child: Wrap(
-                  spacing: 5.0,
-                  runSpacing: 3.0,
-                  children: <Widget>[
-                    FilterChipWidget(
-                      chipName: '\$',
-                      chips: budget,
-                    ),
-                    FilterChipWidget(
-                      chipName: '\$\$',
-                      chips: budget,
-                    ),
-                    FilterChipWidget(
-                      chipName: '\$\$\$',
-                      chips: budget,
-                    ),
-                  ],
-                )),
-              ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                  child: Wrap(
+                spacing: 5.0,
+                runSpacing: 3.0,
+                children: <Widget>[
+                  FilterChipWidget(
+                    chipName: '\$',
+                    chips: budget,
+                  ),
+                  FilterChipWidget(
+                    chipName: '\$\$',
+                    chips: budget,
+                  ),
+                  FilterChipWidget(
+                    chipName: '\$\$\$',
+                    chips: budget,
+                  ),
+                ],
+              )),
             ),
+
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: _titleContainer("Ambiance"),
+            // ),
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: Container(
+            //       child: Wrap(
+            //     spacing: 5.0,
+            //     runSpacing: 3.0,
+            //     children: <Widget>[
+            //       FilterChipWidget(
+            //         chipName: 'Festive',
+            //         chips: ambiance,
+            //       ),
+            //       FilterChipWidget(
+            //         chipName: 'Calm',
+            //         chips: ambiance,
+            //       ),
+            //       FilterChipWidget(
+            //         chipName: 'Romantic',
+            //         chips: ambiance,
+            //       ),
+            //       FilterChipWidget(
+            //         chipName: 'Business',
+            //         chips: ambiance,
+            //       ),
+            //       FilterChipWidget(
+            //         chipName: 'Family',
+            //         chips: ambiance,
+            //       ),
+            //     ],
+            //   )),
+            // ),
             Divider(
               color: Colors.blueGrey,
               height: 10.0,
             ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _titleContainer("Ambiance"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                    child: Wrap(
-                  spacing: 5.0,
-                  runSpacing: 3.0,
-                  children: <Widget>[
-                    FilterChipWidget(
-                      chipName: 'Festive',
-                      chips: ambiance,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Calm',
-                      chips: ambiance,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Romantic',
-                      chips: ambiance,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Business',
-                      chips: ambiance,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Family',
-                      chips: ambiance,
-                    ),
-                  ],
-                )),
-              ),
-            ),
-            Divider(
-              color: Colors.blueGrey,
-              height: 10.0,
+              child: _titleContainer("General"),
             ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _titleContainer("General"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                    child: Wrap(
-                  spacing: 5.0,
-                  runSpacing: 3.0,
-                  children: <Widget>[
-                    FilterChipWidget(
-                      chipName: 'Requires reservation',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Car parking',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Smoking area',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'No smoking area',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Children area',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'restaurant tickets',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'check',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Animals allowed',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Alcohol',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Shisha',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Indoors',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Outdoors',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'TPE',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'WIFI',
-                      chips: general,
-                    ),
-                    FilterChipWidget(
-                      chipName: 'Karaoke',
-                      chips: general,
-                    ),
-                  ],
-                )),
-              ),
+              child: Container(
+                  child: Wrap(
+                spacing: 5.0,
+                runSpacing: 3.0,
+                children: <Widget>[
+                  FilterChipWidget(
+                    chipName: 'Requires reservation',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Car parking',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Smoking area',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'No smoking area',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Children area',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'restaurant tickets',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'check',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Animals allowed',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Alcohol',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Shisha',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Indoors',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Outdoors',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'TPE',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'WIFI',
+                    chips: general,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Karaoke',
+                    chips: general,
+                  ),
+                ],
+              )),
             ),
             Divider(
               color: Colors.blueGrey,
@@ -502,396 +626,11 @@ class _FiltrageState extends State<Filtrage> {
   }
 }
 
-/*
-class Filtrage extends StatefulWidget {
-  @override
-  _FiltrageState createState() => _FiltrageState();
-}
-
-class _FiltrageState extends State<Filtrage> {
-  bool estclick = false;
-  bool kitclick = false;
-  bool budclick = false;
-  bool ambclick = false;
-  bool genclick = false;
-
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-  UserServices get userService => GetIt.I<UserServices>();
-  CuisineServices get cuisineservice => GetIt.I<CuisineServices>();
-  bool _isLoading = false;
-  TextEditingController NameController = TextEditingController();
-  List<Restaurant> reservations = [];
-  List<Cuisine> cuisine = [];
-  APIResponse<List<Restaurant>> _apiResponse;
-  List<Restaurant> _foundRestaurants = [];
-  String errorMessage;
-  List<String> listcriteres=[];
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: KBlue,
-        ),
-        title: Center(
-          child: Text(
-            'filter parameters',
-            style: TextStyle(
-                fontSize: 25,
-                color: KBlue,
-                fontFamily: 'ProductSans',
-                letterSpacing: 1,
-                fontWeight: FontWeight.w100),
-          ),
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FilterParameter(
-                  title: 'Type of establishment :',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Lounge',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Beachbar',
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Tea room',
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                FilterParameter(
-                  title: 'Kitchen :',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Frensh',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Tunisian',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Italian',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Turkish',
-                        ),
-                        MyStatefulWidget(
-                          title: 'American',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Lebanese',
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Seafood',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Steak',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Mexican',
-                        ),
-                        MyStatefulWidget(
-                          title: 'European',
-                        ),
-                        MyStatefulWidget(
-                          title: 'African',
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                FilterParameter(
-                  title: 'Budget :',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MyStatefulWidget(
-                      title: '*',
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    MyStatefulWidget(
-                      title: '**',
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    MyStatefulWidget(
-                      title: '***',
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                FilterParameter(
-                  title: 'Ambiance :',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Festive',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Calm',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Romantic',
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Buisness',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Family',
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                FilterParameter(
-                  title: 'General :',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Requires reservation',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Car park',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Smoking area',
-                        ),
-                        MyStatefulWidget(
-                          title: 'No smoking',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Children area',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Ticket restaurant',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Check',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Animals',
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.02,
-                    ),
-                    Column(
-                      children: [
-                        MyStatefulWidget(
-                          title: 'Alcohol',
-                        ),
-                        MyStatefulWidget(
-                          title: 'shisha',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Outdoors',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Indoors',
-                        ),
-                        MyStatefulWidget(
-                          title: 'TPE',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Wifi',
-                        ),
-                        MyStatefulWidget(
-                          title: 'Karaoke',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    margin: EdgeInsets.only(top: 25),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10), color: KBlue),
-                    child: Text(
-                      'Check result',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  findRestaurantUsingLoop(
-      List<Restaurant> restaurants, List<String> cuisineType) {
-    List<Restaurant> results = [];
-    print(cuisineType);
-    if (cuisineType.length == null) {
-      setState(() {
-        results = _apiResponse.data;
-      });
-    } else {
-      for (var i = 0; i < restaurants.length; i++) {
-        for (var j = 0; j < cuisineType.length; j++) {
-          if (cuisine[i].type == cuisineType[j].toLowerCase()) {
-            results.add(restaurants[i]);
-            print('Using loop: ${restaurants[i].NomResto}');
-            setState(() {
-              _foundRestaurants = results;
-            });
-          }
-        }
-      }
-    }
-  }
-}
-
-class FilterParameter extends StatelessWidget {
-  final String title;
-
-  const FilterParameter({
-    Key key,
-    this.title,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Text(
-        title,
-        style: TextStyle(
-            fontSize: 22.5, color: KBlue, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  final String title;
-
-  const MyStatefulWidget({Key key, this.title}) : super(key: key);
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-/// This is the private State class that goes with MyStatefulWidget.
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  bool isChecked = false;
-  @override
-  Widget build(BuildContext context) {
-    Color getColor(Set<MaterialState> states) {
-      return KBlue;
-    }
-
-    return Row(
-      children: [
-        Checkbox(
-          checkColor: Colors.white,
-          fillColor: MaterialStateProperty.resolveWith(getColor),
-          value: isChecked,
-          onChanged: (bool value) {
-            setState(() {
-              isChecked = value;
-            });
-          },
-        ),
-        Text(
-          widget.title,
-          style: TextStyle(color: KBlue, fontSize: 20),
-        ),
-      ],
-    );
-  }
-}
-*/
-
 Widget _titleContainer(String myTitle) {
   return Text(
     myTitle,
     style: TextStyle(
-        color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold),
+        color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold),
   );
 }
 
@@ -911,8 +650,10 @@ class _FilterChipWidgetState extends State<FilterChipWidget> {
   Widget build(BuildContext context) {
     return FilterChip(
       label: Text(widget.chipName),
-      labelStyle:
-          TextStyle(color: KBlue, fontSize: 16.0, fontWeight: FontWeight.bold),
+      labelStyle: TextStyle(
+        color: KBlue,
+        fontSize: 14.0,
+      ),
       selected: _isSelected,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),

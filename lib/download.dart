@@ -10,6 +10,7 @@ import 'package:ndialog/ndialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:path/path.dart' as path;
+import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 
@@ -41,7 +42,7 @@ class _FileDownloadState extends State<FileDownload> {
     print(widget.random);
     dio=Dio();
     //final result =bwsService.printInvoicePDF('700');
-    courseContent.add(Course(title:"Chapter 2",path:"http://37.187.198.241:3000/PrintInvoice/"+widget.random+".pdf"));
+    courseContent.add(Course(title:"Chapter 2",path:"http://10.0.2.2:3000/PrintInvoice/"+widget.random+".pdf"));
     // String url =courseContent[0].path;
     // String extension=url.substring(url.lastIndexOf("/"));
   }
@@ -152,34 +153,39 @@ class _FileDownloadState extends State<FileDownload> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('Your reservation is added succesfully,download your invoice'),
-                ElevatedButton(
-                  onPressed: ()async{
-                    _getDownloadDirectory().then((value) {
-                      final savePath = path.join(value.path,);
+                Text('Your reservation is added succesfully,download your invoice',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: KBeige.withOpacity(0.8),
+                  child: TextButton(
 
-                      File f=File(savePath+"$extension");
-                      if(f.existsSync())
-                      {
-                        Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return PDFScreen(f.path);
-                        }));
-                        return;
-                      }
-                      print(url);
-                      downloadFile(url,"$savePath/$extension");
-                    });
+                    onPressed: ()async{
+                      _getDownloadDirectory().then((value) {
+                        final savePath = path.join(value.path,);
 
-                  }, child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.download_outlined),
-                      Text("Download",style: TextStyle(fontSize: 16,color: Colors.white),),
-                    ],
-                  ),),
+                        File f=File(savePath+"$extension");
+                        if(f.existsSync())
+                        {
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return PDFScreen(f.path);
+                          }));
+                          return;
+                        }
+                        print(url);
+                        downloadFile(url,"$savePath/$extension");
+                      });
+
+                    }, child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.download_outlined,color: Colors.white,),
+                        Text("Download",style: TextStyle(fontSize: 18,color: Colors.white),),
+                      ],
+                    ),),
+                ),
               ],
             ),
           ),

@@ -243,16 +243,23 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
                             ),
                           ],
                         ),
-                        TextButton(
-                          onPressed: (){
-                            Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
-                          },
-                          child: Text(
-                            'Add reservation',
-                            style: TextStyle(fontSize: 16, color: KBeige),
+                        Padding(
+                          padding: const EdgeInsets.only(top:12.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: KBeige,
+                            child: TextButton(
+                              onPressed: (){
+                                Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
+                              },
+                              child: Text(
+                                'Add reservation',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                       ],
