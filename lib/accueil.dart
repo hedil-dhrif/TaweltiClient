@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:tawelticlient/HomePage.dart';
 import 'package:tawelticlient/client/Profil.dart';
-
 import 'constants.dart';
-import 'reservation/AddReservation.dart';
-import 'reservation/ReservationList.dart';
 import 'reservation/ReservationList.dart';
 class Accueil extends StatefulWidget {
   final int userId;
@@ -26,7 +23,7 @@ class _AccueilState extends State<Accueil> {
     List<Widget> _buildScreens() {
       return [
         HomePage(),
-        ReservationtList(),
+        ReservationList(),
         ClientProfil(userID:widget.userId ,)
       ];
     }

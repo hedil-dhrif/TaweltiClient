@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
-import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/models/ambiance.dart';
 import 'package:tawelticlient/models/etablissement.dart';
 import 'package:tawelticlient/models/general.dart';
@@ -14,7 +13,6 @@ import '../constants.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tawelticlient/api/api_Response.dart';
-import 'package:tawelticlient/services/user.services.dart';
 
 class Filtrage extends StatefulWidget {
   const Filtrage({Key key}) : super(key: key);
@@ -243,6 +241,10 @@ class _FiltrageState extends State<Filtrage> {
                       chipName: 'tea room',
                       chips: etablissment,
                     ),
+                    FilterChipWidget(
+                      chipName: 'restaurant',
+                      chips: etablissment,
+                    ),
                   ],
                 )),
               ),
@@ -268,15 +270,15 @@ class _FiltrageState extends State<Filtrage> {
                     runSpacing: 5.0,
                     children: <Widget>[
                       FilterChipWidget(
-                        chipName: 'Cuisine française',
+                        chipName: 'française',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'Cuisine Tunisienne',
+                        chipName: 'Tunisienne',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'Cuisine italienne',
+                        chipName: 'italienne',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
@@ -284,15 +286,15 @@ class _FiltrageState extends State<Filtrage> {
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'Asian',
+                        chipName: 'Asiatique',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'Mexican',
+                        chipName: 'Mediteranienne',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'European',
+                        chipName: 'Europenne',
                         chips: cuisine,
                       ),
                       FilterChipWidget(
@@ -300,7 +302,11 @@ class _FiltrageState extends State<Filtrage> {
                         chips: cuisine,
                       ),
                       FilterChipWidget(
-                        chipName: 'Sea Food',
+                        chipName: 'Fruits de mer/Poisson',
+                        chips: cuisine,
+                      ),
+                      FilterChipWidget(
+                        chipName: 'Divers',
                         chips: cuisine,
                       ),
                     ],
@@ -369,11 +375,11 @@ class _FiltrageState extends State<Filtrage> {
                       chips: ambiance,
                     ),
                     FilterChipWidget(
-                      chipName: 'Calm',
+                      chipName: 'Calme',
                       chips: ambiance,
                     ),
                     FilterChipWidget(
-                      chipName: 'Romantic',
+                      chipName: 'Romantique',
                       chips: ambiance,
                     ),
                     FilterChipWidget(
@@ -381,7 +387,11 @@ class _FiltrageState extends State<Filtrage> {
                       chips: ambiance,
                     ),
                     FilterChipWidget(
-                      chipName: 'Family',
+                      chipName: 'Familiale',
+                      chips: ambiance,
+                    ),
+                    FilterChipWidget(
+                      chipName: 'Live music',
                       chips: ambiance,
                     ),
                   ],

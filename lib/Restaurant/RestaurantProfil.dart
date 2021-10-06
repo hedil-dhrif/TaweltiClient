@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
-import 'package:tawelticlient/models/file.dart';
 import 'package:tawelticlient/reservation/AddReservation.dart';
 import 'package:tawelticlient/services/file.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
-import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/NestedTab.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:tawelticlient/widget/profileCarousel.dart';
@@ -191,12 +187,13 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                          width: 200,
+                        padding: EdgeInsets.only(bottom: 10),
+                          width: MediaQuery.of(context).size.width*0.5,
                           child: Text(
                             name.toUpperCase(),
                             style: TextStyle(
                                 color: KBlue,
-                                fontSize: 30,
+                                fontSize: 27.5,
                                 fontWeight: FontWeight.bold),
                           )),
                       CircleAvatar(
@@ -258,16 +255,24 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: (){
+                  GestureDetector(
+                    onTap: (){
                       Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
                     },
-                    child: Text(
-                      'Add reservation',
-                      style: TextStyle(fontSize: 16, color: KBeige),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: KBeige,
+                        borderRadius: BorderRadius.circular(5)
+                      ),
+                      child: Text(
+                        'Add reservation',
+                        style: TextStyle(fontSize: 17.5, color: KBackgroundColor),
+                      ),
                     ),
                   ),
                 ],

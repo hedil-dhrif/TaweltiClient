@@ -1,11 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tawelticlient/Restaurant/RestaurantProfil.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/RechercheBar.dart';
-import 'package:tawelticlient/widget/RestaurantCard.dart';
 
 import '../constants.dart';
 
@@ -16,13 +17,11 @@ class ResultRecherche extends StatefulWidget {
 // final List<String> etablissemnt;
 // final List<String> budget;
 //ResultRecherche({this.general,this.ambiance,this.budget,this.cuisine,this.etablissemnt});
-final List<int> restaurantsIDs;
-ResultRecherche({this.restaurantsIDs});
+  final List<int> restaurantsIDs;
+  ResultRecherche({this.restaurantsIDs});
   @override
   _ResultRechercheState createState() => _ResultRechercheState();
 }
-
-
 
 class _ResultRechercheState extends State<ResultRecherche> {
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
@@ -31,16 +30,30 @@ class _ResultRechercheState extends State<ResultRecherche> {
   bool _isLoading = false;
   bool get isEditing => widget.restaurantsIDs != null;
   String errorMessage;
-Restaurant restaurant;
+  Restaurant restaurant;
+  String adresse;
+  String description;
+  String name;
+  String phone;
+  String email;
+  String web;
+  int userId;
+  String kitchen;
+  bool _enabled = true;
+  String etablissement;
+  String general;
+  String ambiance;
+  int restaurantID;
   @override
   void initState() {
     print(widget.restaurantsIDs);
-   _fetchFilteredRestaurants();
+    _fetchFilteredRestaurants();
     super.initState();
   }
+
   _fetchFilteredRestaurants() async {
     print(widget.restaurantsIDs);
-    for(int i=0;i<widget.restaurantsIDs.length;i++){
+    for (int i = 0; i < widget.restaurantsIDs.length; i++) {
       if (isEditing) {
         setState(() {
           _isLoading = false;
@@ -57,132 +70,90 @@ Restaurant restaurant;
           }
           restaurant = response.data;
           print(restaurant);
+          adresse = restaurant.adresse;
+          description = restaurant.description;
+          name = restaurant.NomResto;
+          restaurantID = restaurant.id;
+          userId = restaurant.userId;
+          //kitchen = cuisine.type;
+          print(adresse);
+          print('the id is ${restaurantID}');
+          //print(kitchen);
+          print(description);
+          print(name);
+          print(userId);
           //_foundRestaurants.add(restaurant);
         });
       }
     }
-
   }
+
   _buildRestaurant(restaurant) {
     print(restaurant);
     //List ListPhotos=['assets/plaza_corniche.jpg','assets/the_cliff.jpg','assets/villa_didon.jpg','assets/maison_bleue.jpg','assets/maison_bleue.jpg','assets/maison_bleue.jpg',];
-        return _isLoading?CircularProgressIndicator():GestureDetector(
-          onTap: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => RestaurantProfil(
-            //           restaurantId: _apiResponse[index].id,
-            //         )));
-          },
-          child: RechercheCard(
-            name: restaurant.NomResto,
-            adresse: restaurant.adresse,
-            description: restaurant.description,
-          ),
-        );
+    return _isLoading
+        ? CircularProgressIndicator()
+        : GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantProfil(
+                restaurantId: restaurantID,
+              )));
+            },
+            child: RechercheCard(
+              name: restaurant.NomResto,
+              adresse: restaurant.adresse,
+              description: restaurant.description,
+            ),
+          );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: AppBarWidget(
-          title: 'Result page',
-        ),
-      ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0XFFF4F4F4),
       body: ListView(
         children: [
           Column(
             children: [
+              Padding(
+                padding: EdgeInsets.only(top: 20, bottom: 10),
+                child: RechercheBarFilter(),
+              ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
                       Text(
-                          'Filtred by: ',
+                        'Filtrer par: ',
                         style: TextStyle(
-                          fontSize: 18,
-                          color: KBlue,
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.bold,
+                            color: KBlue,
+                            fontSize: 20
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: KBlue, width: 1)
-                        ),
-                        child: Text(
-                            'Location',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: KBlue,
-                          ),
-                        ),
+                      FilterParameter(
+                        ontapped: (){},
+                        parameter: 'Les plus proches',
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: KBlue, width: 1)
-                        ),
-                        child: Text(
-                            'Rate',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: KBlue,
-                          ),
-                        ),
+                      FilterParameter(
+                        ontapped: (){},
+                        parameter: 'Prix',
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: KBlue, width: 1)
-                        ),
-                        child: Text(
-                            'Price',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: KBlue,
-                          ),
-                        ),
+                      FilterParameter(
+                        ontapped: (){},
+                        parameter: 'Ouvert maintement',
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: KBlue, width: 1)
-                        ),
-                        child: Text(
-                            'Open now',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: KBlue,
-                          ),
-                        ),
-                      )
+                      FilterParameter(
+                        ontapped: (){},
+                        parameter: 'évaluation',
+                      ),
                     ],
                   ),
                 ),
               ),
               _buildRestaurant(restaurant),
-              //RechercheCard(),
-              Divider(thickness: 3.0,),
-              // SizedBox(height: 15,),
-              // RechercheCard(),
-              // SizedBox(height: 15,),
-              // RechercheCard(),
-              // SizedBox(height: 15,),
             ],
           )
         ],
@@ -192,21 +163,18 @@ Restaurant restaurant;
 }
 
 class RechercheCard extends StatelessWidget {
-
   final String name;
   final String adresse;
   final String description;
-  RechercheCard({this.adresse,this.description,this.name});
+  RechercheCard({this.adresse, this.description, this.name});
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(5),
-      // width: MediaQuery.of(context).size.width*0.8,
-      // height: MediaQuery.of(context).size.height*0.325,
-      // decoration: BoxDecoration(
-      //   color: KBlue,
-      //   borderRadius: BorderRadius.circular(15),
-      // ),
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
       child: Column(
         children: [
           Row(
@@ -214,71 +182,94 @@ class RechercheCard extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: Image.asset(
-                      'assets/restaurant.jpg',
+                    'assets/restaurant.jpg',
                   ),
                 ),
               ),
               Flexible(
                 flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         name,
-                        style: TextStyle(
-                            color: KBlue,
-                            fontSize: 17.5
-                        ),
+                        style: TextStyle(color: KBlue, fontSize: 17.5),
+                      ),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        ' * * * *',
+                        style: TextStyle(color: KBlue, fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 3,
                       ),
                       Text(
                         adresse,
-                        style: TextStyle(
-                            color: KBlue,
-                            fontSize: 17.5
-                        ),
+                        style: TextStyle(color: KBlue, fontSize: 15),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.9,
-                        child: Text(
-                          description,
-                          style: TextStyle(
-                              color: KBlue,
-                              fontSize: 12
-                          ),
-                        ),
+                      Divider(
+                        color: KBlue,
+                        thickness: 0.25,
+                        height: 15,
+                      ),
+                      Text(
+                        '\$ ' + '22.5',
+                        style: TextStyle(color: KBlue, fontSize: 17.5),
                       ),
                     ],
                   ),
                 ),
               ),
             ],
-          ),
-          SizedBox(height: 10,),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ResultContainer(),
-                SizedBox(width: 15,),
-                ResultContainer(),
-                SizedBox(width: 15,),
-                ResultContainer(),
-                SizedBox(width: 15,),
-                ResultContainer(),
-                SizedBox(width: 15,),
-                ResultContainer(),
-              ],
-            ),
           )
         ],
       ),
     );
   }
 }
+
+class FilterParameter extends StatelessWidget {
+
+  final Function ontapped;
+  final String parameter;
+
+  const FilterParameter({Key key, this.ontapped, this.parameter}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: ontapped,
+      child: Container(
+        margin: EdgeInsets.only(left: 7.5),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: KBlue.withOpacity(0.75), width: 1)
+        ),
+        child: Center(
+          child: Text(
+            parameter,
+            style: TextStyle(
+              color: KBlue,
+              fontSize: 17
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class ResultContainer extends StatelessWidget {
   const ResultContainer({
@@ -292,11 +283,51 @@ class ResultContainer extends StatelessWidget {
       width: 80,
       decoration: BoxDecoration(
         image: DecorationImage(
-            colorFilter: ColorFilter.mode(
-                Color(0xFF1C3956), BlendMode.dstATop),
+            colorFilter: ColorFilter.mode(Color(0xFF1C3956), BlendMode.dstATop),
             image: ExactAssetImage('assets/restaurant1.jpg'),
             fit: BoxFit.cover),
       ),
+    );
+  }
+}
+
+class RechercheBarFilter extends StatelessWidget {
+  final TextEditingController editingController;
+  final Function changed;
+
+  const RechercheBarFilter({Key key, this.editingController, this.changed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          height: 60,
+          width: MediaQuery.of(context).size.width * 0.85,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: TextField(
+            controller: editingController,
+            onChanged: changed,
+            decoration: InputDecoration(
+              hintText: "Search",
+              hintStyle: TextStyle(
+                color: KBlue,
+                fontSize: 17.5,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: KBlue, width: 1),
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: KBlue,
+                size: 24,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

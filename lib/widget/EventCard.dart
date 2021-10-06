@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import 'package:readmore/readmore.dart';
 
 class EventCard extends StatefulWidget {
   final String EventName;
@@ -28,21 +27,23 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return
+    GestureDetector(
       onTap: widget.pressDetails,
       child: Container(
-        padding: EdgeInsets.only(right: 20),
-        height: MediaQuery.of(context).size.height * 0.25,
-        width: MediaQuery.of(context).size.width * 0.9,
+        margin: EdgeInsets.only(right: 20),
+        height: MediaQuery.of(context).size.height * 0.6,
+        width: MediaQuery.of(context).size.width * 0.5,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              width: MediaQuery.of(context).size.width * 0.375,
+              height: MediaQuery.of(context).size.height * 0.175,
+              width: MediaQuery.of(context).size.width * 0.5,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
@@ -51,62 +52,70 @@ class _EventCardState extends State<EventCard> {
                 ),
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.EventName,
-                      style: TextStyle(
-                        fontSize: 22.5,
-                        color: KBlue,
-                      ),
+            Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  height: MediaQuery.of(context).size.height*0.065,
+                  width: MediaQuery.of(context).size.width*0.1,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: KBlue, width: 1),
+                  ),
+                  child: Center(
+                    child: Text(
+                        widget.dateDebut.toString(),
                     ),
-                    SizedBox(
-                      height: 3.5,
-                    ),
-                    Text(
-                      widget.dateDebut.toString(),
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: KBlue,
-                          fontWeight: FontWeight.w300),
-                    ),
-                    SizedBox(
-                      height: 3.5,
-                    ),
-                    Text(
-                      widget.category,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: KBlue,
-                          fontWeight: FontWeight.w300),
-                    ),
-                    SizedBox(
-                      height: 3.5,
-                    ),
-                    ReadMoreText(
-                      widget.description,
-                      textAlign: TextAlign.justify,
-                      trimLines: 4,
-                      style: TextStyle(
-                          fontSize: 16.5,
-                          color: KBlue,
-                          fontWeight: FontWeight.w200),
-                      colorClickableText: KBlue,
-                      trimMode: TrimMode.Line,
-                      trimCollapsedText: '...Show more',
-                      trimExpandedText: ' show less',
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  flex: 4,
+                  child: Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.EventName,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: KBlue,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 3.5,
+                        ),
+                        Text(
+                          widget.dateDebut.toString(),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: KBlue,
+                              fontWeight: FontWeight.w300),
+                        ),
+                        SizedBox(
+                          height: 3.5,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 10, right: 30),
+                  child: Icon(
+                    Icons.pin_drop,
+                    color: KBlue,
+                    size: 22.5,
+                  ),
+                ),
+                Text('Place',  style: TextStyle(
+                    fontSize: 16,
+                    color: KBlue,
+                    fontWeight: FontWeight.w300),)
+              ],
             )
           ],
         ),

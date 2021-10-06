@@ -133,7 +133,7 @@ class _NestedTabBarState extends State<NestedTabBar>
         Container(
           height: screenHeight * 0.6,
           child: Container(
-              padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+              padding: EdgeInsets.only(left: 20,  right: 20),
               child: ListView(
                 children: [
                   Column(
@@ -189,9 +189,6 @@ class _NestedTabBarState extends State<NestedTabBar>
                       //     ),
                       //   ],
                       // ),
-                      SizedBox(
-                        height: 15,
-                      ),
                       Text(
                         'Description : ',
                         style: TextStyle(
@@ -376,7 +373,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                       ),
 
                       Padding(
-                        padding: const EdgeInsets.only(top:15.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
                           'Events : ',
                           style: TextStyle(
@@ -389,15 +386,14 @@ class _NestedTabBarState extends State<NestedTabBar>
                         width: 15,
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.4,
                         padding: EdgeInsets.only(top: 5),
                         child: EventList(
                           restaurantId: widget.restaurantId,
                         ),
                       ),
-
                       Padding(
-                        padding: const EdgeInsets.only(top:15.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
                           'Your Rating !',
                           style: TextStyle(
@@ -410,7 +406,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                         width: 5,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top:10.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -509,12 +505,19 @@ class _NestedTabBarState extends State<NestedTabBar>
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 15),
-                        child: Text('We would like to hear more about your experience !',style: TextStyle(fontSize: 16,color: KBlue),),
+                        child: Text(
+                          'We would like to hear more about your experience !',
+                          style: TextStyle(fontSize: 16, color: KBlue),
+                        ),
                       ),
-                      TextButton( child: Text('Add your Review',style: TextStyle(color: KBeige,fontSize: 18),)),
+                      TextButton(
+                          child: Text(
+                        'Add your Review',
+                        style: TextStyle(color: KBeige, fontSize: 18),
+                      )),
                       Divider(),
                       Padding(
-                        padding: const EdgeInsets.only(top:15.0,bottom: 15),
+                        padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -528,9 +531,9 @@ class _NestedTabBarState extends State<NestedTabBar>
                             Text(
                               'Read All(400) ',
                               style: TextStyle(
-                                decoration: TextDecoration.underline,
+                                  decoration: TextDecoration.underline,
                                   fontSize: 16,
-                                 // fontWeight: FontWeight.w400,
+                                  // fontWeight: FontWeight.w400,
                                   color: KBeige),
                             ),
                           ],
@@ -539,7 +542,6 @@ class _NestedTabBarState extends State<NestedTabBar>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
-
                         children: [
                           CircleAvatar(
                             child: Text('M'),
@@ -552,8 +554,8 @@ class _NestedTabBarState extends State<NestedTabBar>
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              color: KBeige.withOpacity(0.8),
-                              //  border: Border.all(color: KBeige),
+                                color: KBeige.withOpacity(0.8),
+                                //  border: Border.all(color: KBeige),
                                 borderRadius: BorderRadius.circular(5)),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -571,13 +573,12 @@ class _NestedTabBarState extends State<NestedTabBar>
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top:10.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
                           'loremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsum',
                           style: TextStyle(fontSize: 16, color: KBlue),
                         ),
                       ),
-
                     ],
                   ),
                 ],

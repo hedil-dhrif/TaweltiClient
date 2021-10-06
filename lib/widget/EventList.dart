@@ -84,8 +84,8 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: KBlue,
-      body: Column(
+      backgroundColor: Color(0xFFF4F4F4),
+      body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
@@ -106,6 +106,7 @@ class _EventListState extends State<EventList> {
     if (data.length > 0) {
       return Container(
         child: ListView.separated(
+          scrollDirection: Axis.horizontal,
           itemCount: data.length,
           itemBuilder: (BuildContext context, int index) {
             return Dismissible(

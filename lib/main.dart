@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/accueil.dart';
 import 'package:tawelticlient/auth/start.dart';
-import 'package:tawelticlient/download.dart';
-import 'package:tawelticlient/download.dart';
-import 'package:tawelticlient/models/fileEvent.dart';
 import 'package:tawelticlient/services/ambiance.services.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
@@ -18,13 +15,10 @@ import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/table.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:get_it/get_it.dart';
-
 import 'accueil.dart';
 import 'auth/start.dart';
-import 'download.dart';
 
 void setupLocator() {
-
   GetIt.I.registerLazySingleton(() => EventServices());
   GetIt.I.registerLazySingleton(() => UserServices());
   GetIt.I.registerLazySingleton(() => RestaurantServices());
@@ -37,7 +31,6 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => RestaurantTableServices());
   GetIt.I.registerLazySingleton(() => FileServices());
   GetIt.I.registerLazySingleton(() => FileEventServices());
-
 }
 
 void main() {
@@ -59,22 +52,23 @@ class _MyAppState extends State<MyApp> {
     _checkIfLoggedIn();
     super.initState();
   }
-  void _checkIfLoggedIn() async{
+
+  void _checkIfLoggedIn() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var token = localStorage.getString('token');
-    if(token!= null){
+    if (token != null) {
       setState(() {
         _isLoggedIn = true;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: FileDownload(),
-      home:_isLoggedIn?Accueil():StartPage(),
+      home: _isLoggedIn ? Accueil() : StartPage(),
     );
   }
 }
-
