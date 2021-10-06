@@ -155,7 +155,7 @@ class _FileDownloadState extends State<FileDownload> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('Your reservation is added succesfully,download your invoice',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                Text('Your reservation is added succesfully,download your voucher',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   color: KBeige.withOpacity(0.8),
