@@ -110,7 +110,7 @@ class _DetailReservationState extends State<DetailReservation> {
           leading: IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ReservationtList()));
+                  MaterialPageRoute(builder: (context) => ReservationList()));
             },
             icon: Icon(CupertinoIcons.arrow_left),
           ),

@@ -78,7 +78,7 @@ class _DetailsEventState extends State<DetailsEvent> {
             icon: Icon(CupertinoIcons.arrow_left),
           ),
           title: Text(
-            'Event list',
+            'HAHAHA',
             style: TextStyle(
                 fontSize: 25,
                 color: KBlue,
@@ -100,13 +100,17 @@ class _DetailsEventState extends State<DetailsEvent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height * 0.35,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/event.jpeg'),
+            Align(
+              alignment: Alignment.topCenter,
+              child: ClipPath(
+                clipper: ImageClipper(),
+                child: Image.asset(
+                 "assetst/event.jpeg",
                   fit: BoxFit.cover,
+                  width: MediaQuery.of(context).size.width,
+                  color: Color(0x99000000),
+                  colorBlendMode: BlendMode.darken,
+                  height: MediaQuery.of(context).size.height * 0.5,
                 ),
               ),
             ),
@@ -239,4 +243,29 @@ class _DetailsEventState extends State<DetailsEvent> {
       ),
     );
   }
+}
+
+class ImageClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    Offset curveStartingPoint = Offset(0, 40);
+    Offset curveEndPoint = Offset(size.width, size.height * 0.95);
+    path.lineTo(curveStartingPoint.dx, curveStartingPoint.dy - 5);
+    path.quadraticBezierTo(
+        size.width * 0.2, size.height * 0.85, curveEndPoint.dx - 60,
+        curveEndPoint.dy + 10);
+    path.quadraticBezierTo(
+        size.width * 0.99, size.height * 0.99, curveEndPoint.dx,
+        curveEndPoint.dy);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+
 }

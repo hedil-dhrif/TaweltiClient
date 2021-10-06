@@ -1,3 +1,41 @@
+import 'package:flutter/material.dart';
+import 'package:tawelticlient/widget/reservationcard.dart';
+//import 'package:tawelticlient/widget/reservecard.dart';
+
+import '../constants.dart';
+
+class ReservationList extends StatefulWidget {
+  const ReservationList({Key key}) : super(key: key);
+
+  @override
+  _ReservationListState createState() => _ReservationListState();
+}
+
+class _ReservationListState extends State<ReservationList> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: KBlue,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ReservationCard(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+/*
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -107,14 +145,16 @@ class _ReservationtListState extends State<ReservationtList> {
                 letterSpacing: 1,
                 fontWeight: FontWeight.w100),
           ),
-          /*bottom: PreferredSize(
+          */
+/*bottom: PreferredSize(
             preferredSize: Size(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height * 0.08),
             child: Divider(
               thickness: 2,
               color: KBeige,
             ),
-          ),*/
+          ),*//*
+
         ),
       ),
       body: SingleChildScrollView(
@@ -122,7 +162,9 @@ class _ReservationtListState extends State<ReservationtList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            /*Container(
+            ReservationtList(),
+            */
+/*Container(
               color: Colors.white,
               child: TableCalendar(
                 events: _events,
@@ -177,21 +219,25 @@ class _ReservationtListState extends State<ReservationtList> {
                 calendarController: _controller,
               ),
             ),
-            SizedBox(height: 20,),*/
+            SizedBox(height: 20,),*//*
+
             Container(
               margin: EdgeInsets.only(left: 10),
               height: MediaQuery.of(context).size.height,
                child:_buildEventsList(events),
             ),
 
-            /*..._selectedEvents.map(
+            */
+/*..._selectedEvents.map(
               (event) => ListTile(
                 title: Container(
                   color: Colors.white,
                     padding: EdgeInsets.all(20),
                     child: Text(event.title),
                 ),
-                */ /*onTap: () {
+                *//*
+ */
+/*onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -200,9 +246,12 @@ class _ReservationtListState extends State<ReservationtList> {
                       ),
                     ),
                   );
-                },*/ /*
+                },*//*
+ */
+/*
               ),
-            ),*/
+            ),*//*
+
           ],
         ),
       ),
@@ -293,3 +342,4 @@ class _ReservationtListState extends State<ReservationtList> {
     );
   }
 }
+*/

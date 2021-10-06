@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -165,11 +164,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // TextField(
-            //   onChanged: (value) => _runFilter(value),
-            //   decoration: InputDecoration(
-            //       labelText: 'Search', suffixIcon: Icon(Icons.search)),
-            // ),
             RechercherBar(
               changed: (value){
                   _runFilter(value);
@@ -352,9 +346,7 @@ class RestaurantRecommand extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Container(
-        //borderRadius: BorderRadius.circular(5),
-       // height: MediaQuery.of(context).size.height * 0.2,
-        width: MediaQuery.of(context).size.width * 0.5,
+        width: MediaQuery.of(context).size.width * 0.4,
         decoration:
             BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
         child: Column(

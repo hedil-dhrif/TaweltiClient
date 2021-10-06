@@ -6,6 +6,7 @@ import 'package:readmore/readmore.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/event.dart';
 import 'package:tawelticlient/services/event.services.dart';
+import 'package:tawelticlient/widget/profileCarousel.dart';
 
 class DetailsEvent extends StatefulWidget {
   final int eventId;
@@ -15,7 +16,6 @@ class DetailsEvent extends StatefulWidget {
 }
 
 class _DetailsEventState extends State<DetailsEvent> {
-
   bool clickedm = false;
   Color _ContainerColorP = Colors.white;
   Color _TextColorP = KBlue;
@@ -34,6 +34,8 @@ class _DetailsEventState extends State<DetailsEvent> {
   DateTime _heuredebut;
   String _category;
   String _description;
+  int _restaurantId;
+
   void initState() {
     super.initState();
 
@@ -55,6 +57,7 @@ class _DetailsEventState extends State<DetailsEvent> {
         _description = event.description;
         _category = event.category;
         _datedebut = event.dateDebut;
+        _restaurantId = event.restaurantId;
       });
     }
     super.initState();
@@ -96,90 +99,83 @@ class _DetailsEventState extends State<DetailsEvent> {
           ),
         ),
       ),
-      body: Stack(
-        children: <Widget>[
-          Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 50, horizontal: 25),
-                height: MediaQuery.of(context).size.height * 0.35,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/event.jpeg'),
-                    fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: <Widget>[
+                Column(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 50, horizontal: 25),
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/event.jpeg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _name,
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            _category,
+                            style: TextStyle(
+                              fontSize: 22.5,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 170),
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20, left: 20),
+                    height: 75,
+                    width: 75,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '15',
+                        style: TextStyle(
+                            color: KBlue,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _name,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      _category,
-                      style: TextStyle(
-                        fontSize: 22.5,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 225,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                margin: EdgeInsets.only(bottom: 20, left: 20),
-                height: 75,
-                width: 75,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                /*child: Column(*/
-                /*  mainAxisAlignment: MainAxisAlignment.center,*/
-                /*  children: [*/
-                /*    Text(*/
-                /*      _datedebut.day.toString(),*/
-                /*      style: TextStyle(*/
-                /*        fontSize: 23.5,*/
-                /*        color: KBlue,*/
-                /*      ),*/
-                /*    ),*/
-                /*    Text(*/
-                /*      _datedebut.month.toString(),*/
-                /*      style: TextStyle(*/
-                /*        fontSize: 22.5,*/
-                /*        color: KBlue,*/
-                /*      ),*/
-                /*    ),*/
-                /*  ],*/
-                /*),*/
-              ),
+              ],
             ),
-          ),
-          Positioned(
-            bottom: 175,
-            child: Row(
+            Row(
               children: [
                 GestureDetector(
                   onTap: () {
@@ -209,10 +205,7 @@ class _DetailsEventState extends State<DetailsEvent> {
                         ),
                         Text(
                           'Participate',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: _TextColorP
-                          ),
+                          style: TextStyle(fontSize: 20, color: _TextColorP),
                         )
                       ],
                     ),
@@ -235,8 +228,7 @@ class _DetailsEventState extends State<DetailsEvent> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(color: KBeige, width: 1),
-                      color: _ContainerColorI
-                    ),
+                        color: _ContainerColorI),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -247,10 +239,7 @@ class _DetailsEventState extends State<DetailsEvent> {
                         ),
                         Text(
                           'Interested',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: _TextColorI
-                          ),
+                          style: TextStyle(fontSize: 20, color: _TextColorI),
                         )
                       ],
                     ),
@@ -258,79 +247,44 @@ class _DetailsEventState extends State<DetailsEvent> {
                 ),
               ],
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Event description',
+            Padding(
+              padding: EdgeInsets.only(top: 15, left: 20),
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                    text: 'Description:\n',
                     style: TextStyle(
-                        color: KBlue,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  ReadMoreText(
-                    _description,
-                    textAlign: TextAlign.justify,
-                    trimLines: 4,
-                    style: TextStyle(
-                      fontSize: 17.5,
                       color: KBlue,
+                      fontSize: 22.5,
+                      fontWeight: FontWeight.w500,
                     ),
-                    colorClickableText: KBeige,
-                    trimMode: TrimMode.Line,
-                    trimCollapsedText: 'Show more',
-                    trimExpandedText: ' show less',
                   ),
-                ],
+                  TextSpan(
+                    text: _description,
+                    style: TextStyle(
+                      color: KBlue,
+                      fontSize: 15,
+                    ),
+                  ),
+                ]),
               ),
             ),
-          ),
-          // Container(
-          //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-          //   child: Text(
-          //     'Event images : ',
-          //     style: TextStyle(
-          //       fontFamily: 'Product Sans',
-          //       fontSize: 20,
-          //       color: Color(0xff8f9db5),
-          //     ),
-          //   ),
-          // ),
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Row(
-          //     children: [
-          //       ImageBox(),
-          //       SizedBox(
-          //         width: 20,
-          //       ),
-          //       ImageBox(),
-          //       SizedBox(
-          //         width: 20,
-          //       ),
-          //       ImageBox(),
-          //       SizedBox(
-          //         width: 20,
-          //       ),
-          //       ImageBox(),
-          //       SizedBox(
-          //         width: 20,
-          //       ),
-          //       ImageBox(),
-          //     ],
-          //   ),
-          //
-          // ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: 5, left: 20, bottom: 15),
+              child: Text(
+                'Images: ',
+                style: TextStyle(
+                  color: KBlue,
+                  fontSize: 22.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            ProfileCarousel(
+              restaurantId: _restaurantId.toString(),
+            )
+          ],
+        ),
       ),
     );
   }
