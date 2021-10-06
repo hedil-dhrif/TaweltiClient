@@ -53,7 +53,7 @@ import 'package:tawelticlient/services/reservation.services.dart';
 import 'package:tawelticlient/reservation/AddReservation.dart';
 import 'package:tawelticlient/widget/floorDelete.dart';
 import 'package:tawelticlient/widget/waitCard.dart';
-
+import 'package:http/http.dart' as http;
 import '../widget/RestauCard.dart';
 import 'DetailsReservation.dart';
 
@@ -74,7 +74,9 @@ class _ReservationtListState extends State<ReservationtList> {
   SharedPreferences prefs;
   String dateReservatin;
   String timeReservatin;
- var user;
+   List<BookWaitSeat> events = <BookWaitSeat>[];
+
+  var user;
   @override
   void initState() {
     _getUserInfo();
@@ -222,7 +224,7 @@ class _ReservationtListState extends State<ReservationtList> {
             Container(
               margin: EdgeInsets.only(left: 10),
               height: MediaQuery.of(context).size.height,
-               child:_buildEventsList(_apiResponse.data),
+               child:_buildEventsList(events),
             ),
 
             */
@@ -265,17 +267,34 @@ class _ReservationtListState extends State<ReservationtList> {
   }
 
   _fetchReservations(user) async {
-    print(user);
-    setState(() {
-      _isLoading = true;
-    });
+    // print(user);
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    //
+    // _apiResponse =
+    // await bwsService.getUserListBWS(user.toString());
+    // print(_apiResponse.data);
+    // setState(() {
+    //   _isLoading = false;
+    // });
+    final response = await http
+        .get(Uri.parse('http://37.187.198.241:3000/users/BWS/${user.toString()}'));
 
-    _apiResponse =
-    await bwsService.getUserListBWS(user.toString());
-    print(_apiResponse.data);
-    setState(() {
-      _isLoading = false;
-    });
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final jsonData = json.decode(response.body);
+      for (var item in jsonData) {
+        events.add(BookWaitSeat.fromJson(item));
+      }
+      print(events);
+      return events;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   _buildEventsList(List data) {

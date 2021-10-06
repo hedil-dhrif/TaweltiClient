@@ -175,13 +175,18 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 15, left: 10),
-              child: Text(
-                'Recommended for you',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: KBlue,
-                  fontSize: 20,
-                  letterSpacing: 0.5,
+              child: TextButton(
+                onPressed: (){
+                  _getUserInfo();
+                },
+                child: Text(
+                  'Recommended for you',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: KBlue,
+                    fontSize: 20,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),
@@ -313,7 +318,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = true;
     });
-    await userService.getUserProfile('29').then((response) {
+    await userService.getUserProfile(user.toString()).then((response) {
       if (response.error) {
         errorMessage = response.errorMessage ?? 'An error occurred';
       }

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+//import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,6 +10,7 @@ import 'package:ndialog/ndialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:path/path.dart' as path;
+import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 
@@ -90,10 +91,12 @@ class _FileDownloadState extends State<FileDownload> {
   //   return directory.path;
   // }
 
-  Future<Directory> _getDownloadDirectory() async {
+  _getDownloadDirectory() async {
     if (Platform.isAndroid) {
-      print(DownloadsPathProvider.downloadsDirectory);
-      return await DownloadsPathProvider.downloadsDirectory;
+      // print(DownloadsPathProvider.downloadsDirectory);
+      // return await DownloadsPathProvider.downloadsDirectory;
+      // return ExtStorage.getExternalStoragePublicDirectory(
+      //     ExtStorage.DIRECTORY_DOWNLOADS);
     }
 
     // in this example we are using only Android and iOS so I can assume
@@ -150,34 +153,39 @@ class _FileDownloadState extends State<FileDownload> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('Your reservation is added succesfully,download your invoice'),
-                ElevatedButton(
-                  onPressed: ()async{
-                    _getDownloadDirectory().then((value) {
-                      final savePath = path.join(value.path,);
+                Text('Your reservation is added succesfully,download your invoice',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: KBeige.withOpacity(0.8),
+                  child: TextButton(
 
-                      File f=File(savePath+"$extension");
-                      if(f.existsSync())
-                      {
-                        Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return PDFScreen(f.path);
-                        }));
-                        return;
-                      }
-                      print(url);
-                      downloadFile(url,"$savePath/$extension");
-                    });
+                    onPressed: ()async{
+                      _getDownloadDirectory().then((value) {
+                        final savePath = path.join(value.path,);
 
-                  }, child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.download_outlined),
-                      Text("Download",style: TextStyle(fontSize: 16,color: Colors.white),),
-                    ],
-                  ),),
+                        File f=File(savePath+"$extension");
+                        if(f.existsSync())
+                        {
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return PDFScreen(f.path);
+                          }));
+                          return;
+                        }
+                        print(url);
+                        downloadFile(url,"$savePath/$extension");
+                      });
+
+                    }, child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.download_outlined,color: Colors.white,),
+                        Text("Download",style: TextStyle(fontSize: 18,color: Colors.white),),
+                      ],
+                    ),),
+                ),
               ],
             ),
           ),

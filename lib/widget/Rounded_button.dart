@@ -21,20 +21,21 @@ class _RoundedButtonState extends State<RoundedButton> {
       onTap: widget.ontap,
       child: Container(
         padding: EdgeInsets.all(5),
-        width: MediaQuery.of(context).size.width*0.65,
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height*0.08,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(5),
           border: Border.all(color: Colors.white, width: 1)
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            Icon(Icons.alternate_email,color: Colors.white,size: 24,),
             Text(
               widget.text,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),

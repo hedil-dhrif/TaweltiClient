@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/models/bookWaitSeat.dart';
 import 'package:tawelticlient/models/table.dart';
+import 'package:tawelticlient/recherche/filtrage.dart';
 import 'package:tawelticlient/reservation/confResevPage.dart';
 import 'package:tawelticlient/services/bookWaitedSeat.services.dart';
 import 'package:tawelticlient/services/table.services.dart';
@@ -14,6 +15,8 @@ import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/DisabledInput.dart';
 import '../constants.dart';
+import 'package:time_picker_widget/time_picker_widget.dart';
+
 import 'package:http/http.dart' as http;
 class PassReservation extends StatefulWidget {
   final int restaurantId;
@@ -26,16 +29,16 @@ class _PassReservationState extends State<PassReservation> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   APIResponse<List<BookWaitSeat>> _apiResponse;
   APIResponse<List<RestaurantTable>> _apiResponse2;
-  TextEditingController FirstNameController = TextEditingController();
-  TextEditingController LastNameController = TextEditingController();
-  TextEditingController mailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
+  // TextEditingController FirstNameController = TextEditingController();
+  // TextEditingController LastNameController = TextEditingController();
+  // TextEditingController mailController = TextEditingController();
+  // TextEditingController passwordController = TextEditingController();
+  // TextEditingController phoneController = TextEditingController();
   BookWaitSeatServices get bwsService => GetIt.I<BookWaitSeatServices>();
   RestaurantTableServices get restaurantTableService =>
       GetIt.I<RestaurantTableServices>();
 
-  TextEditingController NameController = TextEditingController();
+  //TextEditingController NameController = TextEditingController();
   TextEditingController guestNameController = TextEditingController();
   int _currentStep = 0;
   String errorMessage;
@@ -49,6 +52,8 @@ class _PassReservationState extends State<PassReservation> {
   final List<BookWaitSeat> listBWS = [];
   final List<BookWaitSeat> databaseBWS = [];
   final List<int> listTables = [];
+  final List<RestaurantTable> listAllTables = [];
+  final List<String> demandeSpecial=[];
   DateTime startTime;
   DateTime endTime;
   int id;
@@ -74,7 +79,7 @@ class _PassReservationState extends State<PassReservation> {
   @override
   void initState() {
     print(widget.restaurantId);
-    // _getUserInfo();
+     _getUserInfo();
     _fetchBWS();
     _fetchTables();
     setState(() {
@@ -89,11 +94,30 @@ class _PassReservationState extends State<PassReservation> {
     //print(userId);
     setState(() {
       user = userId;
-      //_getUserProfile(user);
+      _getUserProfile(user);
       //print(user);
     });
   }
-
+  _getUserProfile(user) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await userService.getUserProfile(user.toString()).then((response) {
+      if (response.error) {
+        errorMessage = response.errorMessage ?? 'An error occurred';
+      }
+      Id = response.data.id;
+      guestNameController.text = response.data.first_name + response.data.last_name;
+      print(response.data.first_name);
+      print(response.data.email);
+      print(response.data.id);
+      // _titleController.text = floor.nom;
+      // _contentController.text = note.noteContent;
+    });
+    setState(() {
+      _isLoading = false;
+    });
+  }
   DateTime datetime;
 
   String getText() {
@@ -114,16 +138,22 @@ class _PassReservationState extends State<PassReservation> {
       final minutes = time.minute.toString().padLeft(2, '0');
 
       //print('$hours:$minutes:00');
-      return '$hours:$minutes:00';
+      return '$hours:$minutes';
     }
   }
 
-  Future pickTime(BuildContext context) async {
+  pickTime(BuildContext context) async {
     final initialTime = TimeOfDay(hour: 9, minute: 0);
-    newTime = await showTimePicker(
-      context: context,
-      initialTime: time ?? initialTime,
-    );
+     showCustomTimePicker(
+        context: context,
+        // It is a must if you provide selectableTimePredicate
+        onFailValidation: (context) => print('Unavailable selection'),
+        initialTime: TimeOfDay(hour: 2, minute: 0),
+        selectableTimePredicate: (time) =>
+        // time.hour > 1 &&
+        //     time.hour < 14 &&
+            time.minute % 30 == 0).then((time) =>
+        setState(() => newTime = time));
 
     if (newTime == null) return;
 
@@ -142,49 +172,56 @@ class _PassReservationState extends State<PassReservation> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stepper(
-              //type: StepperType.horizontal,
-              steps: _mySteps(),
-              currentStep: this._currentStep,
-              onStepTapped: (step) {
-                setState(() {
-                  this._currentStep = step;
-                });
-              },
-              onStepContinue: () {
-                setState(() {
-                  if (this._currentStep < this._mySteps().length - 1) {
-                    this._currentStep = this._currentStep + 1;
-                  } else {
-                    //Logic to check if everything is completed
-                    //print('Completed, check fields.');
-                  }
-                  //  _buildListAvailbaleTablesWithNbPerson(_counter);
-                  // _getAvailableTablesTimeAndDate();
-                });
-              },
-              onStepCancel: () {
-                setState(() {
-                  if (this._currentStep > 0) {
-                    this._currentStep = this._currentStep - 1;
-                  } else {
-                    this._currentStep = 0;
-                  }
-                });
-              },
+      body: ListView(
+        children: [
+          //Text(DateTime.now().day.toString()),
+          Stepper(
+            //type: StepperType.horizontal,
+            steps: _mySteps(),
+            currentStep: this._currentStep,
+            onStepTapped: (step) {
+              setState(() {
+                this._currentStep = step;
+              });
+            },
+            onStepContinue: () {
+              setState(() {
+                if (this._currentStep < this._mySteps().length - 1) {
+                  this._currentStep = this._currentStep + 1;
+                } else {
+                  //Logic to check if everything is completed
+                  //print('Completed, check fields.');
+                }
+                //  _buildListAvailbaleTablesWithNbPerson(_counter);
+                // _getAvailableTablesTimeAndDate();
+              });
+            },
+            onStepCancel: () {
+              setState(() {
+                if (this._currentStep > 0) {
+                  this._currentStep = this._currentStep - 1;
+                } else {
+                  this._currentStep = 0;
+                }
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 18.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              color: KBeige.withOpacity(0.8),
+              child: TextButton(
+                  onPressed: () {
+                    // _fetchBWS();
+                    // _fetchTables();
+                   _buildListAvailbaleTablesWithNbPerson(_counter);
+
+                  },
+                  child: Text('get reservation',style: TextStyle(color: Colors.white,fontSize: 18),)),
             ),
-            TextButton(
-                onPressed: () {
-                 // _fetchBWS();
-                 _buildListAvailbaleTablesWithNbPerson(_counter);
-                  
-                },
-                child: Text('get reservation')),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -342,7 +379,48 @@ class _PassReservationState extends State<PassReservation> {
           color: KBlue,
         ),
         isActive: _currentStep >= 3,
-      )
+      ),
+      Step(
+        title: Text(
+          'Special request',
+          style: TextStyle(color: KBlue, fontSize: 20),
+        ),
+        content:Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+              child: Wrap(
+                //spacing: 5.0,
+                //runSpacing: 3.0,
+                children: <Widget>[
+                  FilterChipWidget(
+                    chipName: 'Allergie',
+                    chips: demandeSpecial,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Végéteriens',
+                    chips: demandeSpecial,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Evenement',
+                    chips: demandeSpecial,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Chaise bébé',
+                    chips: demandeSpecial,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Handicapé',
+                    chips: demandeSpecial,
+                  ),
+                  FilterChipWidget(
+                    chipName: 'Table demané',
+                    chips: demandeSpecial,
+                  ),
+                ],
+              )),
+        ),
+        isActive: _currentStep >= 3,
+      ),
     ];
     return _steps;
   }
@@ -372,69 +450,85 @@ class _PassReservationState extends State<PassReservation> {
   // }
 
   _fetchBWS() async {
-    setState(() {
-      _isLoading = true;
-    });
-    _apiResponse =
-        await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
-    print(_apiResponse.data);
-    _buildListBWS();
-    setState(() {
-      _isLoading = false;
-    });
-    // final response = await http
-    //     .get(Uri.parse('http://10.0.2.2:3000/BWS/GetALlBookWaitSeat/45'));
-    //
-    // if (response.statusCode == 200) {
-    //   // If the server did return a 200 OK response,
-    //   // then parse the JSON.
-    //   final jsonData = json.decode(response.body);
-    //   final events = <BookWaitSeat>[];
-    //   for (var item in jsonData) {
-    //     events.add(BookWaitSeat.fromJson(item));
-    //   }
-    //   print(events);
-    //   return events;
-    // } else {
-    //   // If the server did not return a 200 OK response,
-    //   // then throw an exception.
-    //   throw Exception('Failed to load album');
-    // }
-  }
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    // _apiResponse =
+    //     await bwsService.getRestaurantsListBWS(widget.restaurantId.toString());
+    // print(_apiResponse.data);
+    // _buildListBWS();
+    // setState(() {
+    //   _isLoading = false;
+    // });
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:3000/BWS/GetALlBookWaitSeat/${widget.restaurantId}'));
 
-  _buildListBWS() {
-    setState(() {
-      _isLoading = true;
-    });
-
-    for (int i = 0; i < _apiResponse.data.length; i++) {
-      if (listBWS.contains(_apiResponse.data[i].id)) {
-        i++;
-      } else {
-        listBWS.add(_apiResponse.data[i]);
-        databaseBWS.add(_apiResponse.data[i]);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final jsonData = json.decode(response.body);
+      for (var item in jsonData) {
+        listBWS.add(BookWaitSeat.fromJson(item));
       }
+      print(listBWS);
+      return listBWS;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
     }
-    print(listBWS);
-    print(databaseBWS);
-    setState(() {
-      _isLoading = false;
-    });
   }
+
+  // _buildListBWS() {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //
+  //   for (int i = 0; i < _apiResponse.data.length; i++) {
+  //     if (listBWS.contains(_apiResponse.data[i].id)) {
+  //       i++;
+  //     } else {
+  //       listBWS.add(_apiResponse.data[i]);
+  //       databaseBWS.add(_apiResponse.data[i]);
+  //     }
+  //   }
+  //   print(listBWS);
+  //   print(databaseBWS);
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   _fetchTables() async {
-    setState(() {
-      _isLoading = true;
-    });
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    //
+    // _apiResponse2 = await restaurantTableService
+    //     .getRestaurantsListTables(widget.restaurantId.toString());
+    // //print(_apiResponse2.data);
+    //
+    // setState(() {
+    //   _isLoading = false;
+    // });
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:3000/user/RestaurantWithTable/${widget.restaurantId}'));
 
-    _apiResponse2 = await restaurantTableService
-        .getRestaurantsListTables(widget.restaurantId.toString());
-    //print(_apiResponse2.data);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final jsonData = json.decode(response.body);
+      for (var item in jsonData) {
+        listAllTables.add(RestaurantTable.fromJson(item));
+      }
+      print(listAllTables);
+      return     _buildListTables();
 
-    _buildListTables();
-    setState(() {
-      _isLoading = false;
-    });
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   _buildListTables() {
@@ -442,12 +536,12 @@ class _PassReservationState extends State<PassReservation> {
       _isLoading = true;
     });
 
-    for (int i = 0; i < _apiResponse2.data.length; i++) {
-      if (listTables.contains(_apiResponse2.data[i].ids)) {
+    for (int i = 0; i < listAllTables.length; i++) {
+      if (listTables.contains(listAllTables[i].ids)) {
         i++;
       } else {
-        listTables.add(_apiResponse2.data[i].ids - 1630);
-        availableTables.add(_apiResponse2.data[i]);
+        listTables.add(listAllTables[i].ids - 1630);
+        availableTables.add(listAllTables[i]);
       }
     }
     //print(listTables);
@@ -457,20 +551,20 @@ class _PassReservationState extends State<PassReservation> {
   }
 
   _buildListAvailbaleTablesWithNbPerson(int nbPerson) {
-    for (int i = 0; i < databaseBWS.length; i++) {
+    for (int i = 0; i < listBWS.length; i++) {
       for (int j = 0; j < availableTables.length; j++) {
         if (availableTables[j].nbCouverts == nbPerson &&
-            databaseBWS[i].id == availableTables[j].ids - 1630) {
+            listBWS[i].id == availableTables[j].ids - 1630) {
           print(availableTables[j].ids - 1630);
 
           startTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour, newTime.minute);
           endTime = DateTime(datetime.year, datetime.month, datetime.day,
               newTime.hour + 1, newTime.minute);
-          final DateTime dbStartTime=DateTime(databaseBWS[i].debut.year, databaseBWS[i].debut.month, databaseBWS[i].debut.day,
-              databaseBWS[i].debut.hour +2, databaseBWS[i].debut.minute);
-          final DateTime dbEndTime=DateTime(databaseBWS[i].fin.year, databaseBWS[i].fin.month, databaseBWS[i].fin.day,
-              databaseBWS[i].fin.hour +2, databaseBWS[i].fin.minute);
+          final DateTime dbStartTime=DateTime(listBWS[i].debut.year, listBWS[i].debut.month, listBWS[i].debut.day,
+              listBWS[i].debut.hour +2, listBWS[i].debut.minute);
+          final DateTime dbEndTime=DateTime(listBWS[i].fin.year, listBWS[i].fin.month, listBWS[i].fin.day,
+              listBWS[i].fin.hour +2, listBWS[i].fin.minute);
           print(dbStartTime);
           print(dbEndTime);
           print(startTime);
@@ -481,16 +575,16 @@ class _PassReservationState extends State<PassReservation> {
                   endTime.compareTo(dbEndTime) <= 0)) {
             print(databaseBWS[i].id);
             print('is unavailable');
-            id = databaseBWS[i].id;
-            unavailableBWS.add(databaseBWS[i]);
+            id = listBWS[i].id;
+            unavailableBWS.add(listBWS[i]);
             print(unavailableBWS.length);
             _showMyDialog();
           }
           else {
-           print(databaseBWS[i].ids);
+           print(listBWS[i].ids);
            print('is available');
-            id = databaseBWS[i].id;
-            availableBWS.add(databaseBWS[i]);
+            id = listBWS[i].id;
+            availableBWS.add(listBWS[i]);
 
            Navigator.push(
                context,
@@ -501,6 +595,9 @@ class _PassReservationState extends State<PassReservation> {
                      endTime: endTime,
                      Tables: availableTables,
                      guestName: guestNameController.text,
+                     demandeSpecial: demandeSpecial,
+                     user: user,
+                     guestNumber: _counter,
                    )));
           }
         }

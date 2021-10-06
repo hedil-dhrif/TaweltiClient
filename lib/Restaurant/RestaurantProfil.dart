@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:get_it/get_it.dart';
+import 'package:like_button/like_button.dart';
+import 'package:share/share.dart';
+import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/Restaurant.dart';
+import 'package:tawelticlient/models/file.dart';
 import 'package:tawelticlient/reservation/AddReservation.dart';
 import 'package:tawelticlient/services/file.services.dart';
 import 'package:tawelticlient/services/restaurant.services.dart';
+import 'package:tawelticlient/widget/AppBar.dart';
 import 'package:tawelticlient/widget/NestedTab.dart';
 import 'package:tawelticlient/services/cuisine.services.dart';
 import 'package:tawelticlient/widget/profileCarousel.dart';
@@ -21,7 +27,8 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
   RestaurantServices get restaurantService => GetIt.I<RestaurantServices>();
   FileServices get fileService => GetIt.I<FileServices>();
   CuisineServices get cuisineServices => GetIt.I<CuisineServices>();
-
+  String text = 'https://medium.com/@suryadevsingh24032000';
+  String subject = 'follow me';
   bool get isEditing => widget.restaurantId != null;
   bool _isLoading = false;
 
@@ -94,77 +101,23 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
                 Container(
                   child: ProfileCarousel(
                       restaurantId: widget.restaurantId.toString()),
-                  // padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
-                  // decoration: BoxDecoration(
-                  //   borderRadius: BorderRadius.only(
-                  //       bottomLeft: Radius.circular(10),
-                  //       bottomRight: Radius.circular(10)),
-                  //   image: DecorationImage(
-                  //       colorFilter: ColorFilter.mode(
-                  //           Color(0xFFFEFEFE).withOpacity(0.5), BlendMode.dstATop),
-                  //       image: AssetImage('assets/plaza_corniche.jpg'),
-                  //       fit: BoxFit.cover),
-                  // ),
-                  // child: Column(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     RichText(
-                  //       text: TextSpan(
-                  //         children: <TextSpan>[
-                  //           TextSpan(
-                  //               text: 'Welcome to\n',
-                  //               style: TextStyle(
-                  //                   fontWeight: FontWeight.bold,
-                  //                   fontSize: 30,
-                  //                   letterSpacing: 2,
-                  //                   color: KBlue)),
-                  //           TextSpan(
-                  //               text: name,
-                  //               style: TextStyle(fontSize: 30, color: KBlue)),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //                 builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
-                  //       },
-                  //       child: Container(
-                  //         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  //         decoration: BoxDecoration(
-                  //           borderRadius: BorderRadius.circular(15),
-                  //           color: KBlue
-                  //         ),
-                  //         child: Text('Reserve', style: TextStyle( color: Colors.white, fontSize: 25),),
-                  //       ),
-                  //     )
-                  //   ],
-                  // ),
-                ),
-                Positioned(
-                  left: 0.0,
-                  bottom: 0.0,
-                  width: MediaQuery.of(context).size.width,
-                  height: 100.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Colors.black, Colors.black12],
-                      ),
-                    ),
-                  ),
                 ),
                 Positioned(
                   right: 20,
                   top: 30,
-                  child: Icon(
-                    Icons.share,
-                    color: Colors.white,
+                  child: GestureDetector(
+                    onTap: (){
+                      final RenderBox box = context.findRenderObject();
+                      Share.share(text,
+                          subject: subject,
+                          sharePositionOrigin:
+                          box.localToGlobal(Offset.zero) &
+                          box.size);
+                    },
+                    child: Icon(
+                      Icons.share,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -177,120 +130,158 @@ class _RestaurantProfilState extends State<RestaurantProfil> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20,right: 20,top: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              height: MediaQuery.of(context).size.height*0.8,
+              child: ListView(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(bottom: 10),
-                          width: MediaQuery.of(context).size.width*0.5,
-                          child: Text(
-                            name.toUpperCase(),
-                            style: TextStyle(
-                                color: KBlue,
-                                fontSize: 27.5,
-                                fontWeight: FontWeight.bold),
-                          )),
-                      CircleAvatar(
-                        radius: 15,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.favorite,
-                          color: Colors.black12,
-                          size: 20,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20,right: 20,),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width: 200,
+                                child: Text(
+                                  name.toUpperCase(),
+                                  style: TextStyle(
+                                      color: KBlue,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: LikeButton(
+                                  size: 30,
+                                  circleColor:
+                                  CircleColor(start: Colors.redAccent, end: Colors.red),
+                                  bubblesColor: BubblesColor(
+                                    dotPrimaryColor: Colors.redAccent,
+                                    dotSecondaryColor: Colors.red,
+                                  ),
+                                  likeBuilder: (bool isLiked) {
+                                    return Icon(
+                                      Icons.favorite,
+                                      color: isLiked ? Colors.redAccent : Colors.grey,
+                                      size: 24,
+                                    );
+                                  },
+                                  // likeCount: 665,
+                                  // countBuilder: (int count, bool isLiked, String text) {
+                                  //   var color = isLiked ? Colors.red : Colors.grey;
+                                  //   Widget result;
+                                  //   if (count == 0) {
+                                  //     result = Text(
+                                  //       "love",
+                                  //       style: TextStyle(color: color),
+                                  //     );
+                                  //   } else
+                                  //     result = Text(
+                                  //       text,
+                                  //       style: TextStyle(color: color),
+                                  //     );
+                                  //   return result;
+                                  // },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        color: KBeige,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(
-                          flex: 8,
-                          child: Text(
-                            adresse,
-                            style: TextStyle(fontSize: 16, color: KBlue),
-                          )),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        color: KBeige,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(
-                        flex: 8,
-                        child: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Closed in 45 minutes',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: KBeige,
-                                    decoration: TextDecoration.underline),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              color: KBeige,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                                flex: 8,
+                                child: Text(
+                                  adresse,
+                                  style: TextStyle(fontSize: 16, color: KBlue),
+                                )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: KBeige,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                              flex: 8,
+                              child: RichText(
+                                text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'Closed in 45 minutes',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: KBeige,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                    TextSpan(
+                                      text: '11AM To 12 Midnight',
+                                      style: TextStyle(fontSize: 16, color: KBlue),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              TextSpan(
-                                text: '11AM To 12 Midnight',
-                                style: TextStyle(fontSize: 16, color: KBlue),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top:12.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: KBeige,
+                            child: TextButton(
+                              onPressed: (){
+                                Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
+                              },
+                              child: Text(
+                                'Add reservation',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PassReservation(restaurantId:widget.restaurantId ,)));
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 15, bottom: 10),
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: KBeige,
-                        borderRadius: BorderRadius.circular(5)
-                      ),
-                      child: Text(
-                        'Add reservation',
-                        style: TextStyle(fontSize: 17.5, color: KBackgroundColor),
-                      ),
+                      ],
                     ),
+                  ),
+                  NestedTabBar(
+                    restaurantId: widget.restaurantId,
+                    adresse: adresse,
+                    description: description,
+                    // phone: 'phone',
+                    // web: 'web',
+                    userId: userId,
+                    // kitchen: kitchen,
+                    // etablissement: etablissement,
+                    // general: general,
+                    // ambiance: ambiance,
                   ),
                 ],
               ),
             ),
 
-            NestedTabBar(
-              restaurantId: widget.restaurantId,
-              adresse: adresse,
-              description: description,
-              // phone: 'phone',
-              // web: 'web',
-              userId: userId,
-              // kitchen: kitchen,
-              // etablissement: etablissement,
-              // general: general,
-              // ambiance: ambiance,
-            ),
+
           ],
         ),
       ),

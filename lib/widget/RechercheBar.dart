@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tawelticlient/recherche/filter.dart';
 import 'package:tawelticlient/recherche/filtrage.dart';
 
 import '../constants.dart';
@@ -56,7 +57,7 @@ class RechercherBar extends StatelessWidget {
         GestureDetector(
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Filtrage()));
+                context, MaterialPageRoute(builder: (context) => FilterPage()));
           },
           child: Image.asset(
             'assets/filtre.png',

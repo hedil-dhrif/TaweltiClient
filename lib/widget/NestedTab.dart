@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mapbox_search/mapbox_search.dart';
+import 'package:tawelticlient/HomePage.dart';
 import 'package:tawelticlient/api/api_Response.dart';
 import 'package:tawelticlient/constants.dart';
 import 'package:tawelticlient/models/Cuisine.dart';
@@ -17,6 +19,8 @@ import 'package:tawelticlient/services/restaurant.services.dart';
 import 'package:tawelticlient/services/user.services.dart';
 import 'package:tawelticlient/widget/EventCard.dart';
 import 'package:tawelticlient/widget/EventList.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:mapbox_search/mapbox_search.dart';
 
 class NestedTabBar extends StatefulWidget {
   final int restaurantId;
@@ -76,6 +80,10 @@ class _NestedTabBarState extends State<NestedTabBar>
   String phone;
   bool _enabled = true;
   User user;
+  String _platformVersion = 'Unknown';
+  String text = 'https://medium.com/@suryadevsingh24032000';
+  String subject = 'follow me';
+  String url = 'tel:+21626718812';
 
   void initState() {
     super.initState();
@@ -90,105 +98,65 @@ class _NestedTabBarState extends State<NestedTabBar>
     _nestedTabController = new TabController(length: 3, vsync: this);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _nestedTabController.dispose();
+  Future<void> _makeSocialMediaRequest(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        // TabBar(
-        //   unselectedLabelStyle: TextStyle(fontSize: 16),
-        //   // indicator: BoxDecoration(
-        //   //   borderRadius: BorderRadius.circular(40),
-        //   //   border: Border.all(color: KBlue, width: 1),
-        //   // ),
-        //   controller: _nestedTabController,
-        //   indicatorColor: KBeige,
-        //   labelColor: KBlue,
-        //   unselectedLabelColor: KBlue,
-        //   isScrollable: true,
-        //   labelStyle: TextStyle(
-        //     fontSize: 18,
-        //     fontWeight: FontWeight.bold,
-        //     color: Colors.black,
-        //   ),
-        //   tabs: <Widget>[
-        //     Tab(
-        //       text: "Détails",
-        //     ),
-        //     Tab(
-        //       text: "Events",
-        //     ),
-        //     Tab(
-        //       text: "Reviews",
-        //     ),
-        //   ],
-        // ),
-        Container(
-          height: screenHeight * 0.6,
-          child: Container(
-              padding: EdgeInsets.only(left: 20,  right: 20),
-              child: ListView(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 0,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          TabBar(
+            unselectedLabelStyle: TextStyle(fontSize: 16),
+            // indicator: BoxDecoration(
+            //   borderRadius: BorderRadius.circular(40),
+            //   border: Border.all(color: KBlue, width: 1),
+            // ),
+            //controller: _nestedTabController,
+            indicatorColor: KBeige,
+            labelColor: KBlue,
+            unselectedLabelColor: KBlue,
+            isScrollable: true,
+            labelStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            tabs: <Widget>[
+              Tab(
+                text: "Détails",
+              ),
+              Tab(
+                text: "Events",
+              ),
+              Tab(
+                text: "Reviews",
+              ),
+            ],
+          ),
+          Container(
+            height: screenHeight * 0.6,
+            child: TabBarView(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: ListView(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //ProfileCarousel(restaurantId: widget.restaurantId.toString(),),
-                      // Row(
-                      //   children: [
-                      //     Icon(
-                      //       Icons.location_on_outlined,
-                      //       color: KBeige,
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Expanded(
-                      //         flex: 8,
-                      //         child: Text(
-                      //           widget.adresse,
-                      //           style: TextStyle(fontSize: 16, color: KBlue),
-                      //         )),
-                      //   ],
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Icon(
-                      //       Icons.access_time,
-                      //       color: KBeige,
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Expanded(
-                      //       flex: 8,
-                      //       child: RichText(
-                      //         text: TextSpan(
-                      //           children: <TextSpan>[
-                      //             TextSpan(
-                      //               text: 'Closed in 45 minutes',
-                      //               style: TextStyle(
-                      //                   fontSize: 16,
-                      //                   color: KBeige,
-                      //                   decoration: TextDecoration.underline),
-                      //             ),
-                      //             TextSpan(
-                      //               text: '11AM To 12 Midnight',
-                      //               style:
-                      //                   TextStyle(fontSize: 16, color: KBlue),
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      SizedBox(
+                        height: 15,
+                      ),
                       Text(
                         'Description : ',
                         style: TextStyle(
@@ -206,103 +174,103 @@ class _NestedTabBarState extends State<NestedTabBar>
                       SizedBox(
                         height: 5,
                       ),
-                      // Row(
-                      //   children: [
-                      //     Text(
-                      //       'Type : ',
-                      //       style: TextStyle(
-                      //           fontSize: 16,
-                      //           fontWeight: FontWeight.bold,
-                      //           color: KBlue),
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Wrap(
-                      //       children: List.generate(listEtablissements.length,
-                      //           (index) {
-                      //         return Text(
-                      //           listEtablissements[index].toString(),
-                      //           style: TextStyle(
-                      //             //fontWeight: FontWeight.w600,
-                      //             fontSize: 16,
-                      //             color: KBlue,
-                      //           ),
-                      //         );
-                      //       }),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Text(
-                      //       'Food : ',
-                      //       style: TextStyle(
-                      //           fontSize: 16,
-                      //           fontWeight: FontWeight.bold,
-                      //           color: KBlue),
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Wrap(
-                      //       children:
-                      //           List.generate(listCuisines.length, (index) {
-                      //         return Text(
-                      //           listCuisines[index].toString() + ' , ',
-                      //           style: TextStyle(
-                      //             //fontWeight: FontWeight.w600,
-                      //             fontSize: 16,
-                      //             color: KBlue,
-                      //           ),
-                      //         );
-                      //       }),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Text(
-                      //       'Ambiance: ',
-                      //       style: TextStyle(
-                      //           fontSize: 16,
-                      //           fontWeight: FontWeight.bold,
-                      //           color: KBlue),
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Wrap(
-                      //       children:
-                      //           List.generate(listAmbiances.length, (index) {
-                      //         return Text(
-                      //           listAmbiances[index].toString(),
-                      //           style: TextStyle(
-                      //             //fontWeight: FontWeight.w600,
-                      //             fontSize: 16,
-                      //             color: KBlue,
-                      //           ),
-                      //         );
-                      //       }),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
-                      // Text(
-                      //   'Other : ',
-                      //   style: TextStyle(
-                      //       fontSize: 16,
-                      //       fontWeight: FontWeight.bold,
-                      //       color: KBlue),
-                      // ),
+                      Row(
+                        children: [
+                          Text(
+                            'Type : ',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Wrap(
+                            children: List.generate(listEtablissements.length,
+                                (index) {
+                              return Text(
+                                listEtablissements[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: KBlue,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Food : ',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Wrap(
+                            children:
+                                List.generate(listCuisines.length, (index) {
+                              return Text(
+                                listCuisines[index].toString() + ' , ',
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: KBlue,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Ambiance: ',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Wrap(
+                            children:
+                                List.generate(listAmbiances.length, (index) {
+                              return Text(
+                                listAmbiances[index].toString(),
+                                style: TextStyle(
+                                  //fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: KBlue,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Other : ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: KBlue),
+                      ),
                       SizedBox(
                         width: 5,
                       ),
@@ -323,57 +291,131 @@ class _NestedTabBarState extends State<NestedTabBar>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Container(
-                                decoration: BoxDecoration(
-                                    color: KBeige.withOpacity(0.5),
-                                    //border: Border.all(color: KBeige),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.map_outlined,
-                                      color: KBeige,
-                                    ))),
-                            Container(
-                                decoration: BoxDecoration(
-                                    color: KBeige.withOpacity(0.5),
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: (){},
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: KBeige.withOpacity(0.5),
+                                          //border: Border.all(color: KBeige),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.map_outlined,
+                                            color: KBeige,
+                                          ))),
+                                ),
 
-                                    //  border: Border.all(color: KBeige),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.call,
-                                      color: KBeige,
-                                    ))),
-                            Container(
-                                decoration: BoxDecoration(
-                                    color: KBeige.withOpacity(0.5),
-                                    //border: Border.all(color: KBeige),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.email_outlined,
-                                      color: KBeige,
-                                    ))),
-                            Container(
-                                decoration: BoxDecoration(
-                                    color: KBeige.withOpacity(0.5),
-                                    //border: Border.all(color: KBeige),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.link,
-                                      color: KBeige,
-                                    ))),
+                                Text('Map',style: TextStyle(fontSize: 15,color: KBeige,fontWeight: FontWeight.bold),)
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      throw 'call not possible';
+                                    }
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: KBeige.withOpacity(0.5),
+
+                                          //  border: Border.all(color: KBeige),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.call,
+                                            color: KBeige,
+                                          ))),
+                                ),
+                                Text('Call',style: TextStyle(fontSize: 15,color: KBeige,fontWeight: FontWeight.bold),)
+
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    final Uri _emailLaunchUri = Uri(
+                                        scheme: 'mailto',
+                                        path: 'contact.tawelty@gmail.com',
+                                        queryParameters: {'subject': 'subject'});
+                                    launch(_emailLaunchUri.toString());
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: KBeige.withOpacity(0.5),
+                                          //border: Border.all(color: KBeige),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.email_outlined,
+                                            color: KBeige,
+                                          ))),
+                                ),
+                                Text('Email',style: TextStyle(fontSize: 15,color: KBeige,fontWeight: FontWeight.bold),)
+
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _makeSocialMediaRequest(
+                                        "http://pratikbutani.com");
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: KBeige.withOpacity(0.5),
+                                          //border: Border.all(color: KBeige),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.link,
+                                            color: KBeige,
+                                          ))),
+                                ),
+                                Text('Website',style: TextStyle(fontSize: 15,color: KBeige,fontWeight: FontWeight.bold),)
+
+                              ],
+                            ),
+
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _makeSocialMediaRequest(
+                                        "http://pratikbutani.com");
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: KBeige.withOpacity(0.5),
+                                          //border: Border.all(color: KBeige),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.restaurant_menu,
+                                            color: KBeige,
+                                          ))),
+                                ),
+                                Text('Menu',style: TextStyle(fontSize: 15,color: KBeige,fontWeight: FontWeight.bold),)
+
+                              ],
+                            ),
                           ],
                         ),
                       ),
-
                       Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding: const EdgeInsets.only(top: 15.0),
                         child: Text(
                           'Events : ',
                           style: TextStyle(
@@ -386,14 +428,14 @@ class _NestedTabBarState extends State<NestedTabBar>
                         width: 15,
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.2,
                         padding: EdgeInsets.only(top: 5),
                         child: EventList(
                           restaurantId: widget.restaurantId,
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding: const EdgeInsets.only(top: 15.0),
                         child: Text(
                           'Your Rating !',
                           style: TextStyle(
@@ -579,12 +621,261 @@ class _NestedTabBarState extends State<NestedTabBar>
                           style: TextStyle(fontSize: 16, color: KBlue),
                         ),
                       ),
+                      Divider(),
+                      Text(
+                        'Similar  ',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: KBlue),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              RestaurantRecommand(),
+                              RestaurantRecommand(),
+                              RestaurantRecommand(),
+                              RestaurantRecommand(),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              )),
-        )
-      ],
+                ),
+                Container(
+                  child: Text('hello'),
+                ),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: Text(
+                            'Read All(400) ',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                fontSize: 16,
+                                // fontWeight: FontWeight.w400,
+                                color: KBeige),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              child: Text('M'),
+                            ),
+                            Column(
+                              children: [
+                                Text('JhonDoe'),
+                                Text('45 Reviews , 353 Followers'),
+                              ],
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: KBeige.withOpacity(0.8),
+                                  //  border: Border.all(color: KBeige),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Text('1'),
+                                    Icon(
+                                      Icons.star,
+                                      size: 10,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            'loremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsum',
+                            style: TextStyle(fontSize: 16, color: KBlue),
+                          ),
+                        ),
+                        Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              child: Text('M'),
+                            ),
+                            Column(
+                              children: [
+                                Text('JhonDoe'),
+                                Text('45 Reviews , 353 Followers'),
+                              ],
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: KBeige.withOpacity(0.8),
+                                  //  border: Border.all(color: KBeige),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Text('1'),
+                                    Icon(
+                                      Icons.star,
+                                      size: 10,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            'loremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsumloremupsum',
+                            style: TextStyle(fontSize: 16, color: KBlue),
+                          ),
+                        ),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: Text(
+                            'Your Rating !',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: KBlue),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  //color: KBeige.withOpacity(0.5),
+                                    border: Border.all(color: KBeige),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text('1'),
+                                      Icon(
+                                        Icons.star,
+                                        size: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  // color: KBeige.withOpacity(0.5),
+                                    border: Border.all(color: KBeige),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text('2'),
+                                      Icon(
+                                        Icons.star,
+                                        size: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  //color: KBeige.withOpacity(0.5),
+                                    border: Border.all(color: KBeige),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text('3'),
+                                      Icon(
+                                        Icons.star,
+                                        size: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  //color: KBeige.withOpacity(0.5),
+                                    border: Border.all(color: KBeige),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text('4'),
+                                      Icon(
+                                        Icons.star,
+                                        size: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  //color: KBeige.withOpacity(0.5),
+                                    border: Border.all(color: KBeige),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text('5'),
+                                      Icon(
+                                        Icons.star,
+                                        size: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Text(
+                            'We would like to hear more about your experience !',
+                            style: TextStyle(fontSize: 16, color: KBlue),
+                          ),
+                        ),
+                        TextButton(
+                            child: Text(
+                              'Add your Review',
+                              style: TextStyle(color: KBeige, fontSize: 18),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

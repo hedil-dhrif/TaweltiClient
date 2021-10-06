@@ -12,6 +12,7 @@ class BookWaitSeat {
   int etat;
   int userId;
   String random;
+  String other;
 
   BookWaitSeat(
       {this.id,
@@ -24,6 +25,7 @@ class BookWaitSeat {
       this.guestName,
       this.restaurantId,
       this.createdAt,
+        this.other,
       this.userId, this.random,
       this.updatedAt});
   Map<String, dynamic> toJson() {
@@ -39,6 +41,7 @@ class BookWaitSeat {
       'guestName': guestName,
       'UserId': userId,
       'random':random,
+      'other':other,
     };
   }
 
@@ -55,6 +58,7 @@ class BookWaitSeat {
       fin: DateTime.parse(item['fin']),
       createdAt: DateTime.parse(item['createdAt']),
       random: item['random'],
+      other: item['other'],
       updatedAt:
           item['updatedAt'] != null ? DateTime.parse(item['updatedAt']) : null,
     );

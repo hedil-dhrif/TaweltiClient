@@ -43,6 +43,16 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs{
+        debug{
+            keyAlias 'AndroidDebugKey'
+            keyPassword 'malek123'
+            storeFile file('upload-keystore.jks')
+            storePassword 'malek123'
+        }
+    }
+
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -53,6 +63,12 @@ android {
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
